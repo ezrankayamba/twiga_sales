@@ -1,9 +1,9 @@
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/auth/LoginPage";
 import LogoutPage from "./pages/auth/LogoutPage";
-import IndexPage from "./pages/customers/IndexPage";
+import IndexPage from "./pages/sales/IndexPage";
 import React from "react";
-import {IconClient, IconHome, IconPayment, IconSignIn, IconSignOut} from "./utils/Incons";
+import {IconClient, IconHome, IconPayment, IconPeople, IconSignIn, IconSignOut} from "./utils/Incons";
 import UsersPage from "./pages/auth/UsersPage";
 
 const getMenus = (loggedIn, privileges) => {
@@ -15,14 +15,14 @@ const getMenus = (loggedIn, privileges) => {
     let menus = loggedIn ?
         [
             {id: getId(), path: "/home", name: "Home", component: HomePage, Icon: IconHome, privilege: 'Anonymous'},
-            {id: getId(), path: "/users", name: "Users", component: UsersPage, Icon: IconHome, privilege: 'Users.manage'},
+            {id: getId(), path: "/users", name: "Users", component: UsersPage, Icon: IconPeople, privilege: 'Users.manage'},
             {
                 id: getId(),
-                path: "/customers",
-                name: "Customers",
+                path: "/sales",
+                name: "Sales",
                 component: IndexPage,
-                Icon: IconClient,
-                privilege: 'Customers.manage'
+                Icon: IconPayment,
+                privilege: 'Sales.manage'
             },
             {
                 id: getId(),

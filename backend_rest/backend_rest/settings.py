@@ -15,7 +15,7 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.99.101', '77.73.68.233', 'di
 # Application definition
 
 INSTALLED_APPS = [
-    'customers.apps.CustomersConfig',
+    'sales.apps.SalesConfig',
     'users.apps.UsersConfig',
     'web.apps.WebConfig',
 
@@ -119,7 +119,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 OAUTH2_PROVIDER = {
-    'SCOPES': {'read': 'Read scope', 'write': 'Write scope', 'customers': 'Manage customer and records', 'users': 'Manage users'}
+    'SCOPES': {'read': 'Read scope', 'write': 'Write scope', 'sales': 'Manage sales', 'users': 'Manage users'}
 }
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (

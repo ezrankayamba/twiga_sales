@@ -7,7 +7,7 @@ class MainLayout extends Component {
     render() {
         return (
             <>
-                <div className="br-logo"><a href="">Twiga - DTT</a></div>
+                <div className="br-logo"><a href="">Twiga - Sales</a></div>
                 <SideMenu/>
                 <div className="br-header">
                     <TopHeader/>

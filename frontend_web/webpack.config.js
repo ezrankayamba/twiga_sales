@@ -1,3 +1,6 @@
+const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
 module.exports = {
     entry: './src/index.js',
     output: {
@@ -10,6 +13,15 @@ module.exports = {
         contentBase: './',
         publicPath: '/dist/'
     },
+    plugins: [
+        new CleanWebpackPlugin(),
+        new HtmlWebpackPlugin({
+            title: 'Production',
+            template: "index.html",
+            filename: "index.html",
+            inject: 'body'
+        }),
+    ],
     module: {
         rules: [
             {

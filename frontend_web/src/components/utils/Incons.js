@@ -14,8 +14,10 @@ export const IconSignOut = () => <i className="icon ion-power"></i>
 export const IconSignIn = () => <i className="icon ion-power"></i>
 export const IconSettings = () => <i className="icon ion-ios-gear"></i>
 export const IconPerson = () => <i className="icon ion-ios-person"></i>
-export const IconFile = () => <i className="icon ion-document-text"></i>
+export const IconPeople = () => <i className="icon ion-ios-people"></i>
+export const IconFileText = () => <i className="icon ion-document-text"></i>
 export const IconUpload = () => <i className="icon ion-arrow-up-a"></i>
+export const IconFile = () => <i className="icon ion-document"></i>
 export const IconManual = () => <i className="icon ion-grid"></i>
 export const IconClose = () => <i className="ion ion-ios-close-outline tx-24"></i>
 export const IconCaptureLocation = () => <i className="icon ion-android-locate tx-16"></i>

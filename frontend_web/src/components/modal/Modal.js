@@ -11,11 +11,12 @@ class Modal extends Component {
     }
 
     render() {
-        const {modalId, handleClose, show, content, title, footer, large, error} = this.props
+        const {modalId, handleClose, show, content, title, footer, large, error, position} = this.props
         const showHideClassName = show ? "modal display-block" : "modal display-none";
         return (
             <div className={showHideClassName} onClick={this.otherClick.bind(this)} id={modalId}>
-                <div className={large ? "modal-main p-0 large" : "modal-main p-0"}>
+                <div className={large ? "modal-main p-0 large" : "modal-main p-0"}
+                     style={position ? {bottom: 'unset', top: position} : null}>
                     <div className="row m-0 p-1 pl-2 pr-2 modal-header">
                         {title && <div className="col p-0">
                             <h5 className="modal-title">{title}</h5>

@@ -1,9 +1,13 @@
 const merge = require('webpack-merge');
 const common = require('./webpack.common.js');
+const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
+const CopyPlugin = require('copy-webpack-plugin');
+const path = require('path');
 
 module.exports = merge(common, {
     mode: 'development',
-    devtool: 'inline-source-map',
     devServer: {
         contentBase: './dist',
         historyApiFallback: true,
@@ -23,5 +27,14 @@ module.exports = merge(common, {
                 ]
             }
         ],
+    },
+    plugins: [
+        new CopyPlugin([
+            {from: 'static', to: 'static'},
+        ]),
+    ],
+    output: {
+        filename: 'static/[name].bundle.js',
+        path: path.resolve(__dirname, 'dist'),
     },
 });
