@@ -24,11 +24,12 @@ def init_config(filein, fileout):
 
         with open(f'{fileout}', 'w') as f2:
             f2.write(content)
+            print(f'Successfully written to {fileout}')
 
 
 init_config("./conf/supervisord.conf", f'{supervisord_path}{program_name}.conf')
 init_config("./conf/nginx", f'{nginx_path}{program_name}')
 
-certbot = f'sudo certbot --nginx --non-interactive --agree-tos -d {domain_name}.nezatech.co.tz'
+certbot = f'sudo certbot --nginx --non-interactive --agree-tos -d {domain_name}'
 print(certbot)
 os.system(certbot)
