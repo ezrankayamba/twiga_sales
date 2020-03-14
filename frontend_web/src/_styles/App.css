@@ -1,0 +1,42 @@
+.app-bg-primary {
+    background: #F26522;
+}
+
+.nav-item > .nav-link{
+    padding: .2rem .4rem;
+}
+
+
+.loading-indicator{
+    position: fixed;
+    top: 90%;
+    left: 50%;
+    margin-top: -50px;
+    margin-left: -50px;
+    padding: .2rem;
+}
+body, html{
+    /*height: calc(100% - 36px);*/
+    width: calc(100% - 4px);
+}
+body {
+    background: #f1f1f1;
+}
+.main-nav{
+    box-shadow: 2px 3px 5px #C0B5B2;
+}
+
+.pagination .icon {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 1.2em;
+}
+.pagination .btn{
+    padding: 0 .5rem;
+}
+textarea {
+    min-height: 1em;
+    width: 100%;
+}
+
+

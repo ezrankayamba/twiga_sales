@@ -1,0 +1,14 @@
+version: '3'
+services:
+  api:
+    image: ezrankayamba/bulkpay_rest:1.0.1
+    container_name: bulkpay_rest
+    build: ./backend_rest
+    ports:
+      - "8000:8000"
+  web:
+    build: ./frontend_web
+    image: ezrankayamba/bulkpay_web:1.0.1
+    container_name: bulkpay_web
+    ports:
+      - "6060:80"

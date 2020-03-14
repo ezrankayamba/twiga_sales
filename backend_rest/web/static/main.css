@@ -1,0 +1,23 @@
+.loading-indicator {
+    background: #fcfcfc;
+    border-radius: .2rem;
+    color: #2b7a78;
+    border: 1px solid #007a78;
+}
+.loading {
+    display: flex;
+    padding: .2rem;
+}
+.loading i{
+    background-image: url("./images/Loading.gif");
+    background-repeat: repeat;
+    background-size: cover;
+    background-position: center;
+    width: 24px;
+    height: 24px;
+    display: inline-block;
+}
+.loading span{
+    display: inline-block;
+    margin: auto .4rem;
+}
