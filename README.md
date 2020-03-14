@@ -1,2 +1,2 @@
-# Distribution  
-A distribution information capture tool
+# Sales Portal  
+A for managing export sales' documents
