@@ -41,4 +41,4 @@ print(init_config("./conf/nginx", f'{nginx_path}{program_name}'))
 
 run_command(f'cd ../backend_rest && source ../.venv/bin/activate && python manage.py collectstatic --noinput')
 run_command(f'sudo service nginx reload && sudo supervisorctl reload && sudo supervisorctl restart {program_name}')
-run_command(f'sudo certbot --nginx --non-interactive --agree-tos -d {domain_name}')
+run_command(f'sudo certbot --nginx --non-interactive --agree-tos --redirect -d {domain_name}')
