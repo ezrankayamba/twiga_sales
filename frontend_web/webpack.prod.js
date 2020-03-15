@@ -28,10 +28,15 @@ module.exports = merge(common, {
             {from: 'static', to: ''},
         ]),
         new EventHooksPlugin({
-            done: new PromiseTask(async () => {
+            done: new PromiseTask(async (res) => {
+                // console.log(res)
                 fs.copyFile('../backend_rest/web/static/index.html', '../backend_rest/web/templates/web/index.html', (err) => {
                     if (err) throw err;
-                    console.log('File was copied successfully');
+                    console.log('index.html file was copied successfully');
+                });
+                fs.copyFile('../backend_rest/web/static/static/app.bundle.js', '../backend_rest/web/static/app.bundle.js', (err) => {
+                    if (err) throw err;
+                    console.log('app.bundle.js file was copied successfully');
                 });
             })
         })
