@@ -36,7 +36,7 @@ class ImportSalesView(APIView):
         imports.import_sales(excel_file)
         return Response({
             'status': 0,
-            'message': f'Successfully uploaded sales'
+            'message': f'Successfully imported sales'
         })
 
 
