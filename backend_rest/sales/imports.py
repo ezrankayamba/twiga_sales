@@ -41,14 +41,12 @@ def import_docs(zip_file, agent_code):
     with ZipFile(zip_file, 'r') as zip:
         regex = f'^(\w+)\/(\w) (\w+).(\w+)$'
         for entry in zip.infolist():
-            print(entry.filename)
             match = re.match(regex, entry.filename)
             if match:
                 so = match.group(1)
                 doc_type = match.group(2)
                 ref_number = match.group(3)
                 ext = match.group(4)
-                print(so, doc_type, ref_number, ext)
                 sale = models.Sale.objects.filter(sales_order=so).first()
                 if sale:
                     with zip.open(entry, 'r') as file:
