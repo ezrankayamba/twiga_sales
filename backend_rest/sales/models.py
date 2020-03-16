@@ -3,9 +3,14 @@ from django.contrib.auth.models import User
 
 
 class Document(models.Model):
+    DOC_ASSESSMENT = "Assessment"
+    DOC_C2 = "C2"
+    DOC_EXIT = "Exit"
     ref_number = models.CharField(max_length=20, unique=True)
     description = models.CharField(max_length=100, blank=True, null=True)
+    doc_type = models.CharField(max_length=10)
     file = models.FileField(upload_to='docs/')
+    sale = models.ForeignKey('Sale', related_name='docs', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now=False, auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, auto_now_add=False, null=True)
 
@@ -29,9 +34,6 @@ class Sale(models.Model):
     destination = models.CharField(max_length=100)
     agent_name = models.CharField(max_length=100)
     agent_code = models.CharField(max_length=100)
-    c2_doc = models.OneToOneField(Document, null=True, on_delete=models.SET_NULL, related_name='c2_doc')
-    assessment_doc = models.OneToOneField(Document, null=True, on_delete=models.SET_NULL, related_name='assessment_doc')
-    exit_doc = models.OneToOneField(Document, null=True, on_delete=models.SET_NULL, related_name='exit_doc')
     created_at = models.DateTimeField(auto_now=False, auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, auto_now_add=False)
 

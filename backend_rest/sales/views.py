@@ -76,8 +76,8 @@ class UploadDocsView(APIView):
 
     def post(self, request, format=None):
         file = request.FILES['file']
-        print(file)
-        imports.import_docs(file)
+        agent_code = request.data['agent_code']
+        imports.import_docs(file, agent_code)
         return Response({
             'status': 0,
             'message': f'Successfully uploaded documents'

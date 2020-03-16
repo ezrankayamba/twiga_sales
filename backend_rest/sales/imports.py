@@ -37,7 +37,7 @@ def import_sales(excel_file):
         i += 1
 
 
-def import_docs(zip_file):
+def import_docs(zip_file, agent_code):
     with ZipFile(zip_file, 'r') as zip:
         regex = f'^(\w+)\/(\w) (\w+).(\w+)$'
         for entry in zip.infolist():
@@ -54,12 +54,13 @@ def import_docs(zip_file):
                     with zip.open(entry, 'r') as file:
                         doc_file = ContentFile(file.read())
                         doc_file.name = f'{doc_type} {ref_number}.{ext}'
-                        doc, created = models.Document.objects.get_or_create(ref_number=f'{doc_type} {ref_number}', file=doc_file)
-                        if doc and doc_type == 'A':
-                            sale.assessment_doc = doc
-                        if doc and doc_type == 'C':
-                            sale.c2_doc = doc
-                        if doc and doc_type == 'E':
-                            sale.exit_doc = doc
-                        sale.save()
-                        print(f'Successfully saved the sale document: {sale}', doc)
+                        d_type = None
+                        if doc_type == 'A':
+                            d_type = models.Document.DOC_ASSESSMENT
+                        if doc_type == 'C':
+                            d_type = models.Document.DOC_C2
+                        if doc_type == 'E':
+                            d_type = models.Document.DOC_EXIT
+                        models.Document.objects.create(ref_number=f'{doc_type} {ref_number}', file=doc_file, sale=sale, doc_type=d_type)
+                    sale.agent_code = agent_code
+                    sale.save()

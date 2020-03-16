@@ -11,9 +11,7 @@ class DocumentSerializer(serializers.ModelSerializer):
 
 
 class SaleSerializer(serializers.ModelSerializer):
-    c2_doc = DocumentSerializer(many=False, read_only=True)
-    assessment_doc = DocumentSerializer(many=False, read_only=True)
-    exit_doc = DocumentSerializer(many=False, read_only=True)
+    docs = DocumentSerializer(many=True, read_only=True)
 
     class Meta:
         model = models.Sale

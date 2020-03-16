@@ -46,6 +46,12 @@ class List extends Component {
         this.refresh(pageNo)
     }
 
+    getDoc(sale, type) {
+        let t = sale.docs.find((typ) => typ.doc_type === type)
+        let res = t ? t.ref_number.split(" ")[1] : null
+        return res
+    }
+
     refresh(page = 1) {
         this.setState({isLoading: true}, () =>
             fetchSales(this.props.user.token, page, (res) => {
@@ -54,9 +60,9 @@ class List extends Component {
                         sales: res.data.map(c => {
                             return {
                                 ...c,
-                                c2_doc: c.c2_doc ? c.c2_doc.ref_number : null,
-                                assessment_doc: c.assessment_doc ? c.assessment_doc.ref_number : null,
-                                exit_doc: c.exit_doc ? c.exit_doc.ref_number : null,
+                                c2_doc: this.getDoc(c, "C2"),
+                                assessment_doc: this.getDoc(c, "Assessment"),
+                                exit_doc: this.getDoc(c, "Exit"),
                                 transaction_date: DateTime.fmt(c.transaction_date, "DD/MM/YYYY"),
                                 created_at: DateTime.fmt(c.created_at),
                             }
@@ -142,10 +148,10 @@ class List extends Component {
                 {field: 'quantity', title: 'Qty(Tons)'},
                 {field: 'total_value', title: 'Value'},
                 {field: 'destination', title: 'Destination'},
-                {field: 'agent_name', title: 'Agent'},
-                {field: 'c2_number', title: 'C2'},
-                {field: 'assessment_number', title: 'Assessment'},
-                {field: 'exit_number', title: 'Exit'},
+                {field: 'agent_code', title: 'Agent'},
+                {field: 'c2_doc', title: 'C2'},
+                {field: 'assessment_doc', title: 'Assessment'},
+                {field: 'exit_doc', title: 'Exit'},
                 {
                     field: 'action', title: 'Action',
                     render: rowData => <button className="btn btn-sm btn-link text-danger p-0"
@@ -154,6 +160,7 @@ class List extends Component {
             ],
             title: 'List of customers'
         }
+        console.log()
 
         const pagination = {pages, pageNo, onPageChange: this.onPageChange}
         return (
