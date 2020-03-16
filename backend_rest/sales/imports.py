@@ -1,8 +1,11 @@
 import openpyxl
 from . import models
 from zipfile import ZipFile
-import csv
+from django.core.files import File
 from io import TextIOWrapper
+import re
+import io
+from django.core.files.base import ContentFile
 
 
 def import_sales(excel_file):
@@ -36,30 +39,27 @@ def import_sales(excel_file):
 
 def import_docs(zip_file):
     with ZipFile(zip_file, 'r') as zip:
-        with zip.open('DocsList.csv') as csv_file:
-            print(csv_file)
-            reader = csv.DictReader(TextIOWrapper(csv_file))
-            for row in reader:
-                print(row)
-            # wb = openpyxl.load_workbook(TextIOWrapper(excel_file))
-            # ws = wb.active
-            # i = 0
-            # for row in ws.values:
-            #     if i:
-            #         dict = {}
-            #         try:
-            #             dict['sales_order'] = row[0]
-            #             dict['c2'] = row[1]
-            #             dict['assessment'] = row[2]
-            #             dict['exit'] = row[3]
-            #             print(dict)
-            #             # models.Sale.objects.create(**dict)
-            #         except Exception as e:
-            #             print(e)
-            #     else:
-            #         if len(row) < 2:
-            #             print('Not enough columns')
-            #             break
-            #     i += 1
-
-            pass
+        regex = f'^(\w+)\/(\w) (\w+).(\w+)$'
+        for entry in zip.infolist():
+            print(entry.filename)
+            match = re.match(regex, entry.filename)
+            if match:
+                so = match.group(1)
+                doc_type = match.group(2)
+                ref_number = match.group(3)
+                ext = match.group(4)
+                print(so, doc_type, ref_number, ext)
+                sale = models.Sale.objects.filter(sales_order=so).first()
+                if sale:
+                    with zip.open(entry, 'r') as file:
+                        doc_file = ContentFile(file.read())
+                        doc_file.name = f'{doc_type} {ref_number}.{ext}'
+                        doc, created = models.Document.objects.get_or_create(ref_number=f'{doc_type} {ref_number}', file=doc_file)
+                        if doc and doc_type == 'A':
+                            sale.assessment_doc = doc
+                        if doc and doc_type == 'C':
+                            sale.c2_doc = doc
+                        if doc and doc_type == 'E':
+                            sale.exit_doc = doc
+                        sale.save()
+                        print(f'Successfully saved the sale document: {sale}', doc)

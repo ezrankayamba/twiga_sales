@@ -3,14 +3,14 @@ from django.contrib.auth.models import User
 
 
 class Document(models.Model):
-    ref_number = models.CharField(max_length=20)
+    ref_number = models.CharField(max_length=20, unique=True)
     description = models.CharField(max_length=100, blank=True, null=True)
     file = models.FileField(upload_to='docs/')
     created_at = models.DateTimeField(auto_now=False, auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, auto_now_add=False, null=True)
 
     def __str__(self):
-        return self.c2_reference
+        return self.ref_number
 
     class Meta:
         ordering = ['-created_at']
