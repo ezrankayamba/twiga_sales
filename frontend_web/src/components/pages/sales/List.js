@@ -146,7 +146,6 @@ class List extends Component {
                 {field: 'c2_number', title: 'C2'},
                 {field: 'assessment_number', title: 'Assessment'},
                 {field: 'exit_number', title: 'Exit'},
-                {field: 'created_at', title: 'Created'},
                 {
                     field: 'action', title: 'Action',
                     render: rowData => <button className="btn btn-sm btn-link text-danger p-0"
