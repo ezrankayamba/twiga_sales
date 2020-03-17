@@ -5,6 +5,7 @@ import {connect} from "react-redux";
 import CommonForm from "../../utils/CommonForm";
 import LoadingIndicator from "../../utils/LoadingIndicator";
 import Snackbar from "../../utils/notify/Snackbar";
+import "./Auth.css"
 
 @connect((state) => {
     return {
@@ -62,7 +63,7 @@ class LoginPage extends Component {
         }
         return (
             <div className="row mt-3">
-                <div className="col-md-6 offset-md-3"><CommonForm meta={form}/></div>
+                <div className="col-md-6 offset-md-3 auth-form-center"><CommonForm meta={form}/></div>
                 <LoadingIndicator isLoading={isLoading}/>
                 {snackbar && <Snackbar message={snackbar.message} timeout={snackbar.timeout} done={this.snackDone}
                                        error={snackbar.error}/>}
