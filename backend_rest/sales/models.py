@@ -1,12 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
+from users import models as u_models
 
 
 class Document(models.Model):
     DOC_ASSESSMENT = "Assessment"
     DOC_C2 = "C2"
     DOC_EXIT = "Exit"
-    ref_number = models.CharField(max_length=20, unique=True)
+    ref_number = models.CharField(max_length=20)
     description = models.CharField(max_length=100, blank=True, null=True)
     doc_type = models.CharField(max_length=10)
     file = models.FileField(upload_to='docs/')
@@ -15,10 +16,11 @@ class Document(models.Model):
     updated_at = models.DateTimeField(auto_now=True, auto_now_add=False, null=True)
 
     def __str__(self):
-        return self.ref_number
+        return f'{self.ref_number} - {self.doc_type}'
 
     class Meta:
         ordering = ['-created_at']
+        unique_together = ['ref_number', 'doc_type']
 
 
 class Sale(models.Model):
@@ -32,7 +34,7 @@ class Sale(models.Model):
     quantity = models.CharField(max_length=100)
     total_value = models.CharField(max_length=100)
     destination = models.CharField(max_length=100)
-    agent_name = models.CharField(max_length=100)
+    agent = models.ForeignKey(u_models.Agent, on_delete=models.SET_NULL, null=True)
     agent_code = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now=False, auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, auto_now_add=False)

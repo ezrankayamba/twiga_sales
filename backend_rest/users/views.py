@@ -2,9 +2,11 @@ from rest_framework import generics, permissions
 from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope, TokenHasScope
 from . import serializers
 from . import models
+from . import choices
 from django.contrib.auth.models import User
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.decorators import api_view, renderer_classes
 
 
 class UserListView(generics.ListCreateAPIView):
@@ -21,9 +23,6 @@ class RoleListView(generics.ListCreateAPIView):
     required_scopes = ['users']
     serializer_class = serializers.RoleSerializer
 
-    def paginate_queryset(self, queryset):
-        return None
-
     def get_queryset(self):
         return models.Role.objects.all()
 
@@ -39,6 +38,11 @@ class CreateUserView(APIView):
         profile = user.profile
         profile.role_id = data['role']
         profile.save()
+
+        agent_code = data.get('agent_code', None)
+        if agent_code:
+            models.Agent.objects.create(user=user, code=agent_code)
+
         return Response({
             'status': 0,
             'message': f'Successfully created user'
@@ -61,3 +65,17 @@ class ManageUserDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return models.User.objects.all()
+
+
+class ManageRoleDetailView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [permissions.IsAuthenticated, TokenHasScope]
+    required_scopes = ['read']
+    serializer_class = serializers.RoleSerializer
+
+    def get_queryset(self):
+        return models.Role.objects.all()
+
+
+@api_view()
+def privileges(request):
+    return Response([{'id': x[0], 'name':x[1]} for x in choices.PRIVILEGE_CHOICES])

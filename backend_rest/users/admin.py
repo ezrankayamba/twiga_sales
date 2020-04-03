@@ -17,5 +17,5 @@ from . import choices
 
 
 admin.site.register(models.Role)
-# admin.site.register(models.RolePrivilege, RolePrivilegeAdmin)
+admin.site.register(models.Agent)
 admin.site.register(models.Profile)

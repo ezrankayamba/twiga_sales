@@ -5,10 +5,10 @@ import LoadingIndicator from "../../utils/LoadingIndicator";
 import Snackbar from "../../utils/notify/Snackbar";
 import BasicCrudView from "../../utils/BasicCrudView";
 import {
-  createUser,
-  deleteUser,
+  createOrUpdateRole,
   fetchRoles,
-  fetchUsers
+  fetchPrivs,
+  deleteRole
 } from "../../../_services/AuthService";
 import { IconPlus, IconTrash } from "../../utils/Incons";
 import Modal from "../../modal/Modal";
@@ -19,21 +19,23 @@ import Modal from "../../modal/Modal";
     loggedIn: state.auth.loggedIn
   };
 })
-class UsersPage extends Component {
+class RolesPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      users: [],
       roles: [],
+      privs: [],
       isLoading: false,
-      snackbar: null,
       openAdd: false,
+      openEdit: false,
       pages: 1,
-      pageNo: 1
+      pageNo: 1,
+      selected: null
     };
     this.snackDone = this.snackDone.bind(this);
     this.newComplete = this.newComplete.bind(this);
     this.onPageChange = this.onPageChange.bind(this);
+    this.onAdd = this.onAdd.bind(this);
   }
 
   onPageChange(pageNo) {
@@ -46,8 +48,7 @@ class UsersPage extends Component {
   }
   onDelete(e, row) {
     e.stopPropagation();
-    deleteUser(this.props.user.token, row.id, res => {
-      console.log(res);
+    deleteRole(this.props.user.token, row.id, res => {
       if (res) {
         this.refresh();
       }
@@ -56,17 +57,12 @@ class UsersPage extends Component {
 
   refresh(page = 1) {
     this.setState({ isLoading: true, pageNo: page }, () =>
-      fetchUsers(this.props.user.token, page, res => {
+      fetchRoles(this.props.user.token, page, res => {
         if (res) {
           this.setState({
-            users: res.data.map(u => {
+            roles: res.data.map(u => {
               return {
-                ...u,
-                role:
-                  u.profile && u.profile.role
-                    ? u.profile.role.name
-                    : "No role assigned",
-                agent_code: u.agent ? u.agent.code : "N/A"
+                ...u
               };
             }),
             isLoading: false,
@@ -78,48 +74,88 @@ class UsersPage extends Component {
   }
 
   componentDidMount() {
-    fetchRoles(this.props.user.token, 1, res => {
-      console.log(res);
-      this.setState({ roles: res.data });
+    fetchPrivs(this.props.user.token, res => {
+      this.setState({ privs: res }, this.refresh);
     });
-    this.refresh();
   }
 
   onRowClick(e, row) {
-    console.log(row);
+    this.setState({ selected: row, openEdit: true });
   }
 
   newComplete(param) {
-    this.setState({ openAdd: false });
+    this.setState({ openAdd: false, openEdit: false });
+  }
+
+  getForm(data = null) {
+    return {
+      fields: [
+        {
+          name: "name",
+          label: "Name",
+          value: data ? data.name : null,
+          validator: {
+            valid: val => (val ? val.length >= 3 : false),
+            error: "Name should be at least 3 characters"
+          }
+        },
+        {
+          name: "id",
+          value: data ? data.id : null,
+          type: "hidden"
+        },
+        {
+          name: "privileges",
+          type: "checkbox",
+          label: "Privileges",
+          options: this.state.privs,
+          multiple: true,
+          value: data ? data.privileges : null
+        }
+      ],
+      onSubmit: this.onAdd.bind(this)
+    };
   }
 
   onAdd(params, cb) {
-    createUser(this.props.user.token, params, res => {
+    createOrUpdateRole(this.props.user.token, params, res => {
       if (res) {
         cb(true);
-        this.setState({ openAdd: false }, this.refresh);
+        this.setState(
+          { openAdd: false, openEdit: false, selected: null },
+          this.refresh
+        );
       }
     });
   }
 
   render() {
     const { loggedIn } = this.props;
-    const { isLoading, snackbar, openAdd } = this.state;
-    let { users, pages, pageNo, roles } = this.state;
+    const { isLoading, snackbar, openAdd, selected, openEdit } = this.state;
+    let { roles, pages, pageNo, privs } = this.state;
 
     let data = {
-      records: users,
+      records: roles,
       headers: [
         { field: "id", title: "ID" },
-        { field: "username", title: "Username" },
-        { field: "role", title: "Role" },
-        { field: "agent_code", title: "Agent Code" },
+        { field: "name", title: "Role Name" },
+        {
+          field: "privileges",
+          title: "Privileges",
+          render: row => {
+            return row.privileges.map(p => (
+              <span className="mr-2 p-1 border border-secondary rounded">
+                {privs.find(prv => prv.id === p).name}
+              </span>
+            ));
+          }
+        },
         {
           field: "action",
           title: "Action",
           render: rowData => (
             <button
-              className="btn btn-sm btn-link text-danger"
+              className="btn btn-sm btn-link text-danger p-0"
               onClick={e => this.onDelete(e, rowData)}
             >
               <IconTrash />
@@ -127,34 +163,18 @@ class UsersPage extends Component {
           )
         }
       ],
-      title: "List of users"
+      title: "List of roles"
     };
 
     const pagination = { pages, pageNo, onPageChange: this.onPageChange };
 
-    let form = {
-      title: "User Form",
-      fields: [
-        {
-          name: "username",
-          label: "Username",
-          validator: {
-            valid: val => (val ? val.length >= 5 : false),
-            error: "Username should be at least 5 characters"
-          }
-        },
-        { name: "role", label: "Role", type: "select", options: roles },
-        { name: "agent_code", label: "Agent Code" }
-      ],
-      onSubmit: this.onAdd.bind(this)
-    };
-
+    let form = this.getForm();
     return (
       <div className="row">
         <div className="col">
           <div className="row pt-2 pb-2 d-flex">
             <div className="col-md">
-              <h5>List of users</h5>
+              <h5>List of roles</h5>
             </div>
             <div className="col-md">
               <div className="btn-group float-md-right">
@@ -187,10 +207,19 @@ class UsersPage extends Component {
           {openAdd && (
             <Modal
               title={form.title}
-              modalId="addUserForm"
+              modalId="addRoleForm"
               handleClose={() => this.newComplete(false)}
               show={openAdd}
               content={<CommonForm meta={{ ...form, title: null }} />}
+            />
+          )}
+          {openEdit && (
+            <Modal
+              title={"Edit Role"}
+              modalId="editRoleForm"
+              handleClose={() => this.newComplete(false)}
+              show={openEdit}
+              content={<CommonForm meta={this.getForm(selected)} />}
             />
           )}
         </div>
@@ -199,4 +228,4 @@ class UsersPage extends Component {
   }
 }
 
-export default UsersPage;
+export default RolesPage;

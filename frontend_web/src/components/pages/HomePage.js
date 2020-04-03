@@ -1,37 +1,41 @@
-import React, {Component} from 'react';
-import {connect} from "react-redux";
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import Dashboard from "./dashboard/Dashboard";
 
-@connect((state) => {
-    return {
-        user: state.auth.user,
-        loggedIn: state.auth.loggedIn
-    }
+@connect(state => {
+  return {
+    user: state.auth.user,
+    loggedIn: state.auth.loggedIn
+  };
 })
 class HomePage extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {file: null}
-        this.onChange = this.onChange.bind(this)
-    }
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
 
-    onSubmit(data) {
-        console.log("Submitted data: ", data)
-    }
-
-    onChange(e) {
-        this.setState({file: e.target.files[0]})
-    }
-
-    render() {
-        const {user, loggedIn} = this.props
-        return (
-            <div className="">
-                <div className="">
-                    <h5>Home page/dashboard</h5>
-                </div>
-            </div>
-        )
-    }
+  render() {
+    const { user, loggedIn } = this.props;
+    return (
+      <div className="">
+        <div className="p-3">
+          {!user && (
+            <p>
+              You are not logged in
+              <a
+                className="btn btn-sm btn-outline-primary ml-2 mr-2 pt-0 pb-0"
+                href="/login"
+              >
+                Login
+              </a>
+              to access the dashboard
+            </p>
+          )}
+          {user && <Dashboard user={user} />}
+        </div>
+      </div>
+    );
+  }
 }
 
 export default HomePage;

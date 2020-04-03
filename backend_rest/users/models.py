@@ -7,15 +7,20 @@ from multiselectfield import MultiSelectField
 
 
 class Role(models.Model):
-    name = models.CharField(max_length=40)
+    name = models.CharField(max_length=40, unique=True)
     description = models.CharField(max_length=100, null=True, blank=True)
     privileges = MultiSelectField(choices=choices.PRIVILEGE_CHOICES, null=True)
+    created_at = models.DateTimeField(auto_now=False, auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, auto_now_add=False, null=True)
 
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
         return reverse('role-list')
+
+    class Meta:
+        ordering = ['-created_at']
 
 
 class Profile(models.Model):
@@ -38,3 +43,8 @@ class Profile(models.Model):
             output_size = (300, 300)
             img.thumbnail(output_size)
             img.save(self.image.path)
+
+
+class Agent(models.Model):
+    code = models.CharField(max_length=20, unique=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='agent')
