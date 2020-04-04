@@ -51,16 +51,18 @@ const getInput = (
       </fieldset>
     );
   } else if (type === "file") {
-    let url = value ? value : null;
-    let fname = value ? value.split("/").pop() : null;
+    let url = value && typeof value === "string" ? value : null;
+    let fname = url ? value.split("/").pop() : null;
     return (
       <div>
-        <span>
-          Existing:{" "}
-          <a href={url} target="_blank">
-            {fname}
-          </a>
-        </span>
+        {url && (
+          <span>
+            Existing:
+            <a className="pl-2" href={url} target="_blank">
+              {fname}
+            </a>
+          </span>
+        )}
         <input type={type} {...rest} />
       </div>
     );
