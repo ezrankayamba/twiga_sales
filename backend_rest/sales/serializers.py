@@ -4,17 +4,10 @@ from users.serializers import UserSerializer, AgentSerializer
 
 
 class DocumentSerializer(serializers.ModelSerializer):
-    file_url = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Document
         fields = '__all__'
-
-    def get_file_url(self, doc):
-        request = self.context.get('request')
-        url = request.build_absolute_uri(doc.file.url)
-        print('Url: ', url)
-        return url
 
 
 class SaleSerializer(serializers.ModelSerializer):
