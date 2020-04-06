@@ -2,10 +2,10 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import Dashboard from "./dashboard/Dashboard";
 
-@connect(state => {
+@connect((state) => {
   return {
     user: state.auth.user,
-    loggedIn: state.auth.loggedIn
+    loggedIn: state.auth.loggedIn,
   };
 })
 class HomePage extends Component {

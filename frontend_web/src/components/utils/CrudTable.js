@@ -1,7 +1,6 @@
 import React from "react";
 import Pagination from "./Pagination";
 import LoadingIndicator from "./LoadingIndicator";
-import CommonForm from "./CommonForm";
 import CloseableModel from "../modal/ClosableModal";
 import { IconPlus } from "./Incons";
 
@@ -17,7 +16,7 @@ class CrudTable extends React.Component {
       onRowClick,
       isLoading,
       newRecord,
-      pagination
+      pagination,
     } = this.props;
     let pages = 1,
       pageNo = 1,
@@ -31,16 +30,16 @@ class CrudTable extends React.Component {
       title: "Add Record",
       fields: [
         ...columns
-          .filter(col => !col.render)
-          .map(col => {
+          .filter((col) => !col.render)
+          .map((col) => {
             return {
               name: col.field,
               label: col.title,
-              validator: col.validator
+              validator: col.validator,
             };
-          })
+          }),
       ],
-      onSubmit: newRecord && newRecord.onAdd
+      onSubmit: newRecord && newRecord.onAdd,
     };
     return (
       <div className="bg-light p-2">
@@ -56,22 +55,22 @@ class CrudTable extends React.Component {
           <thead className="border-none">
             <tr className="border-none">
               {columns
-                .filter(col => !col.hide)
-                .map(col => (
+                .filter((col) => !col.hide)
+                .map((col) => (
                   <th key={col.field}>{col.title}</th>
                 ))}
             </tr>
           </thead>
           <tbody>
-            {data.map(row => (
+            {data.map((row) => (
               <tr
-                onClick={onRowClick ? e => onRowClick(e, row) : null}
+                onClick={onRowClick ? (e) => onRowClick(e, row) : null}
                 key={row.id}
                 className="border-none"
               >
                 {columns
-                  .filter(col => !col.hide)
-                  .map(col => (
+                  .filter((col) => !col.hide)
+                  .map((col) => (
                     <td className="p-1" key={col.field}>
                       {col.render ? col.render(row) : row[col.field]}
                     </td>
@@ -93,7 +92,14 @@ class CrudTable extends React.Component {
             modalId="manageRecord"
             handleClose={newRecord.hide}
             show={newRecord.open}
-            content={<CommonForm meta={form} onClose={newRecord.hide} />}
+            content={
+              <CommonForm
+                meta={form}
+                onClose={newRecord.hide}
+                newOptions={this.props.newOptions}
+                clearNewOption={this.props.clearNewOption}
+              />
+            }
           />
         )}
       </div>

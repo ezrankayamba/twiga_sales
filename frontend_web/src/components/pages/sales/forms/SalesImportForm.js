@@ -7,7 +7,7 @@ class SalesImportForm extends Component {
     super(props);
     this.state = {
       name: "",
-      file: null
+      file: null,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleFileSelect = this.handleFileSelect.bind(this);

@@ -2,21 +2,24 @@ import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
 import { login, logout } from "../../../redux/auth/actions";
 import { connect } from "react-redux";
-import CommonForm from "../../utils/CommonForm";
+import { CommonForm } from "neza-react-forms";
+import { clearNewOption } from "../../../redux/forms/actions";
 import LoadingIndicator from "../../utils/LoadingIndicator";
 import Snackbar from "../../utils/notify/Snackbar";
 import "./Auth.css";
 
 @connect(
-  state => {
+  (state) => {
     return {
       user: state.auth.user,
-      loggedIn: state.auth.loggedIn
+      loggedIn: state.auth.loggedIn,
+      newOptions: state.forms.newOptions,
     };
   },
   {
     login: login,
-    logout: logout
+    logout: logout,
+    clearNewOption: clearNewOption,
   }
 )
 class LoginPage extends Component {
@@ -34,15 +37,15 @@ class LoginPage extends Component {
     this.setState({ isLoading: true });
     this.props.login(
       { username, password, history: this.props.history },
-      res => {
+      (res) => {
         if (!res) {
           this.setState({
             isLoading: false,
             snackbar: {
               message: "Login failed, try correct credentials",
               timeout: 1000,
-              error: true
-            }
+              error: true,
+            },
           });
         }
       }
@@ -59,13 +62,13 @@ class LoginPage extends Component {
           name: "username",
           label: "Username",
           validator: {
-            valid: val => (val ? val.length >= 5 : false),
-            error: "Username should be at least 5 characters"
-          }
+            valid: (val) => (val ? val.length >= 5 : false),
+            error: "Username should be at least 5 characters",
+          },
         },
-        { name: "password", label: "Password", type: "password" }
+        { name: "password", label: "Password", type: "password" },
       ],
-      onSubmit: this.submitLogin.bind(this)
+      onSubmit: this.submitLogin.bind(this),
     };
 
     if (loggedIn) {
@@ -74,7 +77,11 @@ class LoginPage extends Component {
     return (
       <div className="row mt-3">
         <div className="col-md-6 offset-md-3 auth-form-center">
-          <CommonForm meta={form} />
+          <CommonForm
+            meta={form}
+            newOptions={this.props.newOptions}
+            clearNewOption={this.props.clearNewOption}
+          />
         </div>
         <LoadingIndicator isLoading={isLoading} />
         {snackbar && (

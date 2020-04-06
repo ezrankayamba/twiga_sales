@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import CommonForm from "../../utils/CommonForm";
 import LoadingIndicator from "../../utils/LoadingIndicator";
 import Snackbar from "../../utils/notify/Snackbar";
 import BasicCrudView from "../../utils/BasicCrudView";
@@ -8,17 +7,23 @@ import {
   createOrUpdateRole,
   fetchRoles,
   fetchPrivs,
-  deleteRole
+  deleteRole,
 } from "../../../_services/AuthService";
 import { IconPlus, IconTrash } from "../../utils/Incons";
 import Modal from "../../modal/Modal";
+import { CommonForm } from "neza-react-forms";
+import { clearNewOption } from "../../../redux/forms/actions";
 
-@connect(state => {
-  return {
-    user: state.auth.user,
-    loggedIn: state.auth.loggedIn
-  };
-})
+@connect(
+  (state) => {
+    return {
+      user: state.auth.user,
+      loggedIn: state.auth.loggedIn,
+      newOptions: state.forms.newOptions,
+    };
+  },
+  { clearNewOption: clearNewOption }
+)
 class RolesPage extends Component {
   constructor(props) {
     super(props);
@@ -30,7 +35,7 @@ class RolesPage extends Component {
       openEdit: false,
       pages: 1,
       pageNo: 1,
-      selected: null
+      selected: null,
     };
     this.snackDone = this.snackDone.bind(this);
     this.newComplete = this.newComplete.bind(this);
@@ -48,7 +53,7 @@ class RolesPage extends Component {
   }
   onDelete(e, row) {
     e.stopPropagation();
-    deleteRole(this.props.user.token, row.id, res => {
+    deleteRole(this.props.user.token, row.id, (res) => {
       if (res) {
         this.refresh();
       }
@@ -57,16 +62,16 @@ class RolesPage extends Component {
 
   refresh(page = 1) {
     this.setState({ isLoading: true, pageNo: page }, () =>
-      fetchRoles(this.props.user.token, page, res => {
+      fetchRoles(this.props.user.token, page, (res) => {
         if (res) {
           this.setState({
-            roles: res.data.map(u => {
+            roles: res.data.map((u) => {
               return {
-                ...u
+                ...u,
               };
             }),
             isLoading: false,
-            pages: parseInt(res.pages)
+            pages: parseInt(res.pages),
           });
         }
       })
@@ -74,7 +79,7 @@ class RolesPage extends Component {
   }
 
   componentDidMount() {
-    fetchPrivs(this.props.user.token, res => {
+    fetchPrivs(this.props.user.token, (res) => {
       this.setState({ privs: res }, this.refresh);
     });
   }
@@ -95,14 +100,14 @@ class RolesPage extends Component {
           label: "Name",
           value: data ? data.name : null,
           validator: {
-            valid: val => (val ? val.length >= 3 : false),
-            error: "Name should be at least 3 characters"
-          }
+            valid: (val) => (val ? val.length >= 3 : false),
+            error: "Name should be at least 3 characters",
+          },
         },
         {
           name: "id",
           value: data ? data.id : null,
-          type: "hidden"
+          type: "hidden",
         },
         {
           name: "privileges",
@@ -110,15 +115,15 @@ class RolesPage extends Component {
           label: "Privileges",
           options: this.state.privs,
           multiple: true,
-          value: data ? data.privileges : null
-        }
+          value: data ? data.privileges : null,
+        },
       ],
-      onSubmit: this.onAdd.bind(this)
+      onSubmit: this.onAdd.bind(this),
     };
   }
 
   onAdd(params, cb) {
-    createOrUpdateRole(this.props.user.token, params, res => {
+    createOrUpdateRole(this.props.user.token, params, (res) => {
       if (res) {
         cb(true);
         this.setState(
@@ -142,28 +147,28 @@ class RolesPage extends Component {
         {
           field: "privileges",
           title: "Privileges",
-          render: row => {
-            return row.privileges.map(p => (
+          render: (row) => {
+            return row.privileges.map((p) => (
               <span className="mr-2 p-1 border border-secondary rounded">
-                {privs.find(prv => prv.id === p).name}
+                {privs.find((prv) => prv.id === p).name}
               </span>
             ));
-          }
+          },
         },
         {
           field: "action",
           title: "Action",
-          render: rowData => (
+          render: (rowData) => (
             <button
               className="btn btn-sm btn-link text-danger p-0"
-              onClick={e => this.onDelete(e, rowData)}
+              onClick={(e) => this.onDelete(e, rowData)}
             >
               <IconTrash />
             </button>
-          )
-        }
+          ),
+        },
       ],
-      title: "List of roles"
+      title: "List of roles",
     };
 
     const pagination = { pages, pageNo, onPageChange: this.onPageChange };
@@ -206,11 +211,17 @@ class RolesPage extends Component {
           )}
           {openAdd && (
             <Modal
-              title={form.title}
+              title="New Role"
               modalId="addRoleForm"
               handleClose={() => this.newComplete(false)}
               show={openAdd}
-              content={<CommonForm meta={{ ...form, title: null }} />}
+              content={
+                <CommonForm
+                  meta={{ ...form, title: null }}
+                  newOptions={this.props.newOptions}
+                  clearNewOption={this.props.clearNewOption}
+                />
+              }
             />
           )}
           {openEdit && (
@@ -219,7 +230,13 @@ class RolesPage extends Component {
               modalId="editRoleForm"
               handleClose={() => this.newComplete(false)}
               show={openEdit}
-              content={<CommonForm meta={this.getForm(selected)} />}
+              content={
+                <CommonForm
+                  meta={this.getForm(selected)}
+                  newOptions={this.props.newOptions}
+                  clearNewOption={this.props.clearNewOption}
+                />
+              }
             />
           )}
         </div>

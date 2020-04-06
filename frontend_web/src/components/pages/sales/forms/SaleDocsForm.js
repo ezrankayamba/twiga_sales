@@ -1,15 +1,22 @@
 import React, { Component } from "react";
-import CommonForm from "../../../utils/CommonForm";
 import CloseableModel from "../../../modal/ClosableModal";
 import { FormsHelper } from "../../../../_helpers/FormsHelper";
 import { uploadDocs } from "../../../../_services/SalesService";
 import { connect } from "react-redux";
 
-@connect(state => {
-  return {
-    user: state.auth.user
-  };
-})
+import { CommonForm } from "neza-react-forms";
+import { clearNewOption } from "../../../../redux/forms/actions";
+
+@connect(
+  (state) => {
+    return {
+      user: state.auth.user,
+      loggedIn: state.auth.loggedIn,
+      newOptions: state.forms.newOptions,
+    };
+  },
+  { clearNewOption: clearNewOption }
+)
 class SaleDocsForm extends Component {
   constructor(props) {
     super(props);
@@ -17,11 +24,11 @@ class SaleDocsForm extends Component {
   }
   onSubmit(data, cb) {
     let form = new FormData();
-    Object.entries(data).forEach(entry => {
+    Object.entries(data).forEach((entry) => {
       console.log(entry);
       form.append(entry[0], entry[1]);
     });
-    uploadDocs(this.props.user.token, form, res => {
+    uploadDocs(this.props.user.token, form, (res) => {
       this.props.complete(true);
       cb(res);
       if (res) {
@@ -29,8 +36,8 @@ class SaleDocsForm extends Component {
           snackbar: {
             message: res.message,
             timeout: 1000,
-            error: res.status !== 0
-          }
+            error: res.status !== 0,
+          },
         });
       }
     });
@@ -40,7 +47,7 @@ class SaleDocsForm extends Component {
     const { complete, sale, onSubmit, readOnly } = this.props;
     console.log(sale);
     const hasDocs = sale.docs.length > 0;
-    const val = name => {
+    const val = (name) => {
       if (!hasDocs) return null;
       return sale[name];
     };
@@ -53,61 +60,61 @@ class SaleDocsForm extends Component {
           name: "quantity",
           label: "Quantity(Tons)",
           validator: FormsHelper.notEmpty(),
-          value: val("quantity")
+          value: val("quantity"),
         },
         {
           name: "sale_id",
           value: sale.id,
-          type: "hidden"
+          type: "hidden",
         },
         {
           name: "total_value",
           label: "Value(USD)",
           validator: FormsHelper.notEmpty(),
-          value: val("total_value")
+          value: val("total_value"),
         },
         {
           name: "c2_ref",
           label: "C2 Reference",
           validator: FormsHelper.notEmpty(),
-          value: val("c2_ref")
+          value: val("c2_ref"),
         },
         {
           name: "c2_doc",
           label: "C2 Document",
           type: "file",
           validator: FormsHelper.notEmpty(),
-          value: val("c2_doc")
+          value: val("c2_doc"),
         },
         {
           name: "exit_ref",
           label: "Exit Reference",
           validator: FormsHelper.notEmpty(),
-          value: val("exit_ref")
+          value: val("exit_ref"),
         },
         {
           name: "exit_doc",
           label: "Exit Document",
           type: "file",
           validator: FormsHelper.notEmpty(),
-          value: val("exit_doc")
+          value: val("exit_doc"),
         },
         {
           name: "assessment_ref",
           label: "Assessment Reference",
           validator: FormsHelper.notEmpty(),
-          value: val("assessment_ref")
+          value: val("assessment_ref"),
         },
         {
           name: "assessment_doc",
           label: "Assessment Document",
           type: "file",
           validator: FormsHelper.notEmpty(),
-          value: val("assessment_doc")
-        }
+          value: val("assessment_doc"),
+        },
       ],
       onSubmit: readOnly ? null : onSubmit || this.onSubmit.bind(this),
-      enctype: "multipart/form-data"
+      enctype: "multipart/form-data",
     };
     return (
       <>
@@ -120,6 +127,8 @@ class SaleDocsForm extends Component {
               meta={form}
               readOnly={readOnly}
               onClose={() => complete(false)}
+              newOptions={this.props.newOptions}
+              clearNewOption={this.props.clearNewOption}
             />
           }
         />

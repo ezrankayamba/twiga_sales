@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import CommonForm from "../../utils/CommonForm";
 import LoadingIndicator from "../../utils/LoadingIndicator";
 import Snackbar from "../../utils/notify/Snackbar";
 import BasicCrudView from "../../utils/BasicCrudView";
@@ -8,17 +7,23 @@ import {
   createUser,
   deleteUser,
   fetchRoles,
-  fetchUsers
+  fetchUsers,
 } from "../../../_services/AuthService";
 import { IconPlus, IconTrash } from "../../utils/Incons";
 import Modal from "../../modal/Modal";
+import { CommonForm } from "neza-react-forms";
+import { clearNewOption } from "../../../redux/forms/actions";
 
-@connect(state => {
-  return {
-    user: state.auth.user,
-    loggedIn: state.auth.loggedIn
-  };
-})
+@connect(
+  (state) => {
+    return {
+      user: state.auth.user,
+      loggedIn: state.auth.loggedIn,
+      newOptions: state.forms.newOptions,
+    };
+  },
+  { clearNewOption: clearNewOption }
+)
 class UsersPage extends Component {
   constructor(props) {
     super(props);
@@ -29,7 +34,7 @@ class UsersPage extends Component {
       snackbar: null,
       openAdd: false,
       pages: 1,
-      pageNo: 1
+      pageNo: 1,
     };
     this.snackDone = this.snackDone.bind(this);
     this.newComplete = this.newComplete.bind(this);
@@ -46,7 +51,7 @@ class UsersPage extends Component {
   }
   onDelete(e, row) {
     e.stopPropagation();
-    deleteUser(this.props.user.token, row.id, res => {
+    deleteUser(this.props.user.token, row.id, (res) => {
       console.log(res);
       if (res) {
         this.refresh();
@@ -56,21 +61,21 @@ class UsersPage extends Component {
 
   refresh(page = 1) {
     this.setState({ isLoading: true, pageNo: page }, () =>
-      fetchUsers(this.props.user.token, page, res => {
+      fetchUsers(this.props.user.token, page, (res) => {
         if (res) {
           this.setState({
-            users: res.data.map(u => {
+            users: res.data.map((u) => {
               return {
                 ...u,
                 role:
                   u.profile && u.profile.role
                     ? u.profile.role.name
                     : "No role assigned",
-                agent_code: u.agent ? u.agent.code : "N/A"
+                agent_code: u.agent ? u.agent.code : "N/A",
               };
             }),
             isLoading: false,
-            pages: parseInt(res.pages)
+            pages: parseInt(res.pages),
           });
         }
       })
@@ -78,7 +83,7 @@ class UsersPage extends Component {
   }
 
   componentDidMount() {
-    fetchRoles(this.props.user.token, 1, res => {
+    fetchRoles(this.props.user.token, 1, (res) => {
       console.log(res);
       this.setState({ roles: res.data });
     });
@@ -94,7 +99,7 @@ class UsersPage extends Component {
   }
 
   onAdd(params, cb) {
-    createUser(this.props.user.token, params, res => {
+    createUser(this.props.user.token, params, (res) => {
       if (res) {
         cb(true);
         this.setState({ openAdd: false }, this.refresh);
@@ -117,17 +122,17 @@ class UsersPage extends Component {
         {
           field: "action",
           title: "Action",
-          render: rowData => (
+          render: (rowData) => (
             <button
               className="btn btn-sm btn-link text-danger"
-              onClick={e => this.onDelete(e, rowData)}
+              onClick={(e) => this.onDelete(e, rowData)}
             >
               <IconTrash />
             </button>
-          )
-        }
+          ),
+        },
       ],
-      title: "List of users"
+      title: "List of users",
     };
 
     const pagination = { pages, pageNo, onPageChange: this.onPageChange };
@@ -139,14 +144,14 @@ class UsersPage extends Component {
           name: "username",
           label: "Username",
           validator: {
-            valid: val => (val ? val.length >= 5 : false),
-            error: "Username should be at least 5 characters"
-          }
+            valid: (val) => (val ? val.length >= 5 : false),
+            error: "Username should be at least 5 characters",
+          },
         },
         { name: "role", label: "Role", type: "select", options: roles },
-        { name: "agent_code", label: "Agent Code" }
+        { name: "agent_code", label: "Agent Code" },
       ],
-      onSubmit: this.onAdd.bind(this)
+      onSubmit: this.onAdd.bind(this),
     };
 
     return (
@@ -190,7 +195,13 @@ class UsersPage extends Component {
               modalId="addUserForm"
               handleClose={() => this.newComplete(false)}
               show={openAdd}
-              content={<CommonForm meta={{ ...form, title: null }} />}
+              content={
+                <CommonForm
+                  meta={{ ...form, title: null }}
+                  newOptions={this.props.newOptions}
+                  clearNewOption={this.props.clearNewOption}
+                />
+              }
             />
           )}
         </div>
