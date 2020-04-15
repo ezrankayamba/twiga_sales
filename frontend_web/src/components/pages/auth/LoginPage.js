@@ -4,8 +4,8 @@ import { login, logout } from "../../../redux/auth/actions";
 import { connect } from "react-redux";
 import { CommonForm } from "neza-react-forms";
 import { clearNewOption } from "../../../redux/forms/actions";
-import LoadingIndicator from "../../utils/LoadingIndicator";
-import Snackbar from "../../utils/notify/Snackbar";
+import { LoadingIndicator } from "neza-react-forms";
+import { Snackbar } from "neza-react-forms";
 import "./Auth.css";
 
 @connect(

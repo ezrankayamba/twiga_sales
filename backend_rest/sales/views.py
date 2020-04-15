@@ -18,11 +18,13 @@ class SaleListView(generics.ListCreateAPIView):
     serializer_class = serializers.SaleSerializer
 
     def get_queryset(self):
+        q = self.request.query_params.get('q')
+        if q:
+            return models.Sale.objects.filter(agent__isnull=q == "nodocs")
         return models.Sale.objects.all()
 
     def create(self, request, *args, **kwargs):
         data = request.data
-        print(data)
         entity = models.Sale.objects.create(**data)
         return Response(self.get_serializer(entity).data)
 
@@ -134,7 +136,7 @@ class SaleSummaryView(APIView):
         return Response({
             'status': 0,
             'summary': [
-                {'name': 'Sales with Docs', 'value': with_docs, 'color': "#33FF33"},
-                {'name': 'Sales without Docs', 'value': no_docs, 'color': "#FF3333"}
+                {'name': 'Sales with Docs', 'value': with_docs, 'color': "#33FF33", 'q': 'withdocs'},
+                {'name': 'Sales without Docs', 'value': no_docs, 'color': "#FF3333", 'q': 'nodocs'}
             ]
         })

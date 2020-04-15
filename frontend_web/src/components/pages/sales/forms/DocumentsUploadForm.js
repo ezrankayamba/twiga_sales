@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import Modal from "../../../modal/Modal";
-import { File } from "../../../utils/file/File";
+import { Modal } from "neza-react-forms";
+import { File } from "neza-react-forms";
 
 class DocumentsUploadForm extends Component {
   constructor(props) {

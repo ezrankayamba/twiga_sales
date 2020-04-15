@@ -3,29 +3,30 @@ const axios = require("axios").default;
 export const apiGet = (url, token) => {
   return fetch(url, {
     headers: {
-      Authorization: `Bearer ${token}`
-    }
-  }).then(res => {
+      Authorization: `Bearer ${token}`,
+    },
+  }).then((res) => {
     if (res.status == 200) {
       return res.json();
     }
     throw Error("Failure response: " + res.status);
   });
 };
-export const apiGetPaginated = (url, token, page = 1) => {
+export const apiGetPaginated = (url, token, page = 1, q = "") => {
   return axios.get(url, {
     headers: {
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     },
     params: {
-      page
-    }
+      page,
+      q,
+    },
   });
 };
 export const apiPost = (url, body, token, type = "application/json") => {
   let headers = {
     Authorization: `Bearer ${token}`,
-    "Content-Type": type
+    "Content-Type": type,
   };
   if (type === "application/json") {
     body = JSON.stringify(body);
@@ -35,8 +36,8 @@ export const apiPost = (url, body, token, type = "application/json") => {
   return fetch(url, {
     method: "POST",
     headers: headers,
-    body: body
-  }).then(res => {
+    body: body,
+  }).then((res) => {
     if (res.status == 201 || res.status == 200) {
       return res.json();
     }
@@ -46,7 +47,7 @@ export const apiPost = (url, body, token, type = "application/json") => {
 export const apiUpdate = (url, body, id, token, type = "application/json") => {
   let headers = {
     Authorization: `Bearer ${token}`,
-    "Content-Type": type
+    "Content-Type": type,
   };
   if (type === "application/json") {
     body = JSON.stringify(body);
@@ -56,8 +57,8 @@ export const apiUpdate = (url, body, id, token, type = "application/json") => {
   return fetch(url + id, {
     method: "PUT",
     headers,
-    body
-  }).then(res => {
+    body,
+  }).then((res) => {
     if (res.status == 200) {
       return res.json();
     }
@@ -68,9 +69,9 @@ export const apiDelete = (url, token) => {
   return fetch(url, {
     method: "DELETE",
     headers: {
-      Authorization: `Bearer ${token}`
-    }
-  }).then(res => {
+      Authorization: `Bearer ${token}`,
+    },
+  }).then((res) => {
     if (res.status == 204) {
       return res;
     }

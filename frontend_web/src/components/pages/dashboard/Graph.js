@@ -1,32 +1,37 @@
 import React from "react";
 import { ColorsHelper } from "../../../_helpers/ColorsHelper";
-const LineChart = require("react-chartjs").Line;
 
 class Graph extends React.Component {
   componentDidMount() {
-    const { meta, colors } = this.props;
+    const { meta, colors, onDataClick } = this.props;
     let bgColors = colors || ColorsHelper.randomColors(meta.data.length);
     let fntColors = ColorsHelper.contrastColors(bgColors);
     let options = {
       plugins: {
         datalabels: {
-          color: fntColors
+          color: fntColors,
+        },
+      },
+      onClick: (_, els) => {
+        if (els && els.length && onDataClick) {
+          let data = meta.data.slice(els[0]._index, els[0]._index + 1)[0];
+          onDataClick(data);
         }
-      }
+      },
     };
     let data = {
       datasets: [
         {
-          data: meta.data.map(d => d.value),
-          backgroundColor: bgColors
-        }
+          data: meta.data.map((d) => d.value),
+          backgroundColor: bgColors,
+        },
       ],
-      labels: meta.data.map(d => d.name)
+      labels: meta.data.map((d) => d.name),
     };
     var myPieChart = new Chart(document.getElementById("graph"), {
       type: "pie",
       data: data,
-      options: options
+      options: options,
     });
     console.log(myPieChart);
   }

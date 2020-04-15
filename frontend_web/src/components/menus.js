@@ -4,18 +4,17 @@ import LogoutPage from "./pages/auth/LogoutPage";
 import IndexPage from "./pages/sales/IndexPage";
 import React from "react";
 import {
-  IconClient,
   IconHome,
   IconPayment,
   IconPeople,
   IconSignIn,
-  IconSignOut
-} from "./utils/Incons";
+  IconSignOut,
+} from "neza-react-forms";
 import UsersPage from "./pages/auth/UsersPage";
 import RolesPage from "./pages/auth/RolesPage";
 
 const getMenus = (loggedIn, privileges) => {
-  let pFilter = m => {
+  let pFilter = (m) => {
     return (
       m.privilege === "Anonymous" ||
       (loggedIn && privileges.includes(m.privilege))
@@ -31,7 +30,7 @@ const getMenus = (loggedIn, privileges) => {
           name: "Home",
           component: HomePage,
           Icon: IconHome,
-          privilege: "Anonymous"
+          privilege: "Anonymous",
         },
         {
           id: getId(),
@@ -39,7 +38,7 @@ const getMenus = (loggedIn, privileges) => {
           name: "Users",
           component: UsersPage,
           Icon: IconPeople,
-          privilege: "Users.manage"
+          privilege: "Users.manage",
         },
         {
           id: getId(),
@@ -47,7 +46,7 @@ const getMenus = (loggedIn, privileges) => {
           name: "Roles",
           component: RolesPage,
           Icon: IconPeople,
-          privilege: "Roles.manage"
+          privilege: "Roles.manage",
         },
         {
           id: getId(),
@@ -55,7 +54,7 @@ const getMenus = (loggedIn, privileges) => {
           name: "Sales",
           component: IndexPage,
           Icon: IconPayment,
-          privilege: "Sales.view"
+          privilege: "Sales.view",
         },
         {
           id: getId(),
@@ -63,8 +62,8 @@ const getMenus = (loggedIn, privileges) => {
           name: "Sign Out",
           component: LogoutPage,
           Icon: IconSignOut,
-          privilege: "Anonymous"
-        }
+          privilege: "Anonymous",
+        },
       ]
     : [
         {
@@ -73,7 +72,7 @@ const getMenus = (loggedIn, privileges) => {
           name: "Home",
           component: HomePage,
           Icon: IconHome,
-          privilege: "Anonymous"
+          privilege: "Anonymous",
         },
         {
           id: getId(),
@@ -81,8 +80,8 @@ const getMenus = (loggedIn, privileges) => {
           name: "Sign In",
           component: LoginPage,
           Icon: IconSignIn,
-          privilege: "Anonymous"
-        }
+          privilege: "Anonymous",
+        },
       ];
   return menus.filter(pFilter);
 };

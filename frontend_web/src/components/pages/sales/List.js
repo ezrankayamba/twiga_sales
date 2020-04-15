@@ -4,21 +4,21 @@ import {
   createSale,
   fetchSales,
   importSales,
-  uploadDocs
+  uploadDocs,
 } from "../../../_services/SalesService";
 import { connect } from "react-redux";
-import BasicCrudView from "../../utils/BasicCrudView";
-import LoadingIndicator from "../../utils/LoadingIndicator";
-import { IconPayment } from "../../utils/Incons";
+import { BasicCrudView } from "neza-react-tables";
+import { LoadingIndicator } from "neza-react-forms";
+import { IconPayment } from "neza-react-forms";
 import { DateTime } from "../../../_helpers/DateTime";
 import SalesImportForm from "./forms/SalesImportForm";
 import DocumentsUploadForm from "./forms/DocumentsUploadForm";
 import SaleDocsForm from "./forms/SaleDocsForm";
 import { UserHelper } from "../../../_helpers/UserHelper";
 
-@connect(state => {
+@connect((state) => {
   return {
-    user: state.auth.user
+    user: state.auth.user,
   };
 })
 class List extends Component {
@@ -33,7 +33,7 @@ class List extends Component {
       isLoading: false,
       types: [],
       x: 0,
-      y: 0
+      y: 0,
     };
 
     this.doUpdate = this.doUpdate.bind(this);
@@ -51,23 +51,23 @@ class List extends Component {
   }
 
   getDoc(sale, type) {
-    let t = sale.docs.find(typ => typ.doc_type === type);
+    let t = sale.docs.find((typ) => typ.doc_type === type);
     let res = t ? t.file : null;
     return res;
   }
 
   getRef(sale, type) {
-    let t = sale.docs.find(typ => typ.doc_type === type);
+    let t = sale.docs.find((typ) => typ.doc_type === type);
     let res = t ? t.ref_number : null;
     return res;
   }
 
   refresh(page = 1) {
     this.setState({ isLoading: true }, () =>
-      fetchSales(this.props.user.token, page, res => {
+      fetchSales(this.props.user.token, page, (res) => {
         if (res) {
           this.setState({
-            sales: res.data.map(c => {
+            sales: res.data.map((c) => {
               const hasDocs = c.docs.length > 0;
               return {
                 ...c,
@@ -82,11 +82,11 @@ class List extends Component {
                   "DD/MM/YYYY"
                 ),
                 created_at: DateTime.fmt(c.created_at),
-                agent: c.agent ? c.agent.code : null
+                agent: c.agent ? c.agent.code : null,
               };
             }),
             isLoading: false,
-            pages: parseInt(res.pages)
+            pages: parseInt(res.pages),
           });
         }
       })
@@ -129,7 +129,7 @@ class List extends Component {
     this.setState({ fileUploadSales: false });
     if (data) {
       this.setState({ isLoading: true });
-      importSales(this.props.user.token, data, res => {
+      importSales(this.props.user.token, data, (res) => {
         console.log(res);
         this.setState({ isLoading: true });
         this.refresh();
@@ -142,7 +142,7 @@ class List extends Component {
     this.setState({ fileUploadDocs: false });
     if (data) {
       this.setState({ isLoading: true });
-      uploadDocs(this.props.user.token, data, res => {
+      uploadDocs(this.props.user.token, data, (res) => {
         console.log(res);
         this.setState({ isLoading: true });
         this.refresh();
@@ -159,11 +159,13 @@ class List extends Component {
     );
   }
   canViewDocs() {
-    return (
+    let res =
       this.state.selected &&
       this.state.selected.docs.length > 0 &&
-      UserHelper.hasPriv(this.props.user, "Sales.view.docs")
-    );
+      UserHelper.hasPriv(this.props.user, "Sales.view.docs");
+    console.log("canViewDocs: ", res);
+
+    return res;
   }
   complete() {
     this.setState({ selected: null, openDetail: false }, this.refresh);
@@ -185,9 +187,9 @@ class List extends Component {
         { field: "quantity", title: "Qty(Tons)", hide: this.canAddDocs() },
         { field: "total_value", title: "Value", hide: this.canAddDocs() },
         { field: "destination", title: "Destination" },
-        { field: "agent", title: "Agent" }
+        { field: "agent", title: "Agent" },
       ],
-      title: "List of sales"
+      title: "List of sales2",
     };
 
     const pagination = { pages, pageNo, onPageChange: this.onPageChange };
@@ -203,11 +205,11 @@ class List extends Component {
                 {this.canAddSales() && (
                   <button
                     className="btn btn-primary btn-sm ml-2"
-                    onClick={e =>
+                    onClick={(e) =>
                       this.setState({
                         fileUploadSales: true,
                         x: e.nativeEvent.offsetX,
-                        y: e.nativeEvent.offsetY + 100
+                        y: e.nativeEvent.offsetY + 100,
                       })
                     }
                   >

@@ -1,16 +1,16 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import LoadingIndicator from "../../utils/LoadingIndicator";
-import Snackbar from "../../utils/notify/Snackbar";
-import BasicCrudView from "../../utils/BasicCrudView";
+import { LoadingIndicator } from "neza-react-forms";
+import { Snackbar } from "neza-react-forms";
+import { BasicCrudView } from "neza-react-tables";
 import {
   createUser,
   deleteUser,
   fetchRoles,
   fetchUsers,
 } from "../../../_services/AuthService";
-import { IconPlus, IconTrash } from "../../utils/Incons";
-import Modal from "../../modal/Modal";
+import { IconPlus, IconTrash } from "neza-react-forms";
+import { Modal } from "neza-react-forms";
 import { CommonForm } from "neza-react-forms";
 import { clearNewOption } from "../../../redux/forms/actions";
 

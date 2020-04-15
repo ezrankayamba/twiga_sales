@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import CloseableModel from "../../../modal/ClosableModal";
+import { CloseableModal } from "neza-react-forms";
 import { FormsHelper } from "../../../../_helpers/FormsHelper";
 import { uploadDocs } from "../../../../_services/SalesService";
 import { connect } from "react-redux";
@@ -118,7 +118,7 @@ class SaleDocsForm extends Component {
     };
     return (
       <>
-        <CloseableModel
+        <CloseableModal
           modalId="saleDocsModal"
           handleClose={() => complete(false)}
           show={true}
