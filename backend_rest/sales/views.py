@@ -21,7 +21,16 @@ class SaleListView(generics.ListCreateAPIView):
         q = self.request.query_params.get('q')
         if q:
             return models.Sale.objects.filter(agent__isnull=q == "nodocs")
-        return models.Sale.objects.all()
+
+        filt = {}
+        # filt['customer_name'] = ''
+        filt['customer_name__contains'] = self.request.GET.get('customer_name', '')
+        filt['vehicle_number__contains'] = self.request.GET.get('vehicle_number', '')
+        filt['tax_invoice__contains'] = self.request.GET.get('tax_invoice', '')
+        filt['sales_order__contains'] = self.request.GET.get('sales_order', '')
+
+        return models.Sale.objects.filter(**filt)
+        # return models.Sale.objects.all()
 
     def create(self, request, *args, **kwargs):
         data = request.data

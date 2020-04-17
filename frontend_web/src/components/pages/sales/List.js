@@ -62,34 +62,39 @@ class List extends Component {
     return res;
   }
 
-  refresh(page = 1) {
+  refresh(page = 1, filter = null) {
     this.setState({ isLoading: true }, () =>
-      fetchSales(this.props.user.token, page, (res) => {
-        if (res) {
-          this.setState({
-            sales: res.data.map((c) => {
-              const hasDocs = c.docs.length > 0;
-              return {
-                ...c,
-                c2_ref: this.getRef(c, "C2"),
-                assessment_ref: this.getRef(c, "Assessment"),
-                exit_ref: this.getRef(c, "Exit"),
-                c2_doc: this.getDoc(c, "C2"),
-                assessment_doc: this.getDoc(c, "Assessment"),
-                exit_doc: this.getDoc(c, "Exit"),
-                transaction_date: DateTime.fmt(
-                  c.transaction_date,
-                  "DD/MM/YYYY"
-                ),
-                created_at: DateTime.fmt(c.created_at),
-                agent: c.agent ? c.agent.code : null,
-              };
-            }),
-            isLoading: false,
-            pages: parseInt(res.pages),
-          });
-        }
-      })
+      fetchSales(
+        this.props.user.token,
+        page,
+        (res) => {
+          if (res) {
+            this.setState({
+              sales: res.data.map((c) => {
+                const hasDocs = c.docs.length > 0;
+                return {
+                  ...c,
+                  c2_ref: this.getRef(c, "C2"),
+                  assessment_ref: this.getRef(c, "Assessment"),
+                  exit_ref: this.getRef(c, "Exit"),
+                  c2_doc: this.getDoc(c, "C2"),
+                  assessment_doc: this.getDoc(c, "Assessment"),
+                  exit_doc: this.getDoc(c, "Exit"),
+                  transaction_date: DateTime.fmt(
+                    c.transaction_date,
+                    "DD/MM/YYYY"
+                  ),
+                  created_at: DateTime.fmt(c.created_at),
+                  agent: c.agent ? c.agent.code : null,
+                };
+              }),
+              isLoading: false,
+              pages: parseInt(res.pages),
+            });
+          }
+        },
+        filter
+      )
     );
   }
 
@@ -178,11 +183,43 @@ class List extends Component {
       headers: [
         { field: "id", title: "ID" },
         { field: "transaction_date", title: "Trans Date" },
-        { field: "customer_name", title: "Customer" },
+        {
+          field: "customer_name",
+          title: "Customer",
+          search: {
+            type: "input",
+            label: "Customer Name",
+            name: "customer_name",
+          },
+        },
         { field: "delivery_note", title: "Delivery Note" },
-        { field: "vehicle_number", title: "Veh#" },
-        { field: "tax_invoice", title: "Tax Invoice" },
-        { field: "sales_order", title: "SO#" },
+        {
+          field: "vehicle_number",
+          title: "Veh#",
+          search: {
+            type: "input",
+            label: "Vehicle No",
+            name: "vehicle_number",
+          },
+        },
+        {
+          field: "tax_invoice",
+          title: "Tax Invoice",
+          search: {
+            type: "input",
+            label: "Tax Invoice No",
+            name: "tax_invoice",
+          },
+        },
+        {
+          field: "sales_order",
+          title: "SO#",
+          search: {
+            type: "input",
+            label: "Sales Order",
+            name: "sales_order",
+          },
+        },
         { field: "product_name", title: "Product" },
         { field: "quantity", title: "Qty(Tons)", hide: this.canAddDocs() },
         { field: "total_value", title: "Value", hide: this.canAddDocs() },
@@ -190,6 +227,7 @@ class List extends Component {
         { field: "agent", title: "Agent" },
       ],
       title: "List of sales2",
+      onSearch: (params) => this.refresh(1, params),
     };
 
     const pagination = { pages, pageNo, onPageChange: this.onPageChange };

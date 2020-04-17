@@ -10,8 +10,8 @@ export const createAgentUser = (token, body, cb) => {
       cb(false);
     });
 };
-export const fetchSales = (token, page, cb, q) => {
-  apiGetPaginated(url, token, page, q)
+export const fetchSales = (token, page, cb, filter) => {
+  apiGetPaginated(url, token, page, filter)
     .then((res) => {
       if (res.status === 200) {
         let { pages, records } = res.headers;

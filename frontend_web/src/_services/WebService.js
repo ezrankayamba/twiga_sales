@@ -12,14 +12,14 @@ export const apiGet = (url, token) => {
     throw Error("Failure response: " + res.status);
   });
 };
-export const apiGetPaginated = (url, token, page = 1, q = "") => {
+export const apiGetPaginated = (url, token, page = 1, filters) => {
   return axios.get(url, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
     params: {
       page,
-      q,
+      ...filters,
     },
   });
 };

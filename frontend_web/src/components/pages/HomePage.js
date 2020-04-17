@@ -83,7 +83,7 @@ class HomePage extends Component {
             });
           }
         },
-        this.state.q
+        { q: this.state.q }
       )
     );
   }
