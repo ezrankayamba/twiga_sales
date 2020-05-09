@@ -22,14 +22,18 @@ hyperlink==19.0.0
 idna==2.8
 incremental==17.5.0
 jdcal==1.4.1
+numpy==1.18.3
 oauthlib==3.1.0
+opencv-python==4.2.0.34
 openpyxl==3.0.3
 Pillow==7.0.0
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycparser==2.20
 PyHamcrest==2.0.2
+PyMuPDF==1.16.17
 pyOpenSSL==19.1.0
+pytesseract==0.3.4
 pytz==2019.3
 requests==2.22.0
 service-identity==18.1.0
@@ -38,4 +42,5 @@ sqlparse==0.3.0
 Twisted==19.10.0
 txaio==20.1.1
 urllib3==1.25.7
+XlsxWriter==1.2.8
 zope.interface==4.7.2

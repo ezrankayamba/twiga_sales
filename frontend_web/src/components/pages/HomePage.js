@@ -1,10 +1,13 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import Dashboard from "./dashboard/Dashboard";
-import { Modal } from "neza-react-forms";
+import { Modal, IconPayment } from "neza-react-forms";
 import { BasicCrudView } from "neza-react-tables";
 import { fetchSales } from "../../_services/SalesService";
 import { DateTime } from "../../_helpers/DateTime";
+import "./Dashboard.css";
+import CRUD from "../../_services/CRUD";
+import FileDownload from "../../_helpers/FileDownload";
 
 @connect((state) => {
   return {
@@ -87,6 +90,18 @@ class HomePage extends Component {
       )
     );
   }
+  exportSales() {
+    const { q } = this.state;
+    const fname = `${Date.now()}_Sales_Report_${q}.xlsx`;
+    const getFile = (res) => FileDownload.get(res, fname);
+    const logError = (err) => console.error(err);
+    const token = this.props.user.token;
+    CRUD.export("/reports/export", token, {
+      filter: { q },
+      onSuccess: getFile,
+      onFail: logError,
+    });
+  }
 
   render() {
     const { user } = this.props;
@@ -138,7 +153,20 @@ class HomePage extends Component {
               handleClose={() => this.setState({ selectedOn: false })}
               show={true}
               title={title}
-              content={<BasicCrudView data={data} pagination={pagination} />}
+              content={
+                <div>
+                  <div className="dashboard-export-container">
+                    <button
+                      className="btn btn-outline-primary btn-sm ml-2"
+                      onClick={this.exportSales.bind(this)}
+                    >
+                      <IconPayment />
+                      <span className="pl-2">Export Sales</span>
+                    </button>
+                  </div>
+                  <BasicCrudView data={data} pagination={pagination} />
+                </div>
+              }
             />
           )}
         </div>

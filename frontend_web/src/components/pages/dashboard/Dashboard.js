@@ -7,7 +7,6 @@ class Dashboard extends React.Component {
   state = { meta1: null };
   componentDidMount() {
     fetchSalesSummary(this.props.user.token, 1, (res) => {
-      console.log(res);
       let meta1 = {
         data: res.data.summary,
       };

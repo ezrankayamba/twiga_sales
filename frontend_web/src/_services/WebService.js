@@ -12,6 +12,23 @@ export const apiGet = (url, token) => {
     throw Error("Failure response: " + res.status);
   });
 };
+export const apiExport = (url, token, body = {}, type = "application/json") => {
+  let headers = {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": type,
+  };
+  body = JSON.stringify(body);
+  return fetch(url, {
+    method: "POST",
+    headers: headers,
+    body: body,
+  }).then((res) => {
+    if (res.status == 200) {
+      return { blob: () => res.blob(), headers: res.headers };
+    }
+    throw Error("Failure response: " + res.status);
+  });
+};
 export const apiGetPaginated = (url, token, page = 1, filters) => {
   return axios.get(url, {
     headers: {

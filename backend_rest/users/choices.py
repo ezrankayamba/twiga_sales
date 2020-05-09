@@ -5,4 +5,5 @@ PRIVILEGE_CHOICES = [
     ('Sales.view', 'View sales'),
     ('Sales.view.docs', 'View sales documents'),
     ('Sales.manage.docs', 'Manage sale documents'),
+    ('Sales.reports', 'Sales reports'),
 ]

@@ -1,15 +1,17 @@
 from rest_framework import generics, permissions
 from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope, TokenHasScope
-from . import serializers
-from . import models
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework.renderers import JSONRenderer
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.parsers import FormParser, MultiPartParser
-from . import imports
+from . import imports, ocr, serializers, models
 from django.db.models import Count
+import io
+import re
+from django.db import models as d_models
+from . import reports
 
 
 class SaleListView(generics.ListCreateAPIView):
@@ -20,7 +22,7 @@ class SaleListView(generics.ListCreateAPIView):
     def get_queryset(self):
         q = self.request.query_params.get('q')
         if q:
-            return models.Sale.objects.filter(agent__isnull=q == "nodocs")
+            return reports.get_sales(q)
 
         filt = {}
         # filt['customer_name'] = ''
@@ -96,6 +98,20 @@ class UploadDocsView(APIView):
         })
 
 
+def doc_key(name):
+    return f'{name.lower()}_doc'
+
+
+docs_schema = [
+    {'name': models.Document.DOC_C2, 'key': doc_key(
+        models.Document.DOC_C2), 'regex': '[\\n[]{0,}(\w+)[\({]', 'params': {'x': 700, 'y': 600, 'h': 200, 'w': 600}},
+    {'name': models.Document.DOC_ASSESSMENT, 'key': doc_key(models.Document.DOC_ASSESSMENT), 'regex': ' (\d{4,})', 'params': {
+        'x': 900, 'y': 120, 'h': 200, 'w': 600}},
+    {'name': models.Document.DOC_EXIT, 'key': doc_key(
+        models.Document.DOC_EXIT), 'regex': ':(\d{4} [\w/]+)', 'params': {'x': 140, 'y': 920, 'h': 200, 'w': 600}}
+]
+
+
 class SaleDocsView(APIView):
     permission_classes = [permissions.IsAuthenticated, TokenHasScope]
     required_scopes = []
@@ -106,46 +122,93 @@ class SaleDocsView(APIView):
         print(data)
         sale = models.Sale.objects.get(pk=data['sale_id'])
 
-        c2_doc = request.FILES['c2_doc']
-        exit_doc = request.FILES['exit_doc']
-        assessment_doc = request.FILES['assessment_doc']
-
-        c2_ref = data['c2_ref']
-        exit_ref = data['exit_ref']
-        assessment_ref = data['assessment_ref']
-
-        quantity = data['quantity']
-        total_value = data['total_value']
-
-        if sale.quantity == quantity and sale.total_value == total_value:
-            models.Document.objects.create(ref_number=c2_ref, file=c2_doc, sale=sale, doc_type=models.Document.DOC_C2)
-            models.Document.objects.create(ref_number=exit_ref, file=exit_doc, sale=sale, doc_type=models.Document.DOC_EXIT)
-            models.Document.objects.create(ref_number=assessment_ref, file=assessment_doc, sale=sale, doc_type=models.Document.DOC_ASSESSMENT)
+        errors = []
+        docs = []
+        for d in docs_schema:
+            print()
+            print("======================")
+            file = request.FILES[d['key']]
+            pdf_data = io.BytesIO(file.read())
+            args = d['params']
+            text = ocr.extract_from_file(pdf_data, **args)
+            ret = re.search(d['regex'], text)
+            if ret:
+                ref_number = ret.group(1)
+                print(d['name'], ref_number)
+                name = d['name']
+                duplicate = models.Document.objects.filter(ref_number=ref_number).first()
+                if duplicate:
+                    errors.append({
+                        'key': d['key'],
+                        'name': d['name'],
+                        'message': f'Duplicate {name} document',
+                    })
+                else:
+                    docs.append({
+                        'ref_number': ref_number,
+                        'file': file,
+                        'sale': sale,
+                        'doc_type': name
+                    })
+            else:
+                print(d['name'], text)
+                name = d['name']
+                errors.append({
+                    'key': d['key'],
+                    'name': d['name'],
+                    'message': f'Invalid {name} document',
+                })
+        print()
+        print("======================")
+        if len(errors):
+            print('Errors: ', errors)
+            return Response({
+                'status': -1,
+                'message': f'Invalid document(s)',
+                'errors': errors
+            })
+        else:
+            print('Docs: ', docs)
             sale.agent = request.user.agent
+            sale.quantity2 = data['quantity2']
+            sale.total_value2 = data['total_value2']
             sale.save()
+            for doc in docs:
+                models.Document.objects.create(**doc)
             return Response({
                 'status': 0,
                 'message': f'Successfully uploaded documents'
             })
-        else:
-            return Response({
-                'status': -1,
-                'message': f'Data mismatch'
-            })
 
 
-class SaleSummaryView(APIView):
-    permission_classes = [permissions.IsAuthenticated, TokenHasScope]
+class TestOCRView(APIView):
+    permission_classes = [permissions.AllowAny]
     required_scopes = []
     parser_classes = [FormParser, MultiPartParser]
 
-    def get(self, request, format=None):
-        with_docs = models.Sale.objects.filter(agent__isnull=False).count()
-        no_docs = models.Sale.objects.filter(agent__isnull=True).count()
+    def post(self, request, format=None):
+        params = request.data
+        file = request.FILES['file']
+        dir(dir(file))
+        pdf_data = io.BytesIO(file.read())
+        del params['file']
+        args = {}
+        for p in params:
+            args[p] = int(params.get(p))
+        print('Args: ', args)
+        text = ocr.extract_from_file(pdf_data, **args)
+        for d in docs_schema:
+            ret = re.search(d['regex'], text)
+            if ret:
+                return Response({
+                    'status': 0,
+                    'message': 'Successfully extracted text',
+                    'text': ret.group(1),
+                    'name': d['name']
+                })
+
         return Response({
-            'status': 0,
-            'summary': [
-                {'name': 'Sales with Docs', 'value': with_docs, 'color': "#33FF33", 'q': 'withdocs'},
-                {'name': 'Sales without Docs', 'value': no_docs, 'color': "#FF3333", 'q': 'nodocs'}
-            ]
+            'status': -1,
+            'message': 'System was not able to validate the document',
+            'text': text
         })

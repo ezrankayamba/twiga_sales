@@ -6,6 +6,7 @@ import store from "./redux/store";
 import "./_styles/App.css";
 import "./_styles/CommonForm.css";
 import "./_styles/Modal.css";
+import "./_styles/Snackbar.css";
 
 import { logout } from "./redux/auth/actions";
 import { notifyMe } from "./_helpers/notification";

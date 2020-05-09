@@ -15,8 +15,6 @@ import SalesImportForm from "./forms/SalesImportForm";
 import DocumentsUploadForm from "./forms/DocumentsUploadForm";
 import SaleDocsForm from "./forms/SaleDocsForm";
 import { UserHelper } from "../../../_helpers/UserHelper";
-import CRUD from "../../../_services/CRUD";
-import FileDownload from "../../../_helpers/FileDownload";
 
 @connect((state) => {
   return {
@@ -36,7 +34,6 @@ class List extends Component {
       types: [],
       x: 0,
       y: 0,
-      filter: null,
     };
 
     this.doUpdate = this.doUpdate.bind(this);
@@ -66,7 +63,7 @@ class List extends Component {
   }
 
   refresh(page = 1, filter = null) {
-    this.setState({ isLoading: true, filter }, () =>
+    this.setState({ isLoading: true }, () =>
       fetchSales(
         this.props.user.token,
         page,
@@ -74,6 +71,7 @@ class List extends Component {
           if (res) {
             this.setState({
               sales: res.data.map((c) => {
+                const hasDocs = c.docs.length > 0;
                 return {
                   ...c,
                   c2_ref: this.getRef(c, "C2"),
@@ -161,30 +159,18 @@ class List extends Component {
     return UserHelper.hasPriv(this.props.user, "Sales.manage");
   }
   canAddDocs() {
-    return UserHelper.hasPriv(this.props.user, "Sales.manage.docs");
+    let res =
+      UserHelper.hasPriv(this.props.user, "Sales.manage.docs") &&
+      this.props.user.agent;
+    console.log("canAddDocs", res);
+    return res;
   }
   canViewDocs() {
-    let res =
-      UserHelper.hasPriv(this.props.user, "Sales.view.docs") &&
-      this.state.selected.docs.length > 0;
-    console.log("canViewDocs: ", res);
-
+    let res = UserHelper.hasPriv(this.props.user, "Sales.view.docs");
     return res;
   }
   complete() {
     this.setState({ selected: null, openDetail: false }, this.refresh);
-  }
-  exportSales() {
-    const { filter } = this.state;
-    const fname = `${Date.now()}_Sales_Report.xlsx`;
-    const getFile = (res) => FileDownload.get(res, fname);
-    const logError = (err) => console.error(err);
-    const token = this.props.user.token;
-    CRUD.export("/reports/export", token, {
-      filter,
-      onSuccess: getFile,
-      onFail: logError,
-    });
   }
 
   render() {
@@ -242,6 +228,8 @@ class List extends Component {
     };
 
     const pagination = { pages, pageNo, onPageChange: this.onPageChange };
+    const readOnly = !this.canAddDocs();
+    console.log("ReadOnly: ", readOnly);
     return (
       <div className="row">
         <div className="col">
@@ -250,14 +238,7 @@ class List extends Component {
               <h5>{data.title}</h5>
             </div>
             <div className="col-md">
-              <div className="float-md-right btn-group">
-                <button
-                  className="btn btn-outline-primary btn-sm ml-2"
-                  onClick={this.exportSales.bind(this)}
-                >
-                  <IconPayment />
-                  <span className="pl-2">Export Sales</span>
-                </button>
+              <div className="float-md-right">
                 {this.canAddSales() && (
                   <button
                     className="btn btn-primary btn-sm ml-2"
@@ -302,9 +283,9 @@ class List extends Component {
           {this.state.isLoading && (
             <LoadingIndicator isLoading={this.state.isLoading} />
           )}
-          {openDetail && (this.canViewDocs() || this.canAddDocs()) && (
+          {openDetail && this.canViewDocs() && (
             <SaleDocsForm
-              readOnly={!this.canAddDocs() || selected.docs.length === 3}
+              readOnly={readOnly}
               complete={this.complete.bind(this)}
               sale={selected}
             />

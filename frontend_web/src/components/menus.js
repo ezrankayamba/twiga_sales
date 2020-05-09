@@ -1,7 +1,8 @@
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/auth/LoginPage";
 import LogoutPage from "./pages/auth/LogoutPage";
-import IndexPage from "./pages/sales/IndexPage";
+import SalesIndexPage from "./pages/sales/IndexPage";
+import ReportsIndexPage from "./pages/reports/IndexPage";
 import React from "react";
 import {
   IconHome,
@@ -52,9 +53,17 @@ const getMenus = (loggedIn, privileges) => {
           id: getId(),
           path: "/sales",
           name: "Sales",
-          component: IndexPage,
+          component: SalesIndexPage,
           Icon: IconPayment,
           privilege: "Sales.view",
+        },
+        {
+          id: getId(),
+          path: "/reports",
+          name: "Reports",
+          component: ReportsIndexPage,
+          Icon: IconPayment,
+          privilege: "Sales.reports",
         },
         {
           id: getId(),

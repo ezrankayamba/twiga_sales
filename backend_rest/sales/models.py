@@ -33,9 +33,10 @@ class Sale(models.Model):
     product_name = models.CharField(max_length=100)
     quantity = models.CharField(max_length=100)
     total_value = models.CharField(max_length=100)
+    quantity2 = models.CharField(max_length=100, null=True)
+    total_value2 = models.CharField(max_length=100, null=True)
     destination = models.CharField(max_length=100)
     agent = models.ForeignKey(u_models.Agent, on_delete=models.SET_NULL, null=True)
-    agent_code = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now=False, auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, auto_now_add=False)
 
