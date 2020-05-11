@@ -12,7 +12,7 @@ import io
 import re
 from django.db import models as d_models
 from datetime import datetime, timedelta
-from django.db.models import Q
+from django.db.models import Q, F
 from . import exports
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -30,8 +30,10 @@ def get_sales(q):
             doc_count__lt=3, transaction_date__lte=threshold_date())
     elif q == 'nodocs_new':
         return models.Sale.objects.annotate(doc_count=d_models.Count('docs')).filter(doc_count__lt=3, transaction_date__gt=threshold_date())
+    elif q == 'docs_nomatch':
+        return models.Sale.objects.annotate(doc_count=d_models.Count('docs')).filter(doc_count=3).filter(~Q(total_value=F('total_value2'))).filter(~Q(quantity=F('quantity2')))
     else:
-        return models.Sale.objects.annotate(doc_count=d_models.Count('docs')).filter(doc_count=3)
+        return models.Sale.objects.annotate(doc_count=d_models.Count('docs')).filter(doc_count=3).filter(Q(total_value=F('total_value2'))).filter(Q(quantity=F('quantity2')))
 
 
 class SummaryDetailExport(APIView):
@@ -95,52 +97,45 @@ class SaleSummaryView(APIView):
         with_docs = get_sales(q='withdocs').count()
         no_docs_older = get_sales(q='nodocs_old').count()
         no_docs_new = get_sales(q='nodocs_new').count()
+        docs_nomatch = get_sales(q='docs_nomatch').count()
         return Response({
             'status': 0,
             'summary': [
-                {'name': 'Has Docs', 'value': with_docs, 'color': "#33FF33", 'q': 'withdocs'},
-                {'name': 'No Docs 14 days', 'value': no_docs_older, 'color': "#FF3333", 'q': 'nodocs_old'},
-                {'name': 'No Docs new', 'value': no_docs_new, 'color': "#3333FF", 'q': 'nodocs_new'}
+                {'name': 'Has Docs, value match', 'value': with_docs, 'color': "#00FF00", 'q': 'withdocs'},
+                {'name': 'Has Docs, value mismatch', 'value': docs_nomatch, 'color': "#CCFFCC", 'q': 'docs_nomatch'},
+                {'name': 'No Docs new', 'value': no_docs_new, 'color': "#FFCCCC", 'q': 'nodocs_new'},
+                {'name': 'No Docs 14 days', 'value': no_docs_older, 'color': "#FF6666", 'q': 'nodocs_old'},
             ]
         })
 
 
-class OverThresholdDaysReportView(APIView):
+class DestinationReportView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def threshold(self):
-        return datetime.now() - timedelta(days=14)
-
-    def get_val(self, key):
-        val = self.request.data.get(key)
-        return val if val else ''
-
-    def post(self, request, format=None):
-        print(request.data, request.POST)
-        filt = {}
-        # filt['customer_name'] = ''
-        filt['customer_name__contains'] = self.get_val('customer_name')
-        filt['vehicle_number__contains'] = self.get_val('vehicle_number')
-        filt['tax_invoice__contains'] = self.get_val('tax_invoice')
-        filt['sales_order__contains'] = self.get_val('sales_order')
-        filt['created_at__lt'] = self.threshold()
-        filt['doc_count__lt'] = 3
-
-        no_docs = models.Sale.objects.annotate(doc_count=d_models.Count('docs')).filter(**filt)
-        return Response({
-            'status': 0,
-            'message': f'Successfully fetched report',
-            'data': serializers.SaleSerializer(no_docs, many=True).data
-        })
-
     def get(self, request, format=None):
-        no_docs = models.Sale.objects.annotate(doc_count=d_models.Count(
-            'docs')).filter(doc_count__lt=3, created_at__lt=self.threshold())
+        sql = 'select max(id) as id, destination, complete, count(id) as volume, sum(total_value) as value_sum, sum(quantity) as quantity_sum from (select *, (case when (select count(*) from sales_document d where d.sale_id=s.id)=3 then 1 else 0 end) as complete from sales_sale s) as sales group by destination, complete'
+        qs = models.Sale.objects.raw(sql)
+        data = {}
+        for row in qs:
+            dest = row.destination
+            if dest not in data:
+                data[dest] = {'withdocs': {'value': 0, 'qty': 0, 'volume': 0},
+                              'nodocs': {'value': 0, 'qty': 0, 'volume': 0}}
+            if row.complete == 1:
+                data[dest]['withdocs']['value'] = row.value_sum
+                data[dest]['withdocs']['qty'] = row.quantity_sum
+                data[dest]['withdocs']['volume'] = row.volume
+            else:
+                data[dest]['nodocs']['value'] = row.value_sum
+                data[dest]['nodocs']['qty'] = row.quantity_sum
+                data[dest]['nodocs']['volume'] = row.volume
+
+        print(data)
 
         return Response({
             'status': 0,
             'message': f'Successfully fetched report',
-            'data': serializers.SaleSerializer(no_docs, many=True).data
+            'data': data
         })
 
 
@@ -175,3 +170,10 @@ class UnmatchedValuesReportView(APIView):
             'message': f'Successfully fetched report',
             'data': serializers.SaleSerializer(mismatch, many=True).data
         })
+
+
+# '''
+# >>> models.Sale.objects.values('destination').annotate(quantity=Sum('quantity'), value=Sum('total_value')).order_by('destination')
+# <QuerySet [{'destination': 'Kenya', 'quantity': 377, 'value': 312431}, {'destination': 'Rwanda', 'quantity': 711, 'value': 599704}, {'destination': 'Uganda', 'quantity': 189, 'value': 272427}, {'destination': 'Zambia', 'quantity': 841, 'value': 544854}]>
+
+# '''

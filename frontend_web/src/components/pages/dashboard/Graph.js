@@ -7,6 +7,9 @@ class Graph extends React.Component {
     let bgColors = colors || ColorsHelper.randomColors(meta.data.length);
     let fntColors = ColorsHelper.contrastColors(bgColors);
     let options = {
+      legend: {
+        position: "right",
+      },
       plugins: {
         datalabels: {
           color: fntColors,
@@ -28,7 +31,8 @@ class Graph extends React.Component {
       ],
       labels: meta.data.map((d) => d.name),
     };
-    var myPieChart = new Chart(document.getElementById("graph"), {
+    const { graphId } = this.props;
+    var myPieChart = new Chart(document.getElementById(graphId), {
       type: "pie",
       data: data,
       options: options,
@@ -36,9 +40,11 @@ class Graph extends React.Component {
     console.log(myPieChart);
   }
   render() {
+    const { graphId, title } = this.props;
     return (
       <div className="grapg-container bg-white card p-2">
-        <canvas id="graph" className="graph" style={{}}></canvas>
+        <h6>{title}</h6>
+        <canvas id={graphId} className="graph" style={{}}></canvas>
       </div>
     );
   }

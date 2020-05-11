@@ -1,17 +1,19 @@
-import fitz
+# import fitz
 import pytesseract
 from PIL import Image
 import io
 import cv2
 import numpy as np
+from pdf2image import convert_from_bytes
 
 
 def get_image(data):
-    doc = fitz.open('pdf', data)
-    page = doc.loadPage(0)
-    xref = page.getImageList()[0][0]
-    baseImage = doc.extractImage(xref)
-    image = Image.open(io.BytesIO(baseImage['image']))
+    # doc = fitz.open('pdf', data)
+    # page = doc.loadPage(0)
+    # xref = page.getImageList()[0][0]
+    # baseImage = doc.extractImage(xref)
+    # image = Image.open(io.BytesIO(baseImage['image']))
+    image = convert_from_bytes(data.read())[0]
     return image
 
 

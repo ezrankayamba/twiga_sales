@@ -127,49 +127,47 @@ class HomePage extends Component {
     const pagination = { pages, pageNo, onPageChange: this.onPageChange };
 
     return (
-      <div className="">
-        <div className="p-3">
-          {!user && (
-            <p>
-              You are not logged in
-              <a
-                className="btn btn-sm btn-outline-primary ml-2 mr-2 pt-0 pb-0"
-                href="/login"
-              >
-                Login
-              </a>
-              to access the dashboard
-            </p>
-          )}
-          {user && (
-            <Dashboard
-              onDataClick={this.displaySelected.bind(this)}
-              user={user}
-            />
-          )}
-          {user && selectedOn && (
-            <Modal
-              modalId="dashBoardPopup"
-              handleClose={() => this.setState({ selectedOn: false })}
-              show={true}
-              title={title}
-              content={
-                <div>
-                  <div className="dashboard-export-container">
-                    <button
-                      className="btn btn-outline-primary btn-sm ml-2"
-                      onClick={this.exportSales.bind(this)}
-                    >
-                      <IconPayment />
-                      <span className="pl-2">Export Sales</span>
-                    </button>
-                  </div>
-                  <BasicCrudView data={data} pagination={pagination} />
+      <div>
+        {!user && (
+          <p>
+            You are not logged in
+            <a
+              className="btn btn-sm btn-outline-primary ml-2 mr-2 pt-0 pb-0"
+              href="/login"
+            >
+              Login
+            </a>
+            to access the dashboard
+          </p>
+        )}
+        {user && (
+          <Dashboard
+            onDataClick={this.displaySelected.bind(this)}
+            user={user}
+          />
+        )}
+        {user && selectedOn && (
+          <Modal
+            modalId="dashBoardPopup"
+            handleClose={() => this.setState({ selectedOn: false })}
+            show={true}
+            title={title}
+            content={
+              <div>
+                <div className="dashboard-export-container">
+                  <button
+                    className="btn btn-outline-primary btn-sm ml-2"
+                    onClick={this.exportSales.bind(this)}
+                  >
+                    <IconPayment />
+                    <span className="pl-2">Export Sales</span>
+                  </button>
                 </div>
-              }
-            />
-          )}
-        </div>
+                <BasicCrudView data={data} pagination={pagination} />
+              </div>
+            }
+          />
+        )}
       </div>
     );
   }
