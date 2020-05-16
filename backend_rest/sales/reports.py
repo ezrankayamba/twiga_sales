@@ -42,7 +42,10 @@ class SummaryDetailExport(APIView):
 
     def get_filter(self, name):
         data = self.request.data
-        return data[name] if data[name] else ''
+        if data and name in data:
+            return data[name] if data[name] else ''
+        else:
+            return ''
 
     def post(self, request):
         q = self.request.query_params.get('q')
@@ -55,18 +58,22 @@ class SummaryDetailExport(APIView):
         return response
 
 
-class SalesReportExport(APIView):
+class SalesReportList(APIView):
     permission_classes = [permissions.IsAuthenticated, TokenHasScope]
     required_scopes = []
 
     def get_filter(self, name):
         data = self.request.data
-        return data[name] if data[name] else ''
+        if data and name in data:
+            return data[name] if data[name] else ''
+        else:
+            return ''
 
     def post(self, request):
         data = request.data
-        q = self.get_filter('q')
         print(data)
+        q = self.get_filter('q')
+
         if q:
             sales = get_sales(q)
         elif data:
@@ -75,6 +82,54 @@ class SalesReportExport(APIView):
             filt['vehicle_number__contains'] = self.get_filter('vehicle_number')
             filt['tax_invoice__contains'] = self.get_filter('tax_invoice')
             filt['sales_order__contains'] = self.get_filter('sales_order')
+            date_from = self.get_filter('date_from')
+            date_to = self.get_filter('date_to')
+            if date_from:
+                filt['transaction_date__gte'] = date_from
+            if date_to:
+                filt['transaction_date__lte'] = date_to
+            print(filt)
+            sales = models.Sale.objects.annotate(doc_count=d_models.Count('docs')).filter(**filt)
+        else:
+            sales = []
+
+        return Response({
+            'status': 0,
+            'message': f'Successfully fetched report',
+            'data': serializers.SaleSerializer(sales, many=True).data
+        })
+
+
+class SalesReportExport(APIView):
+    permission_classes = [permissions.IsAuthenticated, TokenHasScope]
+    required_scopes = []
+
+    def get_filter(self, name):
+        data = self.request.data
+        if data and name in data:
+            return data[name] if data[name] else ''
+        else:
+            return ''
+
+    def post(self, request):
+        data = request.data
+        print(data)
+        q = self.get_filter('q')
+
+        if q:
+            sales = get_sales(q)
+        elif data:
+            filt = {}
+            filt['customer_name__contains'] = self.get_filter('customer_name')
+            filt['vehicle_number__contains'] = self.get_filter('vehicle_number')
+            filt['tax_invoice__contains'] = self.get_filter('tax_invoice')
+            filt['sales_order__contains'] = self.get_filter('sales_order')
+            date_from = self.get_filter('date_from')
+            date_to = self.get_filter('date_to')
+            if date_from:
+                filt['transaction_date__gte'] = date_from
+            if date_to:
+                filt['transaction_date__lte'] = date_to
             print(filt)
             sales = models.Sale.objects.annotate(doc_count=d_models.Count('docs')).filter(**filt)
         else:

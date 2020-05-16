@@ -19,20 +19,29 @@ class SaleListView(generics.ListCreateAPIView):
     required_scopes = []
     serializer_class = serializers.SaleSerializer
 
+    def get_filter(self, name):
+        data = self.request.data
+        if data and name in data:
+            return data[name] if data[name] else ''
+        else:
+            return ''
+
     def get_queryset(self):
         q = self.request.query_params.get('q')
+        data = self.request.data
         if q:
             return reports.get_sales(q)
 
-        filt = {}
-        # filt['customer_name'] = ''
-        filt['customer_name__contains'] = self.request.GET.get('customer_name', '')
-        filt['vehicle_number__contains'] = self.request.GET.get('vehicle_number', '')
-        filt['tax_invoice__contains'] = self.request.GET.get('tax_invoice', '')
-        filt['sales_order__contains'] = self.request.GET.get('sales_order', '')
-
-        return models.Sale.objects.filter(**filt)
-        # return models.Sale.objects.all()
+        if data:
+            filt = {}
+            filt['customer_name__contains'] = self.get_filter('customer_name')
+            filt['vehicle_number__contains'] = self.get_filter('vehicle_number')
+            filt['tax_invoice__contains'] = self.get_filter('tax_invoice')
+            filt['sales_order__contains'] = self.get_filter('sales_order')
+            sales = models.Sale.objects.annotate(doc_count=d_models.Count('docs')).filter(**filt)
+        else:
+            sales = models.Sale.objects.annotate(doc_count=d_models.Count('docs')).all()
+        return sales
 
     def create(self, request, *args, **kwargs):
         data = request.data

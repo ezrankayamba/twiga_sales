@@ -1,16 +1,12 @@
 import React, { Component } from "react";
-import {
-  CloseableModal,
-  Modal,
-  Snackbar,
-  LoadingIndicator,
-} from "neza-react-forms";
 import { FormsHelper } from "../../../../_helpers/FormsHelper";
 import { uploadDocs } from "../../../../_services/SalesService";
 import { connect } from "react-redux";
-
-import { CommonForm } from "neza-react-forms";
 import { clearNewOption } from "../../../../redux/forms/actions";
+import LoadingIndicator from "../../../utils/loading/LoadingIndicator";
+import Snackbar from "../../../utils/notify/Snackbar";
+import CommonForm from "../../../utils/form/CommonForm";
+import Modal from "../../../modal/Modal";
 
 @connect(
   (state) => {

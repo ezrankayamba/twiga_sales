@@ -1,18 +1,17 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { LoadingIndicator } from "neza-react-forms";
-import { Snackbar } from "neza-react-forms";
-import { BasicCrudView } from "neza-react-tables";
 import {
   createUser,
   deleteUser,
   fetchRoles,
   fetchUsers,
 } from "../../../_services/AuthService";
-import { IconPlus, IconTrash } from "neza-react-forms";
-import { Modal } from "neza-react-forms";
-import { CommonForm } from "neza-react-forms";
 import { clearNewOption } from "../../../redux/forms/actions";
+import MatIcon from "../../utils/icons/MatIcon";
+import BasicCrudView from "../../utils/crud/BasicCrudView";
+import LoadingIndicator from "../../utils/loading/LoadingIndicator";
+import Modal from "../../modal/Modal";
+import CommonForm from "../../utils/form/CommonForm";
 
 @connect(
   (state) => {
@@ -127,7 +126,7 @@ class UsersPage extends Component {
               className="btn btn-sm btn-link text-danger"
               onClick={(e) => this.onDelete(e, rowData)}
             >
-              <IconTrash />
+              <MatIcon name="delete" extra="text-danger" />
             </button>
           ),
         },
@@ -167,7 +166,7 @@ class UsersPage extends Component {
                   className="btn btn-link p-0"
                   onClick={() => this.setState({ openAdd: true })}
                 >
-                  <IconPlus />
+                  <MatIcon name="add" extra="size-2" />
                 </button>
               </div>
             </div>

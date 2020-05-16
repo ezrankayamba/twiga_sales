@@ -1,0 +1,11 @@
+.text-danger,
+.text-danger > span,
+.text-danger > i {
+  color: #f33;
+}
+
+.text-warning,
+.text-warning > span,
+.text-warning > i {
+  color: rgb(255, 82, 51);
+}

@@ -1,9 +1,7 @@
 import React, { Component, useState } from "react";
 import { connect } from "react-redux";
-import List from "./List";
 import "./Reports.css";
-import OverThresholdReport from "./forms/OverThresholdReport";
-import UnmatchedReport from "./forms/UnmatchedReport";
+import DateRangeReport from "./forms/DateRangeReport";
 
 @connect((state) => {
   return {
@@ -15,20 +13,8 @@ class IndexPage extends Component {
   componentDidMount() {
     const tabs = [
       {
-        name: "Sales > 14 Days Unmatched",
-        form: (
-          <div className="report-form">
-            <OverThresholdReport user={this.props.user} />
-          </div>
-        ),
-      },
-      {
-        name: "Sales with values mismatch",
-        form: <UnmatchedReport user={this.props.user} />,
-      },
-      {
-        name: "Monthly Report",
-        form: <div className="report-form">My Form here ...3</div>,
+        name: "General Report",
+        form: <DateRangeReport user={this.props.user} />,
       },
       {
         name: "Agent Reconciliation Report",

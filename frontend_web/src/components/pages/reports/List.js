@@ -7,14 +7,10 @@ import {
   uploadDocs,
 } from "../../../_services/SalesService";
 import { connect } from "react-redux";
-import { BasicCrudView } from "neza-react-tables";
-import { LoadingIndicator } from "neza-react-forms";
-import { IconPayment } from "neza-react-forms";
 import { DateTime } from "../../../_helpers/DateTime";
-import SalesImportForm from "./forms/SalesImportForm";
-import DocumentsUploadForm from "./forms/DocumentsUploadForm";
-import SaleDocsForm from "./forms/SaleDocsForm";
 import { UserHelper } from "../../../_helpers/UserHelper";
+import BasicCrudView from "../../utils/crud/BasicCrudView";
+import LoadingIndicator from "../../utils/loading/LoadingIndicator";
 
 @connect((state) => {
   return {

@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import Dashboard from "./dashboard/Dashboard";
-import { Modal, IconPayment } from "neza-react-forms";
-import { BasicCrudView } from "neza-react-tables";
 import { fetchSales } from "../../_services/SalesService";
 import { DateTime } from "../../_helpers/DateTime";
 import "./Dashboard.css";

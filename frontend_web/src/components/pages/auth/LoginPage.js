@@ -2,24 +2,20 @@ import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
 import { login, logout } from "../../../redux/auth/actions";
 import { connect } from "react-redux";
-import { CommonForm } from "neza-react-forms";
-import { clearNewOption } from "../../../redux/forms/actions";
-import { LoadingIndicator } from "neza-react-forms";
-import { Snackbar } from "neza-react-forms";
-import "./Auth.css";
+import CommonForm from "../../utils/form/CommonForm";
+import LoadingIndicator from "../../utils/loading/LoadingIndicator";
+import Snackbar from "../../utils/notify/Snackbar";
 
 @connect(
   (state) => {
     return {
       user: state.auth.user,
       loggedIn: state.auth.loggedIn,
-      newOptions: state.forms.newOptions,
     };
   },
   {
     login: login,
     logout: logout,
-    clearNewOption: clearNewOption,
   }
 )
 class LoginPage extends Component {
@@ -75,23 +71,27 @@ class LoginPage extends Component {
       return <Redirect to="/" />;
     }
     return (
-      <div className="row mt-3">
-        <div className="col-md-6 offset-md-3 auth-form-center">
-          <CommonForm
-            meta={form}
-            newOptions={this.props.newOptions}
-            clearNewOption={this.props.clearNewOption}
-          />
+      <div className="login-container">
+        <div className="intro">
+          <div className="wrap">
+            <h1>Twiga Cement</h1>
+            <h3>
+              EXPORTS <small>TRACKING TOOL</small>
+            </h3>
+          </div>
         </div>
-        <LoadingIndicator isLoading={isLoading} />
-        {snackbar && (
-          <Snackbar
-            message={snackbar.message}
-            timeout={snackbar.timeout}
-            done={this.snackDone}
-            error={snackbar.error}
-          />
-        )}
+        <div className="login-content">
+          <CommonForm meta={form} />
+          <LoadingIndicator isLoading={isLoading} />
+          {snackbar && (
+            <Snackbar
+              message={snackbar.message}
+              timeout={snackbar.timeout}
+              done={this.snackDone}
+              error={snackbar.error}
+            />
+          )}
+        </div>
       </div>
     );
   }

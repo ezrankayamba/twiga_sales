@@ -1,0 +1,39 @@
+:root {
+  --paggination-icon-size: 12px;
+  --paggination-icon-size-offset: -6px;
+  --paggination-color: #17a2b8;
+}
+.pagination .btn-group {
+  display: flex;
+  padding: 4px 0;
+}
+.pagination .pg-btn {
+  border: none;
+  padding: 6px 12px;
+  font-size: 14px;
+  outline: none;
+  border: 1px solid var(--paggination-color);
+  display: flex;
+  align-items: center;
+  vertical-align: middle;
+  background: white;
+}
+.pagination .pg-btn .mat-icon {
+  font-size: 1.4em;
+}
+.pagination .pg-btn:hover,
+.pagination .pg-btn.active {
+  background: var(--paggination-color);
+  color: #e1e1e1;
+}
+.pagination .pg-btn:not(:last-child) {
+  border-right: none;
+}
+.pagination .pg-btn:first-child {
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+.pagination .pg-btn:last-child {
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}

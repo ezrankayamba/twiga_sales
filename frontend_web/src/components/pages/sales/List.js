@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-
 import {
   createSale,
   fetchSales,
@@ -7,9 +6,6 @@ import {
   uploadDocs,
 } from "../../../_services/SalesService";
 import { connect } from "react-redux";
-import { BasicCrudView } from "neza-react-tables";
-import { LoadingIndicator } from "neza-react-forms";
-import { IconPayment } from "neza-react-forms";
 import { DateTime } from "../../../_helpers/DateTime";
 import SalesImportForm from "./forms/SalesImportForm";
 import DocumentsUploadForm from "./forms/DocumentsUploadForm";
@@ -17,6 +13,9 @@ import SaleDocsForm from "./forms/SaleDocsForm";
 import { UserHelper } from "../../../_helpers/UserHelper";
 import CRUD from "../../../_services/CRUD";
 import FileDownload from "../../../_helpers/FileDownload";
+import MatIcon from "../../utils/icons/MatIcon";
+import BasicCrudView from "../../utils/crud/BasicCrudView";
+import LoadingIndicator from "../../utils/loading/LoadingIndicator";
 
 @connect((state) => {
   return {
@@ -243,73 +242,67 @@ class List extends Component {
 
     const pagination = { pages, pageNo, onPageChange: this.onPageChange };
     return (
-      <div className="row">
-        <div className="col">
-          <div className="row pt-2 pb-2 d-flex">
-            <div className="col-md">
-              <h5>{data.title}</h5>
-            </div>
-            <div className="col-md">
-              <div className="float-md-right btn-group">
+      <div className="">
+        <div className="list-toolbar">
+          <h5>{data.title}</h5>
+          <div className="wrap">
+            <div className="btn-group float-right">
+              <button
+                className="btn btn-sm btn-outline-primary"
+                onClick={this.exportSales.bind(this)}
+              >
+                <MatIcon name="arrow_downward" /> Export Sales
+              </button>
+              {this.canAddSales() && (
                 <button
-                  className="btn btn-outline-primary btn-sm ml-2"
-                  onClick={this.exportSales.bind(this)}
+                  className="btn btn-sm btn-primary"
+                  onClick={(e) =>
+                    this.setState({
+                      fileUploadSales: true,
+                      x: e.nativeEvent.offsetX,
+                      y: e.nativeEvent.offsetY + 100,
+                    })
+                  }
                 >
-                  <IconPayment />
-                  <span className="pl-2">Export Sales</span>
+                  <MatIcon name="arrow_upward" /> Import Sales
                 </button>
-                {this.canAddSales() && (
-                  <button
-                    className="btn btn-primary btn-sm ml-2"
-                    onClick={(e) =>
-                      this.setState({
-                        fileUploadSales: true,
-                        x: e.nativeEvent.offsetX,
-                        y: e.nativeEvent.offsetY + 100,
-                      })
-                    }
-                  >
-                    <IconPayment />
-                    <span className="pl-2">Import Sales</span>
-                  </button>
-                )}
-              </div>
+              )}
             </div>
           </div>
-          <BasicCrudView
-            onRowClick={this.onRowClick.bind(this)}
-            pagination={pagination}
-            data={data}
-            onUpdate={this.doUpdate}
-            onDelete={this.onDelete}
-            onAdd={this.doAdd}
-            toolbar={true}
-          />
-          {this.state.fileUploadDocs && (
-            <DocumentsUploadForm
-              position={this.state.y}
-              open={this.state.fileUploadDocs}
-              complete={this.fileUploadDocsComplete.bind(this)}
-            />
-          )}
-          {this.state.fileUploadSales && (
-            <SalesImportForm
-              position={this.state.y}
-              open={this.state.fileUploadSales}
-              complete={this.fileUploadSalesComplete.bind(this)}
-            />
-          )}
-          {this.state.isLoading && (
-            <LoadingIndicator isLoading={this.state.isLoading} />
-          )}
-          {openDetail && (this.canViewDocs() || this.canAddDocs()) && (
-            <SaleDocsForm
-              readOnly={!this.canAddDocs() || selected.docs.length === 3}
-              complete={this.complete.bind(this)}
-              sale={selected}
-            />
-          )}
         </div>
+        <BasicCrudView
+          onRowClick={this.onRowClick.bind(this)}
+          pagination={pagination}
+          data={data}
+          onUpdate={this.doUpdate}
+          onDelete={this.onDelete}
+          onAdd={this.doAdd}
+          toolbar={true}
+        />
+        {this.state.fileUploadDocs && (
+          <DocumentsUploadForm
+            position={this.state.y}
+            open={this.state.fileUploadDocs}
+            complete={this.fileUploadDocsComplete.bind(this)}
+          />
+        )}
+        {this.state.fileUploadSales && (
+          <SalesImportForm
+            position={this.state.y}
+            open={this.state.fileUploadSales}
+            complete={this.fileUploadSalesComplete.bind(this)}
+          />
+        )}
+        {this.state.isLoading && (
+          <LoadingIndicator isLoading={this.state.isLoading} />
+        )}
+        {openDetail && (this.canViewDocs() || this.canAddDocs()) && (
+          <SaleDocsForm
+            readOnly={!this.canAddDocs() || selected.docs.length === 3}
+            complete={this.complete.bind(this)}
+            sale={selected}
+          />
+        )}
       </div>
     );
   }

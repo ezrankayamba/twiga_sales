@@ -1,23 +1,54 @@
-import React, {Component} from 'react';
-import Pages from "../../Pages";
-import TopHeader from "../../TopHeader";
-import SideMenu from "../../SideMenu";
+import React, { Component } from "react";
+import Pages from "../../menus/Pages";
+import SideMenu from "../../menus/SideMenu";
 
 class MainLayout extends Component {
-    render() {
-        return (
-            <>
-                <div className="br-logo"><a href="">Twiga - Sales</a></div>
-                <SideMenu/>
-                <div className="br-header">
-                    <TopHeader/>
-                </div>
-                <div className="br-mainpanel p-2">
-                    <Pages/>
-                </div>
-            </>
-        );
-    }
+  state = { avatarOn: false };
+  componentDidMount() {
+    document.querySelector("body").addEventListener("click", (e) => {
+      this.setState({ avatarOn: false });
+    });
+  }
+  toggleAvatar(e) {
+    const { avatarOn } = this.state;
+    this.setState({ avatarOn: !avatarOn });
+  }
+  render() {
+    const { avatarOn } = this.state;
+    return (
+      <>
+        <header class="navbar">
+          <div class="menu sidebar-menu-toggle">
+            <i class="material-icons">menu</i>
+          </div>
+          <div class="navbar-title">
+            EXPORTS <i className="small text-warning">TRACKING TOOL</i>
+          </div>
+          <div class={`avatar${avatarOn ? " on" : ""}`}>
+            <img
+              src="https://via.placeholder.com/150"
+              alt=""
+              onClick={this.toggleAvatar.bind(this)}
+            />
+            <ul className="avatar-menu">
+              <li>
+                <a href="#">My Profile</a>
+              </li>
+              <li>
+                <a href="/logout">Logout</a>
+              </li>
+            </ul>
+          </div>
+        </header>
+        <SideMenu />
+        <section class="main-content-wraper">
+          <div class="main-content">
+            <Pages />
+          </div>
+        </section>
+      </>
+    );
+  }
 }
 
 export default MainLayout;

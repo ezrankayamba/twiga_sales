@@ -1,0 +1,105 @@
+:root {
+  --sidebar-bg-color: rgb(235, 241, 245);
+  --sidebar-menu-active-bg-color: #fcfcff;
+  --sidebar-menu-text-color: rgb(105, 116, 126);
+  --sidebar-width: 250px;
+}
+
+.sidebar {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  z-index: 100;
+  display: none;
+}
+
+.sidebar.show {
+  display: block;
+}
+.sidebar-content {
+  background: var(--sidebar-bg-color);
+  width: 70%;
+  height: 100vh;
+  opacity: 1;
+  box-shadow: 0 0 4px #999;
+}
+.sidebar-title {
+  line-height: 3rem;
+  font-weight: bolder;
+  font-size: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--sidebar-menu-text-color);
+  background: var(--sidebar-bg-color);
+  padding-left: 1rem;
+  -webkit-box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.5);
+  box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.5);
+  position: relative;
+  z-index: 1;
+}
+.sidebar-title .sidebar-close {
+  color: red;
+}
+.sidebar-menu {
+  padding: 0.5rem 0;
+}
+.sidebar-menu li {
+  /* background: var(--sidebar-menu-bg-color); */
+  margin-bottom: 1px;
+  padding-right: 0.5rem;
+}
+.sidebar-menu li a {
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  line-height: 40px;
+}
+.sidebar-menu li a.active {
+  background: var(--sidebar-menu-active-bg-color);
+}
+.sidebar-menu li a:hover {
+  background: var(--sidebar-menu-active-bg-color);
+}
+.sidebar-menu li a {
+  text-decoration: none;
+  line-height: 2.4rem;
+  padding: 0 1rem;
+  font-size: 16px;
+  display: block;
+  color: var(--sidebar-menu-text-color);
+}
+
+.sidebar-menu li a span {
+  margin-left: 1rem;
+}
+.navbar-title {
+  padding: 0 0.5rem;
+  font-size: 1rem;
+}
+.navbar-title i {
+  font-size: 0.5em;
+  color: var(--brand-color);
+}
+
+@media only screen and (min-width: 768px) {
+  .sidebar {
+    display: block;
+    width: var(--sidebar-width);
+  }
+  .sidebar-content {
+    width: 100%;
+  }
+  .sidebar-menu-toggle {
+    display: none;
+  }
+  .navbar,
+  .main-content-wraper {
+    padding-left: var(--sidebar-width);
+  }
+
+  .sidebar-close {
+    display: none;
+  }
+}

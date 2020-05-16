@@ -4,14 +4,12 @@ import { BrowserRouter as Router } from "react-router-dom";
 import { connect, Provider } from "react-redux";
 import store from "./redux/store";
 import "./_styles/App.css";
-import "./_styles/CommonForm.css";
-import "./_styles/Modal.css";
-import "./_styles/Snackbar.css";
 
 import { logout } from "./redux/auth/actions";
 import { notifyMe } from "./_helpers/notification";
 import { SESSION_TIMEOUT_LOGOUT_AT, SESSION_TIMEOUT_WARNING_AT } from "./conf";
 import MainLayout from "./components/pages/layout/MainLayout";
+import LoginPage from "./components/pages/auth/LoginPage";
 
 @connect(
   (state) => {
@@ -38,7 +36,8 @@ class Index extends Component {
     const { loggedIn, user } = this.props;
     return (
       <Router>
-        <MainLayout loggedIn={loggedIn} user={user} />
+        {loggedIn && <MainLayout loggedIn={loggedIn} user={user} />}
+        {!loggedIn && <LoginPage />}
       </Router>
     );
   }

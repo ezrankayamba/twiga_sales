@@ -29,7 +29,6 @@
 }
 #reports .report-container {
   flex: 1;
-  border: 1px solid #3333ff;
   margin: 1px;
   padding: 0.4rem;
 }

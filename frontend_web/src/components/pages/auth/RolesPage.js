@@ -1,18 +1,18 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { LoadingIndicator } from "neza-react-forms";
-import { Snackbar } from "neza-react-forms";
-import { BasicCrudView } from "neza-react-tables";
 import {
   createOrUpdateRole,
   fetchRoles,
   fetchPrivs,
   deleteRole,
 } from "../../../_services/AuthService";
-import { IconPlus, IconTrash } from "neza-react-forms";
-import { Modal } from "neza-react-forms";
-import { CommonForm } from "neza-react-forms";
 import { clearNewOption } from "../../../redux/forms/actions";
+import CommonForm from "../../utils/form/CommonForm";
+import Modal from "../../modal/Modal";
+import Snackbar from "../../utils/notify/Snackbar";
+import LoadingIndicator from "../../utils/loading/LoadingIndicator";
+import BasicCrudView from "../../utils/crud/BasicCrudView";
+import MatIcon from "../../utils/icons/MatIcon";
 
 @connect(
   (state) => {
@@ -163,7 +163,7 @@ class RolesPage extends Component {
               className="btn btn-sm btn-link text-danger p-0"
               onClick={(e) => this.onDelete(e, rowData)}
             >
-              <IconTrash />
+              <MatIcon name="delete" />
             </button>
           ),
         },
@@ -187,7 +187,7 @@ class RolesPage extends Component {
                   className="btn btn-link p-0"
                   onClick={() => this.setState({ openAdd: true })}
                 >
-                  <IconPlus />
+                  <MatIcon name="add" extra="size-2" />
                 </button>
               </div>
             </div>

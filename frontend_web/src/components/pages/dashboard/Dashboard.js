@@ -98,50 +98,42 @@ class Dashboard extends React.Component {
     console.log(destQty);
 
     return (
-      <>
+      <div className="dashboard">
         <div className="row">
-          <div className="col-md-6">
-            {meta1 && (
-              <Graph
-                title="Sales vs Docs Summary"
-                graphId="sales-vs-docs"
-                meta={meta1}
-                colors={colors}
-                onDataClick={onDataClick}
-              />
-            )}
-          </div>
-          <div className="col-md-6">
-            {destQty && (
-              <BarGraph
-                meta={destQty}
-                title="Quantity per Destination Country"
-                graphId="dest-qty"
-              />
-            )}
-          </div>
+          {meta1 && (
+            <Graph
+              title="Sales vs Docs Summary"
+              graphId="sales-vs-docs"
+              meta={meta1}
+              colors={colors}
+              onDataClick={onDataClick}
+            />
+          )}
+          {destQty && (
+            <BarGraph
+              meta={destQty}
+              title="Quantity per Destination Country"
+              graphId="dest-qty"
+            />
+          )}
         </div>
         <div className="row pt-2">
-          <div className="col-md-6">
-            {destVal && (
-              <BarGraph
-                meta={destVal}
-                title="Value per Destination Country"
-                graphId="dest-value"
-              />
-            )}
-          </div>
-          <div className="col-md-6">
-            {destVol && (
-              <BarGraph
-                meta={destVol}
-                title="Volume per Destination Country"
-                graphId="dest-volume"
-              />
-            )}
-          </div>
+          {destVal && (
+            <BarGraph
+              meta={destVal}
+              title="Value per Destination Country"
+              graphId="dest-value"
+            />
+          )}
+          {destVol && (
+            <BarGraph
+              meta={destVol}
+              title="Volume per Destination Country"
+              graphId="dest-volume"
+            />
+          )}
         </div>
-      </>
+      </div>
     );
   }
 }
