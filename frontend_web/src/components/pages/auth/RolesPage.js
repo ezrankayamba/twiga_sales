@@ -149,7 +149,7 @@ class RolesPage extends Component {
           title: "Privileges",
           render: (row) => {
             return row.privileges.map((p) => (
-              <span className="mr-2 p-1 border border-secondary rounded">
+              <span className="inline-item">
                 {privs.find((prv) => prv.id === p).name}
               </span>
             ));
@@ -175,71 +175,65 @@ class RolesPage extends Component {
 
     let form = this.getForm();
     return (
-      <div className="row">
-        <div className="col">
-          <div className="row pt-2 pb-2 d-flex">
-            <div className="col-md">
-              <h5>List of roles</h5>
-            </div>
-            <div className="col-md">
-              <div className="btn-group float-md-right">
-                <button
-                  className="btn btn-link p-0"
-                  onClick={() => this.setState({ openAdd: true })}
-                >
-                  <MatIcon name="add" extra="size-2" />
-                </button>
-              </div>
-            </div>
+      <div>
+        <div className="list-toolbar">
+          <h5>List of roles</h5>
+          <div className="btn-group float-right">
+            <button
+              className="btn btn-link p-0"
+              onClick={() => this.setState({ openAdd: true })}
+            >
+              <MatIcon name="add" extra="size-2" />
+            </button>
           </div>
-          <BasicCrudView
-            title={data.title}
-            data={data}
-            pagination={pagination}
-            onDeleteAll={this.doDeleteSelected}
-            isLoading={isLoading}
-            onRowClick={this.onRowClick.bind(this)}
-          />
-          <LoadingIndicator isLoading={isLoading} />
-          {snackbar && (
-            <Snackbar
-              message={snackbar.message}
-              timeout={snackbar.timeout}
-              done={this.snackDone}
-              error={snackbar.error}
-            />
-          )}
-          {openAdd && (
-            <Modal
-              title="New Role"
-              modalId="addRoleForm"
-              handleClose={() => this.newComplete(false)}
-              show={openAdd}
-              content={
-                <CommonForm
-                  meta={{ ...form, title: null }}
-                  newOptions={this.props.newOptions}
-                  clearNewOption={this.props.clearNewOption}
-                />
-              }
-            />
-          )}
-          {openEdit && (
-            <Modal
-              title={"Edit Role"}
-              modalId="editRoleForm"
-              handleClose={() => this.newComplete(false)}
-              show={openEdit}
-              content={
-                <CommonForm
-                  meta={this.getForm(selected)}
-                  newOptions={this.props.newOptions}
-                  clearNewOption={this.props.clearNewOption}
-                />
-              }
-            />
-          )}
         </div>
+        <BasicCrudView
+          title={data.title}
+          data={data}
+          pagination={pagination}
+          onDeleteAll={this.doDeleteSelected}
+          isLoading={isLoading}
+          onRowClick={this.onRowClick.bind(this)}
+        />
+        <LoadingIndicator isLoading={isLoading} />
+        {snackbar && (
+          <Snackbar
+            message={snackbar.message}
+            timeout={snackbar.timeout}
+            done={this.snackDone}
+            error={snackbar.error}
+          />
+        )}
+        {openAdd && (
+          <Modal
+            title="New Role"
+            modalId="addRoleForm"
+            handleClose={() => this.newComplete(false)}
+            show={openAdd}
+            content={
+              <CommonForm
+                meta={{ ...form, title: null }}
+                newOptions={this.props.newOptions}
+                clearNewOption={this.props.clearNewOption}
+              />
+            }
+          />
+        )}
+        {openEdit && (
+          <Modal
+            title={"Edit Role"}
+            modalId="editRoleForm"
+            handleClose={() => this.newComplete(false)}
+            show={openEdit}
+            content={
+              <CommonForm
+                meta={this.getForm(selected)}
+                newOptions={this.props.newOptions}
+                clearNewOption={this.props.clearNewOption}
+              />
+            }
+          />
+        )}
       </div>
     );
   }

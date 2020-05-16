@@ -29,6 +29,11 @@
 .form-group {
   margin-bottom: 0.8rem;
 }
+.form-group fieldset {
+  display: flex;
+  flex-direction: column;
+  border: none;
+}
 
 .form.search {
   width: 100%;
@@ -50,6 +55,14 @@
 
 .form-group .text-error {
   color: rgb(248, 73, 73);
+}
+
+fieldset .checkbox-label {
+  display: flex;
+  align-items: center;
+}
+fieldset .checkbox-label span {
+  margin-left: 0.4rem;
 }
 
 .form-group label {

@@ -19,6 +19,34 @@ const getInput = (
         )}
       </select>
     );
+  } else if (type === "checkbox") {
+    let checked = (id) => {
+      if (!value) return false;
+      return value.find((v) => v === id) !== undefined;
+    };
+    return (
+      <fieldset>
+        {options &&
+          options.map((o) => {
+            let isChecked = checked(o.id);
+            return (
+              <label className="d-block checkbox-label">
+                <input
+                  className="pt-2"
+                  id={`${name}-${o.id}`}
+                  key={o.id}
+                  value={o.id}
+                  name={name}
+                  type={type}
+                  checked={isChecked}
+                  onChange={rest.onChange}
+                />
+                <span className="pl-2">{o.name}</span>
+              </label>
+            );
+          })}
+      </fieldset>
+    );
   } else if (type === "file") {
     let url =
       value && typeof value === "string" && value.startsWith("http")

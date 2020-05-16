@@ -100,7 +100,7 @@ class InputControl extends Component {
     return (
       <>
         <div className="form-group mb-0">
-          {field.type !== "checkbox" && field.label && (
+          {field.label && (
             <label
               htmlFor={field.name}
               className="d-flex justify-content-between mb-1"

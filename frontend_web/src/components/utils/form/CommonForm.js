@@ -61,18 +61,58 @@ class CommonForm extends Component {
     }
     return tmp;
   }
+  setMultiSelectChanged(e, name, value) {
+    const selObj = e.target;
+    const options = selObj.options;
+    const res = [];
+    for (let i = 0; i < options.length; i++) {
+      const opt = options[i];
+      if (opt.selected) {
+        res.push(opt.value);
+      }
+    }
 
+    this.props.clearNewOption(name);
+    const errors = this.validateOne(name, res);
+    this.setState({ errors, data: { ...this.state.data, [name]: res } });
+  }
+  setCheckBoxChanged(e, name, value) {
+    const boxes = document.querySelectorAll(`input[name=${name}]`);
+    const res = [];
+    for (let i = 0; i < boxes.length; i++) {
+      const opt = boxes[i];
+      if (opt.checked) {
+        res.push(opt.value);
+      }
+    }
+    this.props.clearNewOption(name);
+    const errors = this.validateOne(name, res);
+    this.setState({ errors, data: { ...this.state.data, [name]: res } });
+  }
   handleChange(event) {
-    console.log(event);
-    let { name, value, checked, type } = event.target;
-    console.log(type, name, value, checked);
+    // console.log(event);
+    // let { name, value, checked, type } = event.target;
+    // console.log(type, name, value, checked);
+    // if (type === "checkbox") {
+    //   this.setChanged(name, checked);
+    // } else if (type === "file") {
+    //   console.log("It is fine");
+    //   this.setFileChanged(event, name);
+    // } else {
+    //   this.setChanged(name, value);
+    // }
+    const { name, value, type, multiple } = event.target;
     if (type === "checkbox") {
-      this.setChanged(name, checked);
-    } else if (type === "file") {
-      console.log("It is fine");
-      this.setFileChanged(event, name);
+      this.setCheckBoxChanged(event, name, value);
     } else {
-      this.setChanged(name, value);
+      event.preventDefault();
+      if (type === "file") {
+        this.setFileChanged(event, name);
+      } else if (type === "select-multiple") {
+        this.setMultiSelectChanged(event, name, value);
+      } else {
+        this.setChanged(name, value);
+      }
     }
   }
 
