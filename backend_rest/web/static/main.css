@@ -1,23 +1,94 @@
+body {
+  width: 100vw;
+  padding: 0;
+  margin: 0;
+}
+
 .loading-indicator {
-    background: #fcfcfc;
-    border-radius: .2rem;
-    color: #2b7a78;
-    border: 1px solid #007a78;
+  background: #fcfcfc;
+  border-radius: 0.2rem;
+  color: #2b7a78;
+  border: 1px solid #007a78;
 }
 .loading {
-    display: flex;
-    padding: .2rem;
+  display: flex;
+  padding: 0.2rem;
 }
-.loading i{
-    background-image: url("./images/Loading.gif");
-    background-repeat: repeat;
-    background-size: cover;
-    background-position: center;
-    width: 24px;
-    height: 24px;
-    display: inline-block;
+.loading i {
+  background-image: url("./images/Loading.gif");
+  background-repeat: repeat;
+  background-size: cover;
+  background-position: center;
+  width: 24px;
+  height: 24px;
+  display: inline-block;
 }
-.loading span{
-    display: inline-block;
-    margin: auto .4rem;
+.loading span {
+  display: inline-block;
+  margin: auto 0.4rem;
+}
+
+.table-scrollable {
+  overflow-x: auto;
+}
+
+.bg-image {
+  min-height: calc(100vh - 20px);
+  filter: blur(8px);
+  -webkit-filter: blur(8px);
+  margin-right: 20px;
+
+  background-image: url(./images/truck_img.v1.png);
+  background-size: cover;
+  width: 100%;
+}
+#app {
+  background: rgb(255, 255, 255);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+}
+.list-toolbar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+  align-items: center;
+}
+.app-bg-primary {
+  background: #f26522;
+}
+
+.nav-item > .nav-link {
+  padding: 0.2rem 0.4rem;
+}
+
+.loading-indicator {
+  position: fixed;
+  top: 90%;
+  left: 50%;
+  margin-top: -50px;
+  margin-left: -50px;
+  padding: 0.2rem;
+  z-index: 1000;
+}
+
+.main-nav {
+  box-shadow: 2px 3px 5px #c0b5b2;
+}
+
+.login-outer-form-wrapper {
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+}
+.login-page {
+  width: 100%;
+  max-width: 64rem;
+}
+@media only screen and (min-width: 600px) {
+  .login-outer-form-wrapper {
+    align-items: center;
+  }
 }

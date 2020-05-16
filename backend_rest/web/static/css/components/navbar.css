@@ -1,0 +1,18 @@
+:root {
+  --navbar-bg-color: #2b7a78;
+}
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--navbar-bg-color);
+  color: #f1f1f1;
+  padding: 0.4rem 1rem;
+  filter: drop-shadow(0 0 2px 0 rgb(22, 7, 47));
+  box-shadow: 0 0 4px #999;
+}
+.menu {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
