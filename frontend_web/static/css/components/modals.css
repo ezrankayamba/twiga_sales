@@ -17,6 +17,7 @@
   right: 0;
   text-align: left;
 }
+
 .modal-header {
   display: flex;
   width: 100%;
@@ -28,6 +29,11 @@
   padding: 0.4rem;
   overflow-y: auto;
   height: calc(100% - 40px);
+}
+.modal-footer {
+  padding: 0.4rem;
+  display: flex;
+  justify-content: flex-end;
 }
 
 @media only screen and (min-width: 768px) {

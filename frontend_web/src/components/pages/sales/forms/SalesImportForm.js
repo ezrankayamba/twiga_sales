@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import Modal from "../../../modal/Modal";
+import { File } from "../../../utils/file/File";
 
 class SalesImportForm extends Component {
   constructor(props) {

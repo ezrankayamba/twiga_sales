@@ -44,12 +44,10 @@ body {
 }
 #app {
   background: rgb(255, 255, 255);
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100vw;
   height: 100vh;
 }
+
 .list-toolbar {
   display: flex;
   justify-content: space-between;
@@ -83,10 +81,7 @@ body {
   height: 100vh;
   justify-content: center;
 }
-.login-page {
-  width: 100%;
-  max-width: 64rem;
-}
+
 @media only screen and (min-width: 600px) {
   .login-outer-form-wrapper {
     align-items: center;

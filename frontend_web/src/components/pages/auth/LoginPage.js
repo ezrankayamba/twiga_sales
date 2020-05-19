@@ -71,26 +71,28 @@ class LoginPage extends Component {
       return <Redirect to="/" />;
     }
     return (
-      <div className="login-container">
-        <div className="intro">
-          <div className="wrap">
-            <h1>Twiga Cement</h1>
-            <h3>
-              EXPORTS <small>TRACKING TOOL</small>
-            </h3>
+      <div className="login-page">
+        <div className="login-container">
+          <div className="intro">
+            <div className="wrap">
+              <h1>Twiga Cement</h1>
+              <h3>
+                EXPORTS <small>TRACKING TOOL</small>
+              </h3>
+            </div>
           </div>
-        </div>
-        <div className="login-content">
-          <CommonForm meta={form} />
-          <LoadingIndicator isLoading={isLoading} />
-          {snackbar && (
-            <Snackbar
-              message={snackbar.message}
-              timeout={snackbar.timeout}
-              done={this.snackDone}
-              error={snackbar.error}
-            />
-          )}
+          <div className="login-content">
+            <CommonForm meta={form} />
+            <LoadingIndicator isLoading={isLoading} />
+            {snackbar && (
+              <Snackbar
+                message={snackbar.message}
+                timeout={snackbar.timeout}
+                done={this.snackDone}
+                error={snackbar.error}
+              />
+            )}
+          </div>
         </div>
       </div>
     );

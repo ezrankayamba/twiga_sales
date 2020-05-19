@@ -41,11 +41,7 @@ class Modal extends Component {
             </div>
           </div>
           <div className="modal-content">{content}</div>
-          {footer && (
-            <div className="modal-footer">
-              <div className="float-right">{footer}</div>
-            </div>
-          )}
+          {footer && <div className="modal-footer">{footer}</div>}
         </div>
       </div>
     );
