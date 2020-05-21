@@ -6,7 +6,7 @@ class LoadingIndicator extends Component {
     const { isLoading } = this.props;
     return isLoading ? (
       <div className="loading-indicator">
-        <MatIcon name="autorenew" extra="size-2" />
+        <p>Loading, please wait...</p>
       </div>
     ) : null;
   }
