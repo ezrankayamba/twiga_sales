@@ -20,7 +20,7 @@ class SaleListView(generics.ListCreateAPIView):
     serializer_class = serializers.SaleSerializer
 
     def get_filter(self, name):
-        data = self.request.data
+        data = self.request.GET
         if data and name in data:
             return data[name] if data[name] else ''
         else:
@@ -28,7 +28,8 @@ class SaleListView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         q = self.request.query_params.get('q')
-        data = self.request.data
+        data = self.request.GET
+        print(data)
         if q:
             return reports.get_sales(q)
 
@@ -38,6 +39,7 @@ class SaleListView(generics.ListCreateAPIView):
             filt['vehicle_number__contains'] = self.get_filter('vehicle_number')
             filt['tax_invoice__contains'] = self.get_filter('tax_invoice')
             filt['sales_order__contains'] = self.get_filter('sales_order')
+            print(filt)
             sales = models.Sale.objects.annotate(doc_count=d_models.Count('docs')).filter(**filt)
         else:
             sales = models.Sale.objects.annotate(doc_count=d_models.Count('docs')).all()

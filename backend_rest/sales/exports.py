@@ -41,7 +41,7 @@ def export_report(request, sales):
         row.append(prj.tax_invoice)
         row.append(prj.sales_order)
         row.append(prj.product_name)
-        row.append(int(prj.quantity))
+        row.append(float(prj.quantity))
         row.append(float(prj.total_value))
         row.append(prj.destination)
         row.append(prj.agent.code if prj.agent else 'None')
