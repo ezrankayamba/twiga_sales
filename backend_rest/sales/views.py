@@ -116,7 +116,7 @@ def doc_key(name):
 docs_schema = [
     {'name': models.Document.DOC_C2, 'key': doc_key(
         models.Document.DOC_C2), 'regex': '[\\n[]{0,}(\w+)[\({]', 'params': {'x': 700, 'y': 600, 'h': 200, 'w': 600}},
-    {'name': models.Document.DOC_ASSESSMENT, 'key': doc_key(models.Document.DOC_ASSESSMENT), 'regex': ' (\d{4,})', 'params': {
+    {'name': models.Document.DOC_ASSESSMENT, 'key': doc_key(models.Document.DOC_ASSESSMENT), 'regex': ' (\d{2,})', 'params': {
         'x': 900, 'y': 120, 'h': 200, 'w': 600}},
     {'name': models.Document.DOC_EXIT, 'key': doc_key(
         models.Document.DOC_EXIT), 'regex': ':(\d{4} [\w/]+)', 'params': {'x': 140, 'y': 920, 'h': 200, 'w': 600}}
