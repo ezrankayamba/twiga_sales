@@ -4,6 +4,7 @@ import {
   fetchSales,
   importSales,
   uploadDocs,
+  attachDocs,
 } from "../../../_services/SalesService";
 import { connect } from "react-redux";
 import { DateTime } from "../../../_helpers/DateTime";
@@ -149,7 +150,7 @@ class List extends Component {
     this.setState({ fileUploadDocs: false });
     if (data) {
       this.setState({ isLoading: true });
-      uploadDocs(this.props.user.token, data, (res) => {
+      attachDocs(this.props.user.token, data, (res) => {
         console.log(res);
         this.setState({ isLoading: true });
         this.refresh();
@@ -265,6 +266,20 @@ class List extends Component {
                   }
                 >
                   <MatIcon name="arrow_upward" /> Import Sales
+                </button>
+              )}
+              {this.canAddDocs() && (
+                <button
+                  className="btn btn-sm btn-primary"
+                  onClick={(e) =>
+                    this.setState({
+                      fileUploadDocs: true,
+                      x: e.nativeEvent.offsetX,
+                      y: e.nativeEvent.offsetY + 100,
+                    })
+                  }
+                >
+                  <MatIcon name="attach_file" /> Attach Docs
                 </button>
               )}
             </div>

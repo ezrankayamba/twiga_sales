@@ -7,6 +7,7 @@ urlpatterns = [
     path('sales/<int:pk>', views.SaleDetailView.as_view()),
     path('sales/import', views.ImportSalesView.as_view()),
     path('sales/docs', views.SaleDocsView.as_view()),
+    path('sales/docs/attach', views.UploadDocsView.as_view()),
     path('documents', views.DocumentListView.as_view()),
     path('documents/<int:pk>', views.DocumentDetailView.as_view()),
     path('sales/summary', reports.SaleSummaryView.as_view()),

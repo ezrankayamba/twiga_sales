@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import Modal from "../../../modal/Modal";
+import { File } from "../../../utils/file/File";
 
 class DocumentsUploadForm extends Component {
   constructor(props) {
@@ -50,16 +52,6 @@ class DocumentsUploadForm extends Component {
         content={
           <form autoComplete="off" className="mb-2">
             <div className="pt-3">
-              <div className="form-group">
-                <label htmlFor="agent_code">Agent Code:</label>
-                <input
-                  value={this.state.agent_code}
-                  onChange={this.handleChange}
-                  name="agent_code"
-                  className="form-control"
-                  id="agent_code"
-                />
-              </div>
               <File
                 onChange={this.handleFileSelect}
                 name="image"
@@ -73,14 +65,14 @@ class DocumentsUploadForm extends Component {
         footer={
           <div className="btn-group">
             <button
-              className="btn btn-sm btn-outline-danger"
+              className="btn btn-sm btn-outline-secondary text-danger"
               onClick={() => complete(false)}
             >
               Cancel
             </button>
             <button
               type="button"
-              className="btn btn-sm btn-outline-primary"
+              className="btn btn-sm"
               onClick={this.doSubmit.bind(this)}
             >
               Submit

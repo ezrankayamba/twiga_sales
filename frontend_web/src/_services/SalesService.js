@@ -69,3 +69,13 @@ export const uploadDocs = (token, body, cb) => {
       cb(false);
     });
 };
+
+export const attachDocs = (token, body, cb) => {
+  console.log("Upload docs");
+  apiPost(url + "/docs/attach", body, token, "multipart/form-data")
+    .then(cb)
+    .catch((e) => {
+      console.error(e);
+      cb(false);
+    });
+};

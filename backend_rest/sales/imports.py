@@ -6,6 +6,23 @@ from io import TextIOWrapper
 import re
 import io
 from django.core.files.base import ContentFile
+import threading
+from . import ocr
+import xlsxwriter
+
+
+def doc_key(name):
+    return f'{name.lower()}_doc'
+
+
+docs_schema = [
+    {'name': models.Document.DOC_C2, 'letter': models.Document.LETTER_C2, 'key': doc_key(
+        models.Document.DOC_C2), 'regex': '[\\n[]{0,}(\w+)[\({]', 'params': {'x': 700, 'y': 600, 'h': 200, 'w': 600}},
+    {'name': models.Document.DOC_ASSESSMENT, 'letter': models.Document.LETTER_ASSESSMENT, 'key': doc_key(models.Document.DOC_ASSESSMENT), 'regex': ' (\d{2,})', 'params': {
+        'x': 900, 'y': 120, 'h': 200, 'w': 600}},
+    {'name': models.Document.DOC_EXIT, 'letter': models.Document.LETTER_EXIT, 'key': doc_key(
+        models.Document.DOC_EXIT), 'regex': ':(\d{4} [\w/]+)', 'params': {'x': 140, 'y': 920, 'h': 200, 'w': 600}}
+]
 
 
 def import_sales(excel_file):
@@ -37,28 +54,122 @@ def import_sales(excel_file):
         i += 1
 
 
-def import_docs(zip_file, agent_code):
-    with ZipFile(zip_file, 'r') as zip:
-        regex = f'^(\w+)\/(\w) (\w+).(\w+)$'
+def map_error(error):
+    res = {}
+    key = error['name']
+    res[key] = error['message']
+    return res
+
+
+def read_entries(zip, row, docs_list, agent):
+    so, qty, val = (row[0], row[1], row[2])
+    sale = models.Sale.objects.filter(sales_order=so).first()
+    if sale:
+        doc_entries = filter(lambda x: so in x.filename, docs_list)
+        errors, docs = ([], [])
+        for doc_entry in doc_entries:
+            with zip.open(doc_entry, 'r') as file:
+                filename = doc_entry.filename.split("/")[1]
+                doc_type = filename.split(' ')[0]
+                d = next(x for x in docs_schema if doc_type == x['letter'])
+                args, name, regex, pdf_data = (d['params'], d['name'], d['regex'], io.BytesIO(file.read()))
+                ret = re.search(regex, ocr.extract_from_file(pdf_data, **args))
+                error = None
+                if ret:
+                    ref_number = ret.group(1)
+                    duplicate = models.Document.objects.filter(ref_number=ref_number).first()
+                    if duplicate:
+                        error = f'Duplicate {name} document'
+                    else:
+                        docs.append({
+                            'ref_number': ref_number,
+                            'file': File(pdf_data, name=filename.split(' ')[1]),
+                            'sale': sale,
+                            'doc_type': name
+                        })
+                else:
+                    error = f'Invalid {name} document'
+                if error:
+                    errors.append({
+                        'key': d['key'],
+                        'name': name,
+                        'message': error,
+                    })
+        if len(errors):
+            print('Errors: ', errors)
+        else:
+            print('Docs: ', docs)
+            sale.agent = agent
+            sale.quantity2 = qty
+            sale.total_value2 = val
+            sale.save()
+            for doc in docs:
+                models.Document.objects.create(**doc)
+        return {'sale': sale, 'result': 0, 'errors': list(map(map_error, errors))}
+    else:
+        return {'sale': sale, 'result': -1, 'errors': [{'sale': 'Sales order number is not valid'}]}
+
+
+def cell(i, j):
+    char = "A"
+    char = chr(ord(char[0]) + j - 1)
+    return f'{char}{i}'
+
+
+def write_out(batch, rows):
+    output = io.BytesIO()
+    workbook = xlsxwriter.Workbook(output)
+    main = workbook.add_worksheet("Result")
+    headers = ['SO#', 'Quantity', 'Volume', 'Status', 'Detail']
+    for j, col in enumerate(headers, start=1):
+        main.write(f'{cell(1, j)}', col)
+
+    for i, row in enumerate(rows, start=2):
+        for j, col in enumerate(row, start=1):
+            main.write(f'{cell(i, j)}', col)
+
+    workbook.close()
+    xlsx_data = output.getvalue()
+    batch.file_out = File(xlsx_data, name=f'Result_{batch.id}')
+    batch.status = 1
+    batch.save()
+
+
+def import_docs(batch):
+    import json
+    agent = batch.user.agent
+    rows = []
+    with ZipFile(batch.file_in, 'r') as zip:
+        docs_list = []
         for entry in zip.infolist():
-            match = re.match(regex, entry.filename)
-            if match:
-                so = match.group(1)
-                doc_type = match.group(2)
-                ref_number = match.group(3)
-                ext = match.group(4)
-                sale = models.Sale.objects.filter(sales_order=so).first()
-                if sale:
-                    with zip.open(entry, 'r') as file:
-                        doc_file = ContentFile(file.read())
-                        doc_file.name = f'{doc_type} {ref_number}.{ext}'
-                        d_type = None
-                        if doc_type == 'A':
-                            d_type = models.Document.DOC_ASSESSMENT
-                        if doc_type == 'C':
-                            d_type = models.Document.DOC_C2
-                        if doc_type == 'E':
-                            d_type = models.Document.DOC_EXIT
-                        models.Document.objects.create(ref_number=f'{doc_type} {ref_number}', file=doc_file, sale=sale, doc_type=d_type)
-                    sale.agent_code = agent_code
-                    sale.save()
+            if '/' in entry.filename:
+                docs_list.append(entry)
+            else:
+                excel = entry
+        sales = []
+        if excel:
+            with zip.open(excel, 'r') as file:
+                ws = openpyxl.load_workbook(ContentFile(file.read())).active
+                i = 0
+                for row in ws.values:
+                    if i and len(row) == 3:
+                        try:
+                            res = read_entries(zip, row, docs_list, agent)
+                            rec = {}
+                            rec['SO#'] = row[0]
+                            rec['Quantity'] = row[1]
+                            rec['Volume'] = row[2]
+                            rec['Status'] = 'Completed' if res['result'] == 0 else 'Failed'
+                            rec['Detail'] = json.dumps({'errors': res['errors']})
+                            rows.append(rec)
+                        except Exception as e:
+                            print(e)
+                    i += 1
+    write_out(batch, rows)
+    print('Completed processing the upload')
+
+
+def docs_import_async(batch):
+    t = threading.Thread(target=import_docs, args=(batch,), kwargs={})
+    t.setDaemon(True)
+    t.start()

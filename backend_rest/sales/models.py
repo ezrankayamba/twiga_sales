@@ -7,6 +7,9 @@ class Document(models.Model):
     DOC_ASSESSMENT = "Assessment"
     DOC_C2 = "C2"
     DOC_EXIT = "Exit"
+    LETTER_ASSESSMENT = "A"
+    LETTER_C2 = "C"
+    LETTER_EXIT = "E"
     ref_number = models.CharField(max_length=20)
     description = models.CharField(max_length=100, blank=True, null=True)
     doc_type = models.CharField(max_length=10)
@@ -45,3 +48,17 @@ class Sale(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+
+
+class Batch(models.Model):
+    user = models.ForeignKey(to=User, on_delete=models.PROTECT)
+    created_at = models.DateTimeField(auto_now=True, auto_now_add=False)
+    file_in = models.FileField(upload_to='batches')
+    file_out = models.FileField(upload_to='batches', null=True)
+    status = models.IntegerField(default=0)
+
+    class Meta:
+        verbose_name_plural = 'Batches'
+
+    def __str__(self):
+        return f'{self.user} - {self.created_at}'

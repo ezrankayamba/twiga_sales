@@ -48,12 +48,12 @@
 
 .btn.btn-outline-secondary {
   background: transparent;
-  border: 1px solid var(--button-secondary-text-color);
+  border: 0px solid var(--button-secondary-text-color);
   color: var(--button-secondary-text-color);
 }
 .btn.btn-outline-primary {
   background: transparent;
-  border: 1px solid var(--button-primary-text-color);
+  border: 0px solid var(--button-primary-text-color);
   color: var(--button-primary-text-color);
 }
 .btn.btn-outline-primary:hover {

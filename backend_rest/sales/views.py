@@ -101,26 +101,12 @@ class UploadDocsView(APIView):
 
     def post(self, request, format=None):
         file = request.FILES['file']
-        agent_code = request.data['agent_code']
-        imports.import_docs(file, agent_code)
+        batch = models.Batch.objects.create(file_in=file, user=request.user)
+        imports.docs_import_async(batch)
         return Response({
             'status': 0,
-            'message': f'Successfully uploaded documents'
+            'message': f'Successfully uploaded documents with batch id: {batch.id}'
         })
-
-
-def doc_key(name):
-    return f'{name.lower()}_doc'
-
-
-docs_schema = [
-    {'name': models.Document.DOC_C2, 'key': doc_key(
-        models.Document.DOC_C2), 'regex': '[\\n[]{0,}(\w+)[\({]', 'params': {'x': 700, 'y': 600, 'h': 200, 'w': 600}},
-    {'name': models.Document.DOC_ASSESSMENT, 'key': doc_key(models.Document.DOC_ASSESSMENT), 'regex': ' (\d{2,})', 'params': {
-        'x': 900, 'y': 120, 'h': 200, 'w': 600}},
-    {'name': models.Document.DOC_EXIT, 'key': doc_key(
-        models.Document.DOC_EXIT), 'regex': ':(\d{4} [\w/]+)', 'params': {'x': 140, 'y': 920, 'h': 200, 'w': 600}}
-]
 
 
 class SaleDocsView(APIView):
@@ -135,7 +121,7 @@ class SaleDocsView(APIView):
 
         errors = []
         docs = []
-        for d in docs_schema:
+        for d in imports.docs_schema:
             print()
             print("======================")
             file = request.FILES[d['key']]
@@ -208,7 +194,7 @@ class TestOCRView(APIView):
             args[p] = int(params.get(p))
         print('Args: ', args)
         text = ocr.extract_from_file(pdf_data, **args)
-        for d in docs_schema:
+        for d in imports.docs_schema:
             ret = re.search(d['regex'], text)
             if ret:
                 return Response({
