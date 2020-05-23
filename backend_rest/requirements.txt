@@ -16,6 +16,7 @@ django-cors-headers==3.2.1
 django-filter==2.2.0
 django-multiselectfield==0.1.11
 django-oauth-toolkit==1.2.0
+django-sequences==2.4
 djangorestframework==3.11.0
 et-xmlfile==1.0.1
 gunicorn==20.0.4
@@ -34,6 +35,7 @@ pyasn1-modules==0.2.8
 pycodestyle==2.5.0
 pycparser==2.20
 PyHamcrest==2.0.2
+PyMuPDF==1.16.17
 pyOpenSSL==19.1.0
 pytesseract==0.3.4
 pytz==2019.3
