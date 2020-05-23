@@ -16,10 +16,6 @@ class IndexPage extends Component {
         name: "General Report",
         form: <DateRangeReport user={this.props.user} />,
       },
-      {
-        name: "Agent Reconciliation Report",
-        form: <div className="report-form">My Form here ...4</div>,
-      },
     ];
     this.setState({ tab: tabs[0], tabs: tabs });
   }

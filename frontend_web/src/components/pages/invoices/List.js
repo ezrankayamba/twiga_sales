@@ -6,6 +6,7 @@ import BasicCrudView from "../../utils/crud/BasicCrudView";
 import LoadingIndicator from "../../utils/loading/LoadingIndicator";
 import Modal from "../../modal/Modal";
 import Numbers from "../../../_helpers/Numbers";
+import { UserHelper } from "../../../_helpers/UserHelper";
 
 @connect((state) => {
   return {
@@ -132,7 +133,8 @@ class List extends Component {
           field: "action",
           title: "Action",
           render: (row) =>
-            row.status === "Pending" ? (
+            row.status === "Pending" &&
+            UserHelper.hasPriv(this.props.user, "Sales.update.invoice") ? (
               <div className="actions">
                 <button
                   className="btn btn-sm btn-link text-success"
@@ -166,12 +168,14 @@ class List extends Component {
               <button className="btn btn-sm btn-outline-primary">
                 <MatIcon name="arrow_downward" /> Export Invoices
               </button>
-              <button
-                className="btn btn-sm btn-primary"
-                onClick={() => this.setState({ create: true })}
-              >
-                <MatIcon name="post_add" /> Create Invoice
-              </button>
+              {UserHelper.hasPriv(this.props.user, "Sales.create.invoice") && (
+                <button
+                  className="btn btn-sm btn-primary"
+                  onClick={() => this.setState({ create: true })}
+                >
+                  <MatIcon name="post_add" /> Create Invoice
+                </button>
+              )}
             </div>
           </div>
         </div>
