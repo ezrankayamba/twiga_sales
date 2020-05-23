@@ -24,38 +24,44 @@ class SaleDocsForm extends Component {
     this.state = { snackbar: null, isLoading: false };
   }
   onSubmit(data, cb) {
+    const { sale } = this.props;
+    const hasDocs = sale.docs.length > 0;
     let form = new FormData();
     Object.entries(data).forEach((entry) => {
       console.log(entry);
       form.append(entry[0], entry[1]);
     });
     this.setState({ isLoading: true, snackbar: null });
-    uploadDocs(this.props.user.token, form, (res) => {
-      this.setState({ isLoading: false });
-      if (res && res.status === 0) {
-        this.props.complete(true);
-        cb(res);
-      } else {
-        this.setState({
-          snackbar: {
-            message: (
-              <ol>
-                {res.errors.map((e) => (
-                  <li>{e.message}</li>
-                ))}
-              </ol>
-            ),
-            timeout: 10000,
-            error: true,
-          },
-        });
-      }
-    });
+    uploadDocs(
+      this.props.user.token,
+      form,
+      (res) => {
+        this.setState({ isLoading: false });
+        if (res && res.status === 0) {
+          this.props.complete(true);
+          cb(res);
+        } else {
+          this.setState({
+            snackbar: {
+              message: (
+                <ol>
+                  {res.errors.map((e) => (
+                    <li>{e.message}</li>
+                  ))}
+                </ol>
+              ),
+              timeout: 10000,
+              error: true,
+            },
+          });
+        }
+      },
+      !hasDocs
+    );
   }
 
   render() {
     const { complete, sale, onSubmit, readOnly } = this.props;
-    console.log(readOnly, onSubmit);
     const hasDocs = sale.docs.length > 0;
     const val = (name) => {
       if (!hasDocs) return null;
@@ -101,7 +107,6 @@ class SaleDocsForm extends Component {
           name: "exit_doc",
           label: "Exit Document",
           type: "file",
-          validator: FormsHelper.notEmpty(),
           value: val("exit_doc"),
         },
       ],

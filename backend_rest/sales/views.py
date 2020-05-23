@@ -57,8 +57,12 @@ class ImportSalesView(APIView):
     parser_classes = [FormParser, MultiPartParser]
 
     def post(self, request, format=None):
-        excel_file = request.FILES['file']
-        imports.import_sales(excel_file)
+        file = request.FILES['file']
+        # imports.import_sales(excel_file)
+
+        batch = models.Batch.objects.create(file_in=file, user=request.user)
+        imports.sales_import_async(batch)
+
         return Response({
             'status': 0,
             'message': f'Successfully imported sales'
@@ -122,6 +126,73 @@ class SaleDocsView(APIView):
         errors = []
         docs = []
         for d in imports.docs_schema:
+            if d['key'] not in request.FILES:
+                continue
+            print()
+            print("======================")
+            file = request.FILES[d['key']]
+            pdf_data = io.BytesIO(file.read())
+            args = d['params']
+            text = ocr.extract_from_file(pdf_data, **args)
+            ret = re.search(d['regex'], text)
+            if ret:
+                ref_number = ret.group(1)
+                print(d['name'], ref_number)
+                name = d['name']
+                duplicate = models.Document.objects.filter(ref_number=ref_number).first()
+                if duplicate:
+                    errors.append({
+                        'key': d['key'],
+                        'name': d['name'],
+                        'message': f'Duplicate {name} document',
+                    })
+                else:
+                    docs.append({
+                        'ref_number': ref_number,
+                        'file': file,
+                        'sale': sale,
+                        'doc_type': name
+                    })
+            else:
+                print(d['name'], text)
+                name = d['name']
+                errors.append({
+                    'key': d['key'],
+                    'name': d['name'],
+                    'message': f'Invalid {name} document',
+                })
+        print()
+        print("======================")
+        if len(errors):
+            print('Errors: ', errors)
+            return Response({
+                'status': -1,
+                'message': f'Invalid document(s)',
+                'errors': errors
+            })
+        else:
+            print('Docs: ', docs)
+            sale.agent = request.user.agent
+            sale.quantity2 = data['quantity2']
+            sale.total_value2 = data['total_value2']
+            sale.save()
+            for doc in docs:
+                models.Document.objects.create(**doc)
+            return Response({
+                'status': 0,
+                'message': f'Successfully uploaded documents'
+            })
+
+    def put(self, request, format=None):
+        data = request.data
+        print(data)
+        sale = models.Sale.objects.get(pk=data['sale_id'])
+
+        errors = []
+        docs = []
+        for d in imports.docs_schema:
+            if d['key'] not in request.FILES:
+                continue
             print()
             print("======================")
             file = request.FILES[d['key']]

@@ -60,14 +60,23 @@ export const importSales = (token, body, cb) => {
       cb(false);
     });
 };
-export const uploadDocs = (token, body, cb) => {
+export const uploadDocs = (token, body, cb, newDoc = true) => {
   console.log("Upload docs");
-  apiPost(url + "/docs", body, token, "multipart/form-data")
-    .then(cb)
-    .catch((e) => {
-      console.error(e);
-      cb(false);
-    });
+  if (newDoc) {
+    apiPost(url + "/docs", body, token, "multipart/form-data")
+      .then(cb)
+      .catch((e) => {
+        console.error(e);
+        cb(false);
+      });
+  } else {
+    apiUpdate(url + "/docs", body, null, token, "multipart/form-data")
+      .then(cb)
+      .catch((e) => {
+        console.error(e);
+        cb(false);
+      });
+  }
 };
 
 export const attachDocs = (token, body, cb) => {

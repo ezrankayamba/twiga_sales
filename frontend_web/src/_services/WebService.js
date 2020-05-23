@@ -81,7 +81,7 @@ export const apiUpdate = (url, body, id, token, type = "application/json") => {
   } else if (type === "auto" || type === "multipart/form-data") {
     delete headers["Content-Type"];
   }
-  return fetch(url + id, {
+  return fetch(url + (id || ""), {
     method: "PUT",
     headers,
     body,

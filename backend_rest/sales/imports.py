@@ -9,6 +9,7 @@ from django.core.files.base import ContentFile
 import threading
 from . import ocr
 import xlsxwriter
+import json
 
 
 def doc_key(name):
@@ -25,33 +26,59 @@ docs_schema = [
 ]
 
 
-def import_sales(excel_file):
+def import_sales(batch):
+    excel_file = batch.file_in
     wb = openpyxl.load_workbook(excel_file)
     ws = wb.active
     i = 0
+    rows = []
     for row in ws.values:
         if i:
+            res = {'TRANS DATE': '', 'CUSTOMER': '', 'DELIVERY NOTE': '', 'VEH#': '',
+                   'TAX INVOICE': '', 'SO#': '', 'PRODUCT': '', 'QTY9TONS': '', 'VALUE': '', 'DESTINATION': '', 'STATUS': '', 'DETAILS': ''}
             dict = {}
             try:
                 dict['transaction_date'] = row[0]
+                res['TRANS DATE'] = row[0]
                 dict['customer_name'] = row[1]
+                res['CUSTOMER'] = row[1]
                 dict['delivery_note'] = row[2]
+                res['DELIVERY NOTE'] = row[2]
                 dict['vehicle_number'] = row[3]
+                res['VEH#'] = row[3]
                 dict['tax_invoice'] = row[4]
+                res['TAX INVOICE'] = row[4]
                 dict['sales_order'] = row[5]
+                res['SO#'] = row[5]
                 dict['product_name'] = row[6]
+                res['PRODUCT'] = row[6]
                 dict['quantity'] = row[7]
+                res['QTY9TONS'] = row[7]
                 dict['total_value'] = row[8]
+                res['VALUE'] = row[8]
                 dict['destination'] = row[9]
-                print(dict)
+                res['DESTINATION'] = row[9]
                 models.Sale.objects.create(**dict)
+                res['STATUS'] = 'Success'
+                res['DETAILS'] = json.dumps({'errors': []})
+                rows.append(res)
             except Exception as e:
                 print(e)
+                err_msg = str(e)
+                if 'UNIQUE' in err_msg:
+                    err_msg = 'Duplicate record'
+                res['STATUS'] = 'Fail'
+                res['DETAILS'] = json.dumps({'errors': [{'message': err_msg}]})
+                rows.append(res)
         else:
             if len(row) < 2:
                 print('Not enough columns')
                 break
         i += 1
+
+    write_out(batch, rows, headers=['TRANS DATE', 'CUSTOMER', 'DELIVERY NOTE', 'VEH#',
+                                    'TAX INVOICE', 'SO#', 'PRODUCT', 'QTY9TONS)', 'VALUE', 'DESTINATION', 'STATUS', 'DETAILS'])
+    print('Completed processing the upload')
 
 
 def map_error(error):
@@ -116,27 +143,28 @@ def cell(i, j):
     return f'{char}{i}'
 
 
-def write_out(batch, rows):
+def write_out(batch, rows, headers):
     output = io.BytesIO()
     workbook = xlsxwriter.Workbook(output)
     main = workbook.add_worksheet("Result")
-    headers = ['SO#', 'Quantity', 'Volume', 'Status', 'Detail']
+    print(rows[0], headers)
+
     for j, col in enumerate(headers, start=1):
         main.write(f'{cell(1, j)}', col)
 
     for i, row in enumerate(rows, start=2):
         for j, col in enumerate(row, start=1):
-            main.write(f'{cell(i, j)}', col)
+            main.write(f'{cell(i, j)}', row[col])
 
     workbook.close()
     xlsx_data = output.getvalue()
-    batch.file_out = File(xlsx_data, name=f'Result_{batch.id}')
+    batch.file_out = File(output, name=f'Result_{batch.id}.xlsx')
+    # batch.file_out.save()
     batch.status = 1
     batch.save()
 
 
 def import_docs(batch):
-    import json
     agent = batch.user.agent
     rows = []
     with ZipFile(batch.file_in, 'r') as zip:
@@ -165,8 +193,15 @@ def import_docs(batch):
                         except Exception as e:
                             print(e)
                     i += 1
-    write_out(batch, rows)
+    headers = ['SO#', 'Quantity', 'Volume', 'Status', 'Detail']
+    write_out(batch, rows, headers=headers)
     print('Completed processing the upload')
+
+
+def sales_import_async(batch):
+    t = threading.Thread(target=import_sales, args=(batch,), kwargs={})
+    t.setDaemon(True)
+    t.start()
 
 
 def docs_import_async(batch):
