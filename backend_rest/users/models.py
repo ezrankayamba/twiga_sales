@@ -29,8 +29,10 @@ class Profile(models.Model):
     change_password = models.BooleanField(default=True)
     date_created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     date_updated = models.DateTimeField(auto_now=True, null=True, blank=True)
-    created_by = models.ForeignKey(to=User, related_name="created_profiles", on_delete=models.PROTECT, null=True, blank=True)
-    updated_by = models.ForeignKey(to=User, related_name="updated_profiles", on_delete=models.PROTECT, null=True, blank=True)
+    created_by = models.ForeignKey(to=User, related_name="created_profiles",
+                                   on_delete=models.PROTECT, null=True, blank=True)
+    updated_by = models.ForeignKey(to=User, related_name="updated_profiles",
+                                   on_delete=models.PROTECT, null=True, blank=True)
     role = models.ForeignKey(to=Role, related_name='profiles', on_delete=models.PROTECT, null=True)
 
     def __str__(self):
@@ -47,4 +49,5 @@ class Profile(models.Model):
 
 class Agent(models.Model):
     code = models.CharField(max_length=20, unique=True)
+    commission = models.DecimalField(max_digits=10, decimal_places=2)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='agent')

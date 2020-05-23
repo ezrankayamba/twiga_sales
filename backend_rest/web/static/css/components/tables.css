@@ -33,3 +33,7 @@ td .inline-item {
   border-radius: 4px;
   color: gray;
 }
+
+td .actions {
+  display: flex;
+}

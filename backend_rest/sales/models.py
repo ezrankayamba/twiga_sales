@@ -3,6 +3,17 @@ from django.contrib.auth.models import User
 from users import models as u_models
 
 
+class Invoice(models.Model):
+    number = models.CharField(max_length=20)
+    commission = models.DecimalField(max_digits=20, decimal_places=2)
+    agent = models.ForeignKey(u_models.Agent, on_delete=models.PROTECT)
+    quantity = models.DecimalField(max_digits=20, decimal_places=2)
+    value = models.DecimalField(max_digits=20, decimal_places=2)
+    status = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now=False, auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, auto_now_add=False, null=True)
+
+
 class Document(models.Model):
     DOC_ASSESSMENT = "Assessment"
     DOC_C2 = "C2"
@@ -42,6 +53,7 @@ class Sale(models.Model):
     agent = models.ForeignKey(u_models.Agent, on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now=False, auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, auto_now_add=False)
+    invoice = models.ForeignKey(Invoice, on_delete=models.SET_NULL, null=True, related_name='sales')
 
     def __str__(self):
         return self.customer_name

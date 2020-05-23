@@ -17,3 +17,12 @@ class SaleSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Sale
         fields = '__all__'
+
+
+class InvoiceSerializer(serializers.ModelSerializer):
+    sales = SaleSerializer(many=True, read_only=True)
+    agent = AgentSerializer(many=False, read_only=True)
+
+    class Meta:
+        model = models.Invoice
+        fields = '__all__'

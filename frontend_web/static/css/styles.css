@@ -15,6 +15,7 @@
 @import "./components/dashboard.css";
 @import "./components/icons.css";
 @import "./components/colors.css";
+@import "./components/invoices.css";
 
 :root {
   --brand-color: #ffd400;

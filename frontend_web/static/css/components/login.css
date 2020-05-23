@@ -47,10 +47,11 @@
 
 .login-container .login-content {
   display: flex;
-  background: rgb(189, 173, 173, 0.2);
+  background: rgb(251, 251, 251);
   justify-content: space-around;
   flex-direction: column;
   align-items: center;
+  border: 1px solid var(--brand-color);
 }
 .login-content .form-wrap {
   width: 400px;

@@ -2,6 +2,7 @@ import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/auth/LoginPage";
 import LogoutPage from "../pages/auth/LogoutPage";
 import SalesIndexPage from "../pages/sales/IndexPage";
+import InvoicesIndexPage from "../pages/invoices/IndexPage";
 import ReportsIndexPage from "../pages/reports/IndexPage";
 
 import UsersPage from "../pages/auth/UsersPage";
@@ -50,6 +51,14 @@ const getMenus = (loggedIn, privileges) => {
           component: SalesIndexPage,
           Icon: () => <MatIcon name="attach_money" />,
           privilege: "Sales.view",
+        },
+        {
+          id: getId(),
+          path: "/invoices",
+          name: "Invoices",
+          component: InvoicesIndexPage,
+          Icon: () => <MatIcon name="data_usage" />,
+          privilege: "Sales.view.invoices",
         },
         {
           id: getId(),

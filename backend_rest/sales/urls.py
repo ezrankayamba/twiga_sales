@@ -1,6 +1,7 @@
 from django.urls import path, include
 from . import views
 from . import reports
+from . import invoices
 
 urlpatterns = [
     path('sales', views.SaleListView.as_view()),
@@ -15,4 +16,7 @@ urlpatterns = [
     path('reports/destination', reports.DestinationReportView.as_view()),
     path('reports/export', reports.SalesReportExport.as_view()),
     path('reports/search', reports.SalesReportList.as_view()),
+    path('invoices', invoices.InvoiceListView.as_view()),
+    path('invoices/manage', invoices.InvoiceManageView.as_view()),
+    path('invoices/manage/<int:invoice_id>', invoices.InvoiceManageView.as_view()),
 ]

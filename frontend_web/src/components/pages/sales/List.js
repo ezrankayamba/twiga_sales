@@ -313,7 +313,7 @@ class List extends Component {
         )}
         {openDetail && (this.canViewDocs() || this.canAddDocs()) && (
           <SaleDocsForm
-            readOnly={!this.canAddDocs() || selected.docs.length === 3}
+            readOnly={!this.canAddDocs()}
             complete={this.complete.bind(this)}
             sale={selected}
           />

@@ -61,6 +61,16 @@ export const apiPost = (url, body, token, type = "application/json") => {
     throw Error("Failure response: " + res.status);
   });
 };
+export const apiSearch = (url, token, body, page = 1) => {
+  return axios.post(url, body, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    params: {
+      page,
+    },
+  });
+};
 export const apiUpdate = (url, body, id, token, type = "application/json") => {
   let headers = {
     Authorization: `Bearer ${token}`,
@@ -89,7 +99,7 @@ export const apiDelete = (url, token) => {
       Authorization: `Bearer ${token}`,
     },
   }).then((res) => {
-    if (res.status == 204) {
+    if (res.status == 204 || res.status == 200) {
       return res;
     }
     throw Error("Failure response: " + res.status);

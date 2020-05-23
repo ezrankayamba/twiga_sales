@@ -14,6 +14,7 @@ const init = () => {
   const hideCompleted = () => {
     sidebar.classList.remove("show");
     sidebar.removeEventListener("animationend", hideCompleted);
+    console.log(sidebar);
   };
 
   const open = () => {
@@ -25,6 +26,7 @@ const init = () => {
     sidebar.classList.add("slideOutLeft");
     sidebar.classList.remove("slideInLeft");
     sidebar.addEventListener("animationend", hideCompleted);
+    console.log("Closing ...");
   };
   console.log(sidebar, toggle);
   if (sidebar && toggle) {
