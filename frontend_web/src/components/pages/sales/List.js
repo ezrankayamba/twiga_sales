@@ -17,6 +17,7 @@ import FileDownload from "../../../_helpers/FileDownload";
 import MatIcon from "../../utils/icons/MatIcon";
 import BasicCrudView from "../../utils/crud/BasicCrudView";
 import LoadingIndicator from "../../utils/loading/LoadingIndicator";
+import Numbers from "../../../_helpers/Numbers";
 
 @connect((state) => {
   return {
@@ -88,6 +89,7 @@ class List extends Component {
                   ),
                   created_at: DateTime.fmt(c.created_at),
                   agent: c.agent ? c.agent.code : null,
+                  total_value: Numbers.fmt(c.total_value),
                 };
               }),
               isLoading: false,
@@ -235,6 +237,16 @@ class List extends Component {
         { field: "quantity", title: "Qty(Tons)", hide: this.canAddDocs() },
         { field: "total_value", title: "Value", hide: this.canAddDocs() },
         { field: "destination", title: "Destination" },
+        {
+          field: "docs",
+          title: "Docs",
+          render: (row) =>
+            row.docs.length ? (
+              <span>{row.docs.length}</span>
+            ) : (
+              <span>None</span>
+            ),
+        },
         { field: "agent", title: "Agent" },
       ],
       title: "List of sales",

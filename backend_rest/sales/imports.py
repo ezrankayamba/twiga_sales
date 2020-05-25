@@ -77,7 +77,7 @@ def import_sales(batch):
         i += 1
 
     write_out(batch, rows, headers=['TRANS DATE', 'CUSTOMER', 'DELIVERY NOTE', 'VEH#',
-                                    'TAX INVOICE', 'SO#', 'PRODUCT', 'QTY9TONS)', 'VALUE', 'DESTINATION', 'STATUS', 'DETAILS'])
+                                    'TAX INVOICE', 'SO#', 'PRODUCT', 'QTY9TONS', 'VALUE', 'DESTINATION', 'STATUS', 'DETAILS'])
     print('Completed processing the upload')
 
 

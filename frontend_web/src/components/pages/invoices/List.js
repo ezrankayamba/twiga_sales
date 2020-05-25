@@ -126,7 +126,7 @@ class List extends Component {
         { field: "commission", title: "Commission Rate" },
         { field: "agent", title: "Agent" },
         { field: "quantity", title: "Total Quantity (Tons)" },
-        { field: "value", title: "Commission Value (USD)" },
+        { field: "value", title: "Commission Value (TZS)" },
         { field: "num_sales", title: "Sales Count" },
         { field: "status", title: "Status" },
         {
@@ -207,7 +207,7 @@ class List extends Component {
                   </div>
                 </div>
                 <div className="item">
-                  <div className="label">Commission Value (USD)</div>
+                  <div className="label">Commission Value (TZS)</div>
                   <div className="value">
                     {Numbers.fmt(
                       invoiceable.commission * invoiceable.complete.quantity
