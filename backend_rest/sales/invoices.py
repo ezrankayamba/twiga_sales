@@ -65,7 +65,7 @@ class InvoiceManageView(APIView):
         data = {'quantity': 0, 'quantity': 0, 'number': generate_num(), 'commission': agent.commission, 'agent': agent}
         for row in qs:
             if row.complete:
-                data['quantity'] = row.quantity_sum
+                data['quantity'] = row.quantity_sum * agent.commission
                 data['value'] = row.value_sum
 
         with transaction.atomic():
