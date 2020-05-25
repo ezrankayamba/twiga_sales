@@ -13,6 +13,7 @@ from django.db.models import Q, F
 from django.db import models as d_models
 from sequences import get_next_value
 from django.db import transaction
+from decimal import Decimal
 
 INVOICES_SEQUENCE_KEY = 'INVOICES'
 INVOICES_DIGITS = 5
@@ -66,7 +67,7 @@ class InvoiceManageView(APIView):
         for row in qs:
             if row.complete and row.quantity_sum:
                 data['quantity'] = row.quantity_sum
-                data['value'] = row.quantity_sum * agent.commission
+                data['value'] = Decimal(row.quantity_sum) * agent.commission
 
         with transaction.atomic():
             inv = models.Invoice.objects.create(**data)
