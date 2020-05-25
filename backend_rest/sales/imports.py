@@ -20,9 +20,9 @@ docs_schema = [
     {'name': models.Document.DOC_C2, 'letter': models.Document.LETTER_C2, 'key': doc_key(
         models.Document.DOC_C2), 'regex': '[\\n[]{0,}(\w+)[\({]', 'params': {'x': 700, 'y': 600, 'h': 200, 'w': 600}},
     {'name': models.Document.DOC_ASSESSMENT, 'letter': models.Document.LETTER_ASSESSMENT, 'key': doc_key(models.Document.DOC_ASSESSMENT), 'regex': '(C( ){0,}\d{2,})', 'params': {
-        'x': 900, 'y': 120, 'h': 200, 'w': 600, 'threshold': 220}},
+        'x': 900, 'y': 120, 'h': 200, 'w': 600, 'threshold': 230}},
     {'name': models.Document.DOC_EXIT, 'letter': models.Document.LETTER_EXIT, 'key': doc_key(
-        models.Document.DOC_EXIT), 'regex': ':(\d{4} [\w/]+)', 'params': {'x': 140, 'y': 920, 'h': 200, 'w': 600, 'threshold': 220}}
+        models.Document.DOC_EXIT), 'regex': '(\d{4} [\w/]+)', 'params': {'x': 140, 'y': 920, 'h': 200, 'w': 600, 'threshold': 220}}
 ]
 
 
