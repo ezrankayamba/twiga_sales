@@ -256,23 +256,29 @@ class TestOCRView(APIView):
 
     def post(self, request, format=None):
         params = request.data
+        letter = params.get('letter')
         file = request.FILES['file']
-        dir(dir(file))
+        print(file)
         pdf_data = io.BytesIO(file.read())
         del params['file']
+        del params['letter']
         args = {}
         for p in params:
             args[p] = int(params.get(p))
         print('Args: ', args)
         text = ocr.extract_from_file(pdf_data, **args)
+        print(text)
         for d in imports.docs_schema:
+            if d['letter'] != letter:
+                continue
             ret = re.search(d['regex'], text)
             if ret:
                 return Response({
                     'status': 0,
                     'message': 'Successfully extracted text',
                     'text': ret.group(1),
-                    'name': d['name']
+                    'name': d['name'],
+                    'raw': text
                 })
 
         return Response({

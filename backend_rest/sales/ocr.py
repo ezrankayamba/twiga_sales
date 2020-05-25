@@ -32,9 +32,9 @@ def crop(image, x=0, y=0, h=2338, w=1653, show=False):
     return crop_img
 
 
-def auto_crop(image):
+def auto_crop(image, threshold=210):
     gray = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2GRAY)
-    (thresh, img) = cv2.threshold(gray, 160, 255, cv2.THRESH_BINARY)
+    (thresh, img) = cv2.threshold(gray, threshold, 255, cv2.THRESH_BINARY)
     bit = cv2.bitwise_not(img)
     nonzero = np.nonzero(bit)
     minx = min(nonzero[1])
@@ -47,4 +47,13 @@ def auto_crop(image):
 
 
 def extract_from_file(file, **kwargs):
-    return extract(crop(auto_crop(get_image(file)), **kwargs))
+    import string
+    print(kwargs)
+    threshold = kwargs.get('threshold')
+    if not threshold:
+        threshold = 210
+    else:
+        del kwargs['threshold']
+    res = extract(crop(auto_crop(get_image(file), threshold=threshold), **kwargs))
+    res = ''.join(filter(lambda x: x in set(string.printable), res))
+    return res.upper()
