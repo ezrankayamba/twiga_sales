@@ -136,7 +136,8 @@ class SaleDocsView(APIView):
             text = ocr.extract_from_file(pdf_data, **args)
             ret = re.search(d['regex'], text)
             if ret:
-                ref_number = ret.group(1)
+                prefix = d.get('prefix', '')
+                ref_number = f'{prefix}{ret.group(1)}'
                 print(d['name'], ref_number)
                 name = d['name']
                 duplicate = models.Document.objects.filter(ref_number=ref_number).first()
@@ -201,7 +202,8 @@ class SaleDocsView(APIView):
             text = ocr.extract_from_file(pdf_data, **args)
             ret = re.search(d['regex'], text)
             if ret:
-                ref_number = ret.group(1)
+                prefix = d.get('prefix', '')
+                ref_number = f'{prefix}{ret.group(1)}'
                 print(d['name'], ref_number)
                 name = d['name']
                 duplicate = models.Document.objects.filter(ref_number=ref_number).first()
@@ -271,12 +273,13 @@ class TestOCRView(APIView):
         for d in imports.docs_schema:
             if d['letter'] != letter:
                 continue
+            prefix = d.get('prefix', '')
             ret = re.search(d['regex'], text)
             if ret:
                 return Response({
                     'status': 0,
                     'message': 'Successfully extracted text',
-                    'text': ret.group(1),
+                    'text': f'{prefix}{ret.group(1)}',
                     'name': d['name'],
                     'raw': text
                 })
