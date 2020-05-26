@@ -26,7 +26,7 @@ class Document(models.Model):
     ref_number = models.CharField(max_length=20)
     description = models.CharField(max_length=100, blank=True, null=True)
     doc_type = models.CharField(max_length=10)
-    truck = models.CharField(max_length=10, default='head')
+    truck = models.CharField(max_length=10, default='trailer')
     file = models.FileField(upload_to='docs/')
     sale = models.ForeignKey('Sale', related_name='docs', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now=False, auto_now_add=True, null=True)

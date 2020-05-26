@@ -122,7 +122,7 @@ class SaleDocsView(APIView):
         data = request.data
         print(data)
         sale = models.Sale.objects.get(pk=data['sale_id'])
-        truck = 'trailer' if sale.quantity < models.TRUCK_THRESHOLD else 'head'
+        truck = 'trailer' if sale.quantity >= models.TRUCK_THRESHOLD else 'head'
 
         errors = []
         docs = []
@@ -190,7 +190,7 @@ class SaleDocsView(APIView):
         data = request.data
         print(data)
         sale = models.Sale.objects.get(pk=data['sale_id'])
-        truck = 'trailer' if sale.quantity < models.TRUCK_THRESHOLD else 'head'
+        truck = 'trailer' if sale.quantity >= models.TRUCK_THRESHOLD else 'head'
 
         errors = []
         docs = []

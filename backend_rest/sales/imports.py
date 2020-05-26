@@ -91,7 +91,7 @@ def map_error(error):
 def read_entries(zip, row, docs_list, agent):
     so, qty, val = (row[0], row[1], row[2])
     sale = models.Sale.objects.filter(sales_order=so).first()
-    truck = 'trailer' if sale.quantity < models.TRUCK_THRESHOLD else 'head'
+    truck = 'trailer' if sale.quantity >= models.TRUCK_THRESHOLD else 'head'
     if sale:
         doc_entries = filter(lambda x: so in x.filename, docs_list)
         errors, docs = ([], [])
