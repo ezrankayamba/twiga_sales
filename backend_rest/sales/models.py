@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from users import models as u_models
 
+TRUCK_THRESHOLD = 25.00
+
 
 class Invoice(models.Model):
     number = models.CharField(max_length=20)
@@ -24,6 +26,7 @@ class Document(models.Model):
     ref_number = models.CharField(max_length=20)
     description = models.CharField(max_length=100, blank=True, null=True)
     doc_type = models.CharField(max_length=10)
+    truck = models.CharField(max_length=10, default='head')
     file = models.FileField(upload_to='docs/')
     sale = models.ForeignKey('Sale', related_name='docs', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now=False, auto_now_add=True, null=True)
@@ -34,7 +37,7 @@ class Document(models.Model):
 
     class Meta:
         ordering = ['-created_at']
-        unique_together = ['ref_number', 'doc_type']
+        unique_together = ['ref_number', 'doc_type', 'truck']
 
 
 class Sale(models.Model):
@@ -45,10 +48,10 @@ class Sale(models.Model):
     vehicle_number = models.CharField(max_length=100)
     tax_invoice = models.CharField(max_length=100)
     product_name = models.CharField(max_length=100)
-    quantity = models.CharField(max_length=100)
-    total_value = models.CharField(max_length=100)
-    quantity2 = models.CharField(max_length=100, null=True)
-    total_value2 = models.CharField(max_length=100, null=True)
+    quantity = models.DecimalField(decimal_places=2, max_digits=20)
+    total_value = models.DecimalField(decimal_places=2, max_digits=20)
+    quantity2 = models.DecimalField(decimal_places=2, max_digits=20, null=True)
+    total_value2 = models.DecimalField(decimal_places=2, max_digits=20, null=True)
     destination = models.CharField(max_length=100)
     agent = models.ForeignKey(u_models.Agent, on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now=False, auto_now_add=True)

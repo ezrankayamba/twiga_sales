@@ -122,6 +122,7 @@ class SaleDocsView(APIView):
         data = request.data
         print(data)
         sale = models.Sale.objects.get(pk=data['sale_id'])
+        truck = 'trailer' if sale.quantity < models.TRUCK_THRESHOLD else 'head'
 
         errors = []
         docs = []
@@ -140,7 +141,7 @@ class SaleDocsView(APIView):
                 ref_number = f'{prefix}{ret.group(1)}'
                 print(d['name'], ref_number)
                 name = d['name']
-                duplicate = models.Document.objects.filter(ref_number=ref_number).first()
+                duplicate = models.Document.objects.filter(ref_number=ref_number, truck=truck).first()
                 if duplicate:
                     errors.append({
                         'key': d['key'],
@@ -152,7 +153,8 @@ class SaleDocsView(APIView):
                         'ref_number': ref_number,
                         'file': file,
                         'sale': sale,
-                        'doc_type': name
+                        'doc_type': name,
+                        'truck': truck
                     })
             else:
                 print(d['name'], text)
@@ -188,6 +190,7 @@ class SaleDocsView(APIView):
         data = request.data
         print(data)
         sale = models.Sale.objects.get(pk=data['sale_id'])
+        truck = 'trailer' if sale.quantity < models.TRUCK_THRESHOLD else 'head'
 
         errors = []
         docs = []
@@ -206,7 +209,7 @@ class SaleDocsView(APIView):
                 ref_number = f'{prefix}{ret.group(1)}'
                 print(d['name'], ref_number)
                 name = d['name']
-                duplicate = models.Document.objects.filter(ref_number=ref_number).first()
+                duplicate = models.Document.objects.filter(ref_number=ref_number, truck=truck).first()
                 if duplicate:
                     errors.append({
                         'key': d['key'],
@@ -218,7 +221,8 @@ class SaleDocsView(APIView):
                         'ref_number': ref_number,
                         'file': file,
                         'sale': sale,
-                        'doc_type': name
+                        'doc_type': name,
+                        'truck': truck
                     })
             else:
                 print(d['name'], text)

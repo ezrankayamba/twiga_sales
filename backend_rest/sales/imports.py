@@ -91,6 +91,7 @@ def map_error(error):
 def read_entries(zip, row, docs_list, agent):
     so, qty, val = (row[0], row[1], row[2])
     sale = models.Sale.objects.filter(sales_order=so).first()
+    truck = 'trailer' if sale.quantity < models.TRUCK_THRESHOLD else 'head'
     if sale:
         doc_entries = filter(lambda x: so in x.filename, docs_list)
         errors, docs = ([], [])
@@ -104,7 +105,7 @@ def read_entries(zip, row, docs_list, agent):
                 error = None
                 if ret:
                     ref_number = ret.group(1)
-                    duplicate = models.Document.objects.filter(ref_number=ref_number).first()
+                    duplicate = models.Document.objects.filter(ref_number=ref_number, truck=truck).first()
                     if duplicate:
                         error = f'Duplicate {name} document'
                     else:
@@ -112,7 +113,8 @@ def read_entries(zip, row, docs_list, agent):
                             'ref_number': ref_number,
                             'file': File(pdf_data, name=filename.split(' ')[1]),
                             'sale': sale,
-                            'doc_type': name
+                            'doc_type': name,
+                            'truck': truck
                         })
                 else:
                     error = f'Invalid {name} document'
