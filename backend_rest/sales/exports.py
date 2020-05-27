@@ -28,7 +28,7 @@ def export_report(request, sales):
 
     main = workbook.add_worksheet("Report")
     headers = ['ID', 'TRANS_DATE', 'CUSTOMER', 'DELIVERY NOTE', 'VEH#',
-               'TAX INVOICE', 'SO#', 'PRODUCT', 'QTY(TONS)', 'VALUE', 'DESTINATION', 'AGENT', 'DOCS']
+               'TAX INVOICE', 'SO#', 'PRODUCT', 'QTY(TONS)', 'VALUE', 'DESTINATION', 'VEH# TRAILER', 'AGENT', 'DOCS']
     rows = []
 
     for prj in sales:
@@ -44,6 +44,7 @@ def export_report(request, sales):
         row.append(float(prj.quantity))
         row.append(float(prj.total_value))
         row.append(prj.destination)
+        row.append(prj.vehicle_number_trailer)
         row.append(prj.agent.code if prj.agent else 'None')
         row.append(prj.doc_count)
         rows.append(row)
@@ -54,7 +55,6 @@ def export_report(request, sales):
     for i, row in enumerate(rows, start=2):
         for j, col in enumerate(row, start=1):
             main.write(f'{cell(i, j)}', col)
-
     workbook.close()
     xlsx_data = output.getvalue()
     return xlsx_data

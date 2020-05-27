@@ -46,6 +46,7 @@ class Sale(models.Model):
     customer_name = models.CharField(max_length=100)
     delivery_note = models.CharField(max_length=100)
     vehicle_number = models.CharField(max_length=100)
+    vehicle_number_trailer = models.CharField(max_length=100, null=True, blank=True)
     tax_invoice = models.CharField(max_length=100)
     product_name = models.CharField(max_length=100)
     quantity = models.DecimalField(decimal_places=2, max_digits=20)

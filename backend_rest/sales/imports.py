@@ -25,6 +25,12 @@ docs_schema = [
         models.Document.DOC_EXIT), 'regex': '(\d{4} [\w/]+)', 'params': {'x': 140, 'y': 920, 'h': 200, 'w': 600, 'threshold': 220}}
 ]
 
+# def get_vehicles(number):
+#     parts=number.split(",")
+#     veh1=parts[0].strip()
+#     veh2=parts[1].strip() if len(parts) > 1 else None
+#     return (veh1, veh2)
+
 
 def import_sales(batch):
     excel_file = batch.file_in
@@ -58,6 +64,8 @@ def import_sales(batch):
                 res['VALUE'] = row[8]
                 dict['destination'] = row[9]
                 res['DESTINATION'] = row[9]
+                dict['vehicle_number_trailer'] = row[10] if len(row) > 10 else None
+                res['VEH# TRAILER'] = row[10] if len(row) > 10 else None
                 models.Sale.objects.create(**dict)
                 res['STATUS'] = 'Success'
                 res['DETAILS'] = json.dumps({'errors': []})
@@ -77,7 +85,7 @@ def import_sales(batch):
         i += 1
 
     write_out(batch, rows, headers=['TRANS DATE', 'CUSTOMER', 'DELIVERY NOTE', 'VEH#',
-                                    'TAX INVOICE', 'SO#', 'PRODUCT', 'QTY9TONS', 'VALUE', 'DESTINATION', 'STATUS', 'DETAILS'])
+                                    'TAX INVOICE', 'SO#', 'PRODUCT', 'QTY9TONS', 'VALUE', 'DESTINATION', 'STATUS', 'DETAILS', 'VEH# TRAILER'])
     print('Completed processing the upload')
 
 

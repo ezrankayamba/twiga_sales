@@ -90,6 +90,9 @@ class List extends Component {
                   created_at: DateTime.fmt(c.created_at),
                   agent: c.agent ? c.agent.code : null,
                   total_value: Numbers.fmt(c.total_value),
+                  vehicle_number: c.vehicle_number_trailer
+                    ? `${c.vehicle_number}, ${c.vehicle_number_trailer}`
+                    : c.vehicle_number,
                 };
               }),
               isLoading: false,
