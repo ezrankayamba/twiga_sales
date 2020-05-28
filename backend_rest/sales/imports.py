@@ -110,7 +110,18 @@ def read_entries(zip, row, docs_list, agent):
             with zip.open(doc_entry, 'r') as file:
                 filename = doc_entry.filename.split("/")[1]
                 doc_type = filename.split(' ')[0]
-                d = next(x for x in docs_schema if doc_type == x['letter'])
+                d = None
+                try:
+                    d = next(x for x in docs_schema if doc_type == x['letter'])
+                except Exception as e:
+                    res = {'sale': sale, 'result': -1, 'errors': [{'sale': 'Sales order number is not valid'}]}
+                    errors.append({
+                        'key': 'Unknown',
+                        'name': "Unknown",
+                        'message': "Not valid document or invalid prefix",
+                    })
+                    continue
+
                 args, name, regex, pdf_data = (d['params'], d['name'], d['regex'], io.BytesIO(file.read()))
                 ret = re.search(regex, ocr.extract_from_file(pdf_data, **args))
                 error = None
