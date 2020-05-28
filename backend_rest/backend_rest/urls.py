@@ -10,6 +10,7 @@ urlpatterns = [
     path(f'{context_path}oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     path(f'{context_path}users/', include('users.urls')),
     path(f'{context_path}', include('sales.urls')),
+    path(f"{context_path}ws/", include("websocket.urls")),
     path('', include('web.urls')),
 ]
 

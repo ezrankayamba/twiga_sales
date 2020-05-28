@@ -11,6 +11,8 @@ from . import ocr
 import xlsxwriter
 import json
 import traceback
+from . import serializers
+from websocket import alarms
 
 
 def doc_key(name):
@@ -100,8 +102,8 @@ def map_error(error):
 def read_entries(zip, row, docs_list, agent):
     so, qty, val = (row[0], row[1], row[2])
     sale = models.Sale.objects.filter(sales_order=so).first()
-    truck = 'trailer' if sale.quantity >= models.TRUCK_THRESHOLD else 'head'
     if sale:
+        truck = 'trailer' if sale.quantity >= models.TRUCK_THRESHOLD else 'head'
         doc_entries = filter(lambda x: so in x.filename, docs_list)
         errors, docs = ([], [])
         for doc_entry in doc_entries:
@@ -201,7 +203,6 @@ def import_docs(batch):
                             res = read_entries(zip, row, docs_list, agent)
                             rec['Status'] = 'Completed' if res['result'] == 0 else 'Failed'
                             rec['Detail'] = json.dumps({'errors': res['errors']})
-
                         except Exception as e:
                             print("Error", e)
                             traceback.print_exc()
@@ -212,6 +213,9 @@ def import_docs(batch):
 
     headers = ['SO#', 'Quantity', 'Volume', 'Status', 'Detail']
     write_out(batch, rows, headers=headers)
+    data = serializers.BatchSerializer(batch).data
+    print(data)
+    alarms.trigger(batch.user, {'file_in': batch.file_in.url, 'file_out': batch.file_out.url})
     print('Completed processing the upload')
 
 

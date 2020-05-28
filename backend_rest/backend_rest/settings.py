@@ -18,6 +18,8 @@ INSTALLED_APPS = [
     'sales.apps.SalesConfig',
     'users.apps.UsersConfig',
     'web.apps.WebConfig',
+    "websocket.apps.WebSocketConfig",
+    "channels",
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -65,6 +67,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend_rest.wsgi.application'
 
+# Channels
+ASGI_APPLICATION = "backend_rest.routing.application"
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {"hosts": [("127.0.0.1", 6379)], },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases

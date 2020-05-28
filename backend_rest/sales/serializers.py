@@ -10,6 +10,13 @@ class DocumentSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class BatchSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Batch
+        fields = '__all__'
+
+
 class SaleSerializer(serializers.ModelSerializer):
     docs = DocumentSerializer(many=True, read_only=True)
     agent = AgentSerializer(many=False, read_only=True)
