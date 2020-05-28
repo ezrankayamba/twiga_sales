@@ -205,7 +205,7 @@ def import_docs(batch):
                             rec['Detail'] = json.dumps({'errors': res['errors']})
                             rows.append(rec)
                         except Exception as e:
-                            print(e)
+                            print("Error", e)
                     i += 1
 
     headers = ['SO#', 'Quantity', 'Volume', 'Status', 'Detail']
