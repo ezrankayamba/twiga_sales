@@ -107,6 +107,7 @@ class UploadDocsView(APIView):
         file = request.FILES['file']
         batch = models.Batch.objects.create(file_in=file, user=request.user)
         imports.docs_import_async(batch)
+        print('Asynchronous response ....')
         return Response({
             'status': 0,
             'message': f'Successfully uploaded documents with batch id: {batch.id}'
