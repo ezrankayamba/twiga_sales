@@ -194,6 +194,7 @@ def import_docs(batch):
                     if i and len(row) == 3:
                         try:
                             res = read_entries(zip, row, docs_list, agent)
+                            print(res)
                             rec = {}
                             rec['SO#'] = row[0]
                             rec['Quantity'] = row[1]
