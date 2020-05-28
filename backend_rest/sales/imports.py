@@ -10,6 +10,7 @@ import threading
 from . import ocr
 import xlsxwriter
 import json
+import traceback
 
 
 def doc_key(name):
@@ -206,6 +207,7 @@ def import_docs(batch):
                             rows.append(rec)
                         except Exception as e:
                             print("Error", e)
+                            traceback.print_exc()
                     i += 1
 
     headers = ['SO#', 'Quantity', 'Volume', 'Status', 'Detail']
