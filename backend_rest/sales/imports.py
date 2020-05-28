@@ -186,28 +186,28 @@ def import_docs(batch):
             else:
                 excel = entry
         sales = []
-        print(docs_list)
         if excel:
             with zip.open(excel, 'r') as file:
                 ws = openpyxl.load_workbook(ContentFile(file.read())).active
                 i = 0
                 for row in ws.values:
-                    print(len(row), i)
                     if i and len(row) == 3:
                         print(row)
+                        rec = {}
                         try:
-                            res = read_entries(zip, row, docs_list, agent)
-                            print("Result", res)
-                            rec = {}
                             rec['SO#'] = row[0]
                             rec['Quantity'] = row[1]
                             rec['Volume'] = row[2]
+                            res = read_entries(zip, row, docs_list, agent)
                             rec['Status'] = 'Completed' if res['result'] == 0 else 'Failed'
                             rec['Detail'] = json.dumps({'errors': res['errors']})
-                            rows.append(rec)
+
                         except Exception as e:
                             print("Error", e)
                             traceback.print_exc()
+                            rec['Status'] = 'Failed'
+                            rec['Detail'] = json.dumps({'errors': [{'message': f'Exception: {e}'}]})
+                        rows.append(rec)
                     i += 1
 
     headers = ['SO#', 'Quantity', 'Volume', 'Status', 'Detail']
