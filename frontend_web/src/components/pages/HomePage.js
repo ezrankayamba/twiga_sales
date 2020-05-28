@@ -6,6 +6,9 @@ import { DateTime } from "../../_helpers/DateTime";
 import "./Dashboard.css";
 import CRUD from "../../_services/CRUD";
 import FileDownload from "../../_helpers/FileDownload";
+import Modal from "../modal/Modal";
+import BasicCrudView from "../utils/crud/BasicCrudView";
+import MatIcon from "../utils/icons/MatIcon";
 
 @connect((state) => {
   return {
@@ -157,7 +160,7 @@ class HomePage extends Component {
                     className="btn btn-outline-primary btn-sm ml-2"
                     onClick={this.exportSales.bind(this)}
                   >
-                    <IconPayment />
+                    <MatIcon name="money" />
                     <span className="pl-2">Export Sales</span>
                   </button>
                 </div>

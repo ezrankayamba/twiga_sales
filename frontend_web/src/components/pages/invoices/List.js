@@ -47,6 +47,7 @@ class List extends Component {
                 commission: Numbers.fmt(item.commission),
                 quantity: Numbers.fmt(item.quantity),
                 value: Numbers.fmt(item.value),
+                value_vat: Numbers.fmt(item.value * 1.18),
                 status: item.status ? "Completed" : "Pending",
               };
             }),
@@ -123,11 +124,12 @@ class List extends Component {
             name: "number",
           },
         },
-        { field: "commission", title: "Commission Rate" },
+        { field: "commission", title: "Rate" },
         { field: "agent", title: "Agent" },
-        { field: "quantity", title: "Total Quantity (Tons)" },
-        { field: "value", title: "Commission Value (TZS)" },
-        { field: "num_sales", title: "Sales Count" },
+        { field: "quantity", title: "Quantity(Tons)" },
+        { field: "value", title: "Value(TZS)" },
+        { field: "value_vat", title: "Value(VAT Incl.)" },
+        { field: "num_sales", title: "Count" },
         { field: "status", title: "Status" },
         {
           field: "action",
@@ -165,9 +167,9 @@ class List extends Component {
           <h5>{data.title}</h5>
           <div className="wrap">
             <div className="btn-group float-right">
-              <button className="btn btn-sm btn-outline-primary">
+              {/* <button className="btn btn-sm btn-outline-primary">
                 <MatIcon name="arrow_downward" /> Export Invoices
-              </button>
+              </button> */}
               {UserHelper.hasPriv(this.props.user, "Sales.create.invoice") && (
                 <button
                   className="btn btn-sm btn-primary"
