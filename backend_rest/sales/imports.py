@@ -114,6 +114,7 @@ def read_entries(zip, row, docs_list, agent):
                 try:
                     d = next(x for x in docs_schema if doc_type == x['letter'])
                 except Exception as e:
+                    print(e)
                     res = {'sale': sale, 'result': -1, 'errors': [{'sale': 'Sales order number is not valid'}]}
                     errors.append({
                         'key': 'Unknown',
