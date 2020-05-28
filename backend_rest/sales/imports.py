@@ -191,10 +191,12 @@ def import_docs(batch):
                 ws = openpyxl.load_workbook(ContentFile(file.read())).active
                 i = 0
                 for row in ws.values:
+                    print(len(row), i)
                     if i and len(row) == 3:
+                        print(row)
                         try:
                             res = read_entries(zip, row, docs_list, agent)
-                            print(res)
+                            print("Result", res)
                             rec = {}
                             rec['SO#'] = row[0]
                             rec['Quantity'] = row[1]
@@ -205,7 +207,7 @@ def import_docs(batch):
                         except Exception as e:
                             print(e)
                     i += 1
-                    print(row)
+
     headers = ['SO#', 'Quantity', 'Volume', 'Status', 'Detail']
     write_out(batch, rows, headers=headers)
     print('Completed processing the upload')
