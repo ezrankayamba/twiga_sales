@@ -157,7 +157,7 @@ def write_out(batch, rows, headers):
     output = io.BytesIO()
     workbook = xlsxwriter.Workbook(output)
     main = workbook.add_worksheet("Result")
-    print(rows[0], headers)
+    print(rows[0] if len(rows) else rows, headers)
 
     for j, col in enumerate(headers, start=1):
         main.write(f'{cell(1, j)}', col)
@@ -185,6 +185,7 @@ def import_docs(batch):
             else:
                 excel = entry
         sales = []
+        print(docs_list)
         if excel:
             with zip.open(excel, 'r') as file:
                 ws = openpyxl.load_workbook(ContentFile(file.read())).active
@@ -203,6 +204,7 @@ def import_docs(batch):
                         except Exception as e:
                             print(e)
                     i += 1
+                    print(row)
     headers = ['SO#', 'Quantity', 'Volume', 'Status', 'Detail']
     write_out(batch, rows, headers=headers)
     print('Completed processing the upload')
