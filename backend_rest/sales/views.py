@@ -39,6 +39,7 @@ class SaleListView(generics.ListCreateAPIView):
             filt['vehicle_number__contains'] = self.get_filter('vehicle_number')
             filt['tax_invoice__contains'] = self.get_filter('tax_invoice')
             filt['sales_order__contains'] = self.get_filter('sales_order')
+            filt['delivery_note__contains'] = self.get_filter('delivery_note')
             print(filt)
             sales = models.Sale.objects.annotate(doc_count=d_models.Count('docs')).filter(**filt)
         else:

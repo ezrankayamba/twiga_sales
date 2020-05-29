@@ -22,13 +22,30 @@ def date_fmt(date):
     return date.strftime("%d/%m/%Y")
 
 
+def get_refs(sale):
+    exit_ref = None
+    c2_ref = None
+    assessment_ref = None
+    exit_doc = models.Document.objects.filter(doc_type=models.Document.DOC_EXIT, sale=sale).first()
+    if exit_doc:
+        exit_ref = exit_doc.ref_number
+    assessment_doc = models.Document.objects.filter(doc_type=models.Document.DOC_ASSESSMENT, sale=sale).first()
+    if assessment_doc:
+        assessment_ref = assessment_doc.ref_number
+    c2_doc = models.Document.objects.filter(doc_type=models.Document.DOC_C2, sale=sale).first()
+    if c2_doc:
+        c2_ref = c2_doc.ref_number
+
+    return [c2_ref, assessment_ref, exit_ref]
+
+
 def export_report(request, sales):
     output = io.BytesIO()
     workbook = xlsxwriter.Workbook(output)
 
     main = workbook.add_worksheet("Report")
     headers = ['ID', 'TRANS_DATE', 'CUSTOMER', 'DELIVERY NOTE', 'VEH#',
-               'TAX INVOICE', 'SO#', 'PRODUCT', 'QTY(TONS)', 'VALUE', 'DESTINATION', 'VEH# TRAILER', 'AGENT', 'DOCS']
+               'TAX INVOICE', 'SO#', 'PRODUCT', 'QTY(TONS)', 'VALUE', 'DESTINATION', 'VEH# TRAILER', 'AGENT', 'C2', 'ASSESSMENT', 'EXIT']
     rows = []
 
     for prj in sales:
@@ -46,7 +63,7 @@ def export_report(request, sales):
         row.append(prj.destination)
         row.append(prj.vehicle_number_trailer)
         row.append(prj.agent.code if prj.agent else 'None')
-        row.append(prj.doc_count)
+        row.extend(get_refs(prj))
         rows.append(row)
 
     for j, col in enumerate(headers, start=1):

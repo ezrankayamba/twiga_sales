@@ -208,7 +208,15 @@ class List extends Component {
             name: "customer_name",
           },
         },
-        { field: "delivery_note", title: "Delivery Note" },
+        {
+          field: "delivery_note",
+          title: "Delivery Note",
+          search: {
+            type: "input",
+            label: "Delivery Note",
+            name: "delivery_note",
+          },
+        },
         {
           field: "vehicle_number",
           title: "Veh#",
@@ -239,18 +247,10 @@ class List extends Component {
         { field: "product_name", title: "Product" },
         { field: "quantity", title: "Qty(Tons)", hide: this.canAddDocs() },
         { field: "total_value", title: "Value", hide: this.canAddDocs() },
-        { field: "destination", title: "Destination" },
-        {
-          field: "docs",
-          title: "Docs",
-          render: (row) =>
-            row.docs.length ? (
-              <span>{row.docs.length}</span>
-            ) : (
-              <span>None</span>
-            ),
-        },
         { field: "agent", title: "Agent" },
+        { field: "c2_ref", title: "C2" },
+        { field: "assessment_ref", title: "Assessment" },
+        { field: "exit_ref", title: "Exit" },
       ],
       title: "List of sales",
       onSearch: (params) => this.refresh(1, params),

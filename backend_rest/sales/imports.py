@@ -103,7 +103,7 @@ def read_entries(zip, row, docs_list, agent):
         for doc_entry in doc_entries:
             with zip.open(doc_entry, 'r') as file:
                 filename = doc_entry.filename.split("/")[1]
-                doc_type = filename.split(' ')[0]
+                doc_type = filename[0]
                 d = None
                 try:
                     d = next(x for x in docs_schema if doc_type == x['letter'])

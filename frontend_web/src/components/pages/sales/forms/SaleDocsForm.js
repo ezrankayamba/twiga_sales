@@ -68,7 +68,7 @@ class SaleDocsForm extends Component {
       return sale[name];
     };
     const { snackbar, isLoading } = this.state;
-    const title = `${sale.vehicle_number} - Sale Documents`;
+    const title = `${sale.sales_order} - Sale Documents`;
     let form = {
       fields: [
         {
