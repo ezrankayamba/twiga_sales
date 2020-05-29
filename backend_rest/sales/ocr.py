@@ -8,11 +8,6 @@ from pdf2image import convert_from_bytes
 
 
 def get_image(data):
-    # doc = fitz.open('pdf', data)
-    # page = doc.loadPage(0)
-    # xref = page.getImageList()[0][0]
-    # baseImage = doc.extractImage(xref)
-    # image = Image.open(io.BytesIO(baseImage['image']))
     image = convert_from_bytes(data.read())[0]
     return image
 
@@ -32,8 +27,18 @@ def crop(image, x=0, y=0, h=2338, w=1653, show=False):
     return crop_img
 
 
+def remove_noise(gray):
+    img_med = cv2.medianBlur(gray, ksize=15)
+    ret, th_img = cv2.threshold(img_med, thresh=127, maxval=255, type=cv2.THRESH_BINARY)
+    img_dest = gray.copy()
+    img_dest[th_img == 0] = 255
+    return img_dest
+
+
 def auto_crop(image, threshold=210):
     gray = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2GRAY)
+    # gray = remove_noise(gray)
+
     (thresh, img) = cv2.threshold(gray, threshold, 255, cv2.THRESH_BINARY)
     bit = cv2.bitwise_not(img)
     nonzero = np.nonzero(bit)
@@ -58,3 +63,24 @@ def extract_from_file(file, **kwargs):
     res = ''.join(filter(lambda x: x in set(string.printable), res))
     print(res)
     return res.upper()
+
+
+def remove_lines():
+    print("Test")
+    file = 'C:\\Users\\godfred.nkayamba\\Downloads\\Bulk Upload Export Docs (2)\\SOC200004272\\E .pdf'
+    with open(file, 'rb') as pdf_data:
+        print(pdf_data)
+        image = get_image(pdf_data)
+        img = np.array(image)
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+        img_med = cv2.medianBlur(gray, ksize=15)
+        ret, th_img = cv2.threshold(img_med, thresh=220, maxval=255, type=cv2.THRESH_BINARY)
+        # cv2.imshow("Img", th_img)
+        img_dest = gray.copy()
+        img_dest[th_img == 0] = 255
+        cv2.imshow("Img", img_dest)
+        cv2.waitKey()
+
+
+# remove_lines()
