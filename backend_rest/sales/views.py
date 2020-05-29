@@ -275,9 +275,11 @@ class TestOCRView(APIView):
         print('Args: ', args)
         text = ocr.extract_from_file(pdf_data, **args)
         print(text)
+        schema = None
         for d in imports.docs_schema:
             if d['letter'] != letter:
                 continue
+            schema = d
             prefix = d.get('prefix', '')
             ret = re.search(d['regex'], text)
             if ret:
@@ -292,5 +294,6 @@ class TestOCRView(APIView):
         return Response({
             'status': -1,
             'message': 'System was not able to validate the document',
-            'text': text
+            'text': text,
+            'schema': schema
         })

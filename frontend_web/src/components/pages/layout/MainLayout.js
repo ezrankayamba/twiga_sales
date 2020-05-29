@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Pages from "../../menus/Pages";
 import SideMenu from "../../menus/SideMenu";
+import BackendNotification from "../../BackendNotification";
 
 class MainLayout extends Component {
   state = { avatarOn: false };
@@ -46,6 +47,9 @@ class MainLayout extends Component {
             <Pages />
           </div>
         </section>
+        <footer>
+          <BackendNotification />
+        </footer>
       </>
     );
   }

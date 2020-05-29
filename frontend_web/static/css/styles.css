@@ -36,6 +36,21 @@ body {
   width: 100vw;
   font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
+body {
+  width: 100vw;
+  padding: 0;
+  margin: 0;
+}
+
+.table-scrollable {
+  overflow-x: auto;
+}
+
+#app {
+  background: rgb(255, 255, 255);
+  width: 100vw;
+  height: 100vh;
+}
 .main-content {
   padding: 0.4rem;
 }
@@ -43,4 +58,47 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+#app {
+  height: 100%;
+}
+
+.loading-indicator {
+  position: fixed;
+  top: 90%;
+  left: 50%;
+  margin-top: -50px;
+  margin-left: -50px;
+  padding: 0.8rem;
+  z-index: 1000;
+  background: #333;
+  border-radius: 0.2rem;
+  color: #fff;
+}
+
+.backend-notification {
+  z-index: 100;
+  position: absolute;
+  bottom: 1rem;
+  margin: 0 1rem;
+  background: #d3daf1;
+  padding: 1rem 0.8rem 0.4rem;
+  color: #fff;
+  border-radius: 0.2rem;
+}
+.backend-notification button.close {
+  padding: 0.2rem;
+  position: absolute;
+  top: -0.8rem;
+  right: -0.4rem;
+  background: #d3daf1;
+  padding: 0 0.2rem;
+  border: 1px solid #e6e9f3;
+}
+
+.backend-notification a {
+  margin-top: 0.4rem;
+  text-decoration: none;
+  text-align: center;
 }
