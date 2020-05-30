@@ -95,21 +95,23 @@ class SideMenu extends Component {
             <span class="material-icons sidebar-close">close</span>
           </div>
           <ul class="sidebar-menu">
-            {getMenus(loggedIn, privileges).map((item) => {
-              return (
-                <li>
-                  <NavLink
-                    key={item.id}
-                    to={item.path}
-                    className="ripple"
-                    activeClassName="active"
-                  >
-                    <item.Icon />
-                    <span className="menu-item-label">{item.name}</span>
-                  </NavLink>
-                </li>
-              );
-            })}
+            {getMenus(loggedIn, privileges)
+              .filter((m) => !m.hide)
+              .map((item) => {
+                return (
+                  <li>
+                    <NavLink
+                      key={item.id}
+                      to={item.path}
+                      className="ripple"
+                      activeClassName="active"
+                    >
+                      <item.Icon />
+                      <span className="menu-item-label">{item.name}</span>
+                    </NavLink>
+                  </li>
+                );
+              })}
           </ul>
         </div>
       </aside>

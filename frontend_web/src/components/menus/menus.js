@@ -9,6 +9,7 @@ import UsersPage from "../pages/auth/UsersPage";
 import RolesPage from "../pages/auth/RolesPage";
 import React from "react";
 import MatIcon from "../utils/icons/MatIcon";
+import MyProfile from "../pages/auth/MyProfile";
 const getMenus = (loggedIn, privileges) => {
   let pFilter = (m) => {
     return (
@@ -67,6 +68,15 @@ const getMenus = (loggedIn, privileges) => {
           component: ReportsIndexPage,
           Icon: () => <MatIcon name="data_usage" />,
           privilege: "Sales.reports",
+        },
+        {
+          id: getId(),
+          path: "/my-profile",
+          name: "My Profile",
+          hide: false,
+          component: MyProfile,
+          Icon: () => <MatIcon name="lock" />,
+          privilege: "Anonymous",
         },
         {
           id: getId(),

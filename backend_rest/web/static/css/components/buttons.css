@@ -31,19 +31,39 @@
   font-size: 14px;
   text-transform: uppercase;
   cursor: pointer;
-  color: white;
-  background-color: var(--button-primary-bg-color);
   box-shadow: 0 0 2px #999;
   outline: none;
   display: flex;
   align-items: center;
+  background-position: center;
+  transition: background 0.8s;
 }
+
+/* Ripple effect */
+.btn:hover {
+  background: rgb(245, 248, 250)
+    radial-gradient(circle, transparent 1%, hsl(207, 53%, 88%) 1%) center/15000%;
+}
+.btn:active {
+  background-color: #eff6fc;
+  background-size: 100%;
+  transition: background 0s;
+}
+
 .btn .mat-icon {
   padding: 0 0.4rem 0 0.2rem;
 }
 .btn.btn-sm {
   padding: 6px 6px;
   font-size: 10px;
+}
+.btn.btn-primary {
+  color: white;
+  background-color: var(--button-primary-bg-color);
+}
+.btn.btn-secondary {
+  color: white;
+  background-color: var(--button-secondary-bg-color);
 }
 
 .btn.btn-outline-secondary {

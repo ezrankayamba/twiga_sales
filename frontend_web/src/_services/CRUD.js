@@ -23,8 +23,14 @@ const CRUD = {
       })
       .catch((error) => (onFail ? onFail(error) : console.log(error)));
   },
-  create: (path, token, body, { onSuccess, onFail }) => {
-    apiPost(`${BASE_URL}${path}`, body, token)
+  create: (
+    path,
+    token,
+    body,
+    { onSuccess, onFail },
+    type = "application/json"
+  ) => {
+    apiPost(`${BASE_URL}${path}`, body, token, type)
       .then((list) => {
         onSuccess(list);
       })

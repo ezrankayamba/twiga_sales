@@ -33,6 +33,17 @@ export const loginPost = (username, password, cb) => {
     });
 };
 
+export const loginRefresh = (token, cb) => {
+  apiGet(BASE_URL + "/users/me/", token)
+    .then((userRes) => {
+      cb({ ...userRes, token: token });
+    })
+    .catch((reason) => {
+      console.log(reason);
+      cb(false);
+    });
+};
+
 export const fetchUsers = (token, page, cb) => {
   apiGetPaginated(BASE_URL + "/users", token, page)
     .then((res) => {
@@ -70,6 +81,14 @@ export const fetchRoles = (token, page = 1, cb) => {
 };
 export const createUser = (token, body, cb) => {
   apiPost(BASE_URL + "/users/create", body, token)
+    .then(cb)
+    .catch((e) => {
+      console.error(e);
+      cb(false);
+    });
+};
+export const changeMyPassword = (token, body, cb) => {
+  apiPost(BASE_URL + "/users/changepwd", body, token)
     .then(cb)
     .catch((e) => {
       console.error(e);

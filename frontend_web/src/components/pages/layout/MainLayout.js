@@ -33,7 +33,7 @@ class MainLayout extends Component {
             />
             <ul className="avatar-menu">
               <li>
-                <a href="#">My Profile</a>
+                <a href="/my-profile">My Profile</a>
               </li>
               <li>
                 <a href="/logout">Logout</a>

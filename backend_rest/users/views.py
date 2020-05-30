@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, renderer_classes
+from django.contrib.auth import authenticate
 
 
 class UserListView(generics.ListCreateAPIView):
@@ -77,6 +78,45 @@ class CreateUserView(APIView):
         return Response({
             'status': 0,
             'message': f'Successfully updated user'
+        })
+
+
+class ManagePasswordView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    required_scopes = []
+
+    def post(self, request, format=None):
+        data = request.data
+
+        user = authenticate(username=request.user.username, password=data.get('password'))
+        result = -1
+        if user:
+            user.set_password(data.get('new_password'))
+            user.save()
+            result = 0
+        return Response({
+            'status': result,
+            'message': f'Successfully updated password' if result == 0 else 'Password update failed, check your crendentials'
+        })
+
+
+class ManageMyProfilePhotoView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    required_scopes = []
+
+    def post(self, request, format=None):
+        photo = request.FILES['photo']
+
+        user = request.user
+        result = -1
+        if user and photo:
+            p = user.profile
+            p.image = photo
+            p.save()
+            result = 0
+        return Response({
+            'status': result,
+            'message': f'Successfully updated profile photo' if result == 0 else 'Photo update failed, check your inputs'
         })
 
 

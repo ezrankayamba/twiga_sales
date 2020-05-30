@@ -84,11 +84,11 @@ class RolesPage extends Component {
     });
   }
 
-  onRowClick(e, row) {
+  onRowClick(row) {
     this.setState({ selected: row, openEdit: true });
   }
 
-  newComplete(param) {
+  newComplete() {
     this.setState({ openAdd: false, openEdit: false });
   }
 
@@ -135,7 +135,6 @@ class RolesPage extends Component {
   }
 
   render() {
-    const { loggedIn } = this.props;
     const { isLoading, snackbar, openAdd, selected, openEdit } = this.state;
     let { roles, pages, pageNo, privs } = this.state;
 
@@ -208,7 +207,7 @@ class RolesPage extends Component {
           <Modal
             title="New Role"
             modalId="addRoleForm"
-            handleClose={() => this.newComplete(false)}
+            handleClose={() => this.newComplete()}
             show={openAdd}
             content={
               <CommonForm
@@ -223,7 +222,7 @@ class RolesPage extends Component {
           <Modal
             title={"Edit Role"}
             modalId="editRoleForm"
-            handleClose={() => this.newComplete(false)}
+            handleClose={() => this.newComplete()}
             show={openEdit}
             content={
               <CommonForm

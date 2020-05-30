@@ -39,10 +39,14 @@ class InvoiceManageView(APIView):
     required_scopes = []
 
     def get(self, request):
-        agent = request.user.agent
+        agent = None
+        try:
+            agent = request.user.agent
+        except Exception as e:
+            pass
         qs = self.eligible_summary(request)
         data = {'complete': {'quantity': 0, 'quantity': 0}, 'incomplete': {
-            'quantity': 0, 'quantity': 0}, 'commission': agent.commission}
+            'quantity': 0, 'quantity': 0}, 'commission': agent.commission if agent else 0}
         for row in qs:
             if row.complete:
                 data['complete']['quantity'] = row.quantity_sum
