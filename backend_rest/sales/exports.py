@@ -2,6 +2,7 @@ import io
 import xlsxwriter
 from . import models
 from datetime import datetime
+import decimal
 
 
 def date_parse(str, fmt='%Y-%m-%d %H:%M:%S'):
@@ -64,6 +65,38 @@ def export_report(request, sales):
         row.append(prj.vehicle_number_trailer)
         row.append(prj.agent.code if prj.agent else 'None')
         row.extend(get_refs(prj))
+        rows.append(row)
+
+    for j, col in enumerate(headers, start=1):
+        main.write(f'{cell(1, j)}', col)
+
+    for i, row in enumerate(rows, start=2):
+        for j, col in enumerate(row, start=1):
+            main.write(f'{cell(i, j)}', col)
+    workbook.close()
+    xlsx_data = output.getvalue()
+    return xlsx_data
+
+
+def export_invoices(request, invoices):
+    output = io.BytesIO()
+    workbook = xlsxwriter.Workbook(output)
+
+    main = workbook.add_worksheet("Report")
+    headers = ['ID', 'INVOICE NO', 'RATE', 'AGENT',
+               'QUANTITY(TONS)', 'VALUE(TZS)', 'VALUE(VAT INCL.)', 'STATUS']
+    rows = []
+
+    for prj in invoices:
+        row = []
+        row.append(prj.id)
+        row.append(prj.number)
+        row.append(prj.commission)
+        row.append(prj.agent.code)
+        row.append(prj.quantity)
+        row.append(prj.value)
+        row.append(prj.value * decimal.Decimal(1.18))
+        row.append('Pending' if prj.status == 0 else 'Completed')
         rows.append(row)
 
     for j, col in enumerate(headers, start=1):

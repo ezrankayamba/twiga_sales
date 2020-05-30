@@ -14,6 +14,9 @@ from django.db import models as d_models
 from sequences import get_next_value
 from django.db import transaction
 from decimal import Decimal
+from datetime import datetime, timedelta
+from django.http import HttpResponse
+from . import exports
 
 INVOICES_SEQUENCE_KEY = 'INVOICES'
 INVOICES_DIGITS = 5
@@ -32,6 +35,37 @@ class InvoiceListView(APIView):
         print(request.GET)
         data = serializers.InvoiceSerializer(models.Invoice.objects.all(), many=True).data
         return Response({'result': 0, 'message': 'Fetched invoices successfully', 'data': data})
+
+
+class InvoiceSaleListView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, invoice_id):
+        print(request.GET)
+        data = serializers.SaleSerializer(models.Sale.objects.filter(invoice_id=invoice_id), many=True).data
+        return Response({'result': 0, 'message': 'Fetched invoices successfully', 'data': data})
+
+    def post(self, request, invoice_id):
+        data = models.Sale.objects.filter(invoice_id=invoice_id)
+        export_id = datetime.now().strftime("%Y%m%d%H%M%S")
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = f'attachment; filename="{export_id}_Sales.xlsx"'
+        xlsx_data = exports.export_report(request, data)
+        response.write(xlsx_data)
+        return response
+
+
+class InvoiceReportExportView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        data = models.Invoice.objects.all()
+        export_id = datetime.now().strftime("%Y%m%d%H%M%S")
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = f'attachment; filename="{export_id}_Sales.xlsx"'
+        xlsx_data = exports.export_invoices(request, data)
+        response.write(xlsx_data)
+        return response
 
 
 class InvoiceManageView(APIView):

@@ -7,6 +7,8 @@ import LoadingIndicator from "../../utils/loading/LoadingIndicator";
 import Modal from "../../modal/Modal";
 import Numbers from "../../../_helpers/Numbers";
 import { UserHelper } from "../../../_helpers/UserHelper";
+import InvoiceDetails from "./forms/InvoiceDetails";
+import FileDownload from "../../../_helpers/FileDownload";
 
 @connect((state) => {
   return {
@@ -24,6 +26,7 @@ class List extends Component {
       filter: {},
       create: false,
       invoiceable: null,
+      selected: null,
     };
   }
 
@@ -67,9 +70,10 @@ class List extends Component {
     this.refresh();
   }
 
-  onRowClick(e) {
+  onRowClick(e, row) {
     e.stopPropagation();
-    // this.setState({ selected: row, openDetail: true });
+    console.log(row);
+    this.setState({ selected: row });
   }
 
   handleComplete(e, row) {
@@ -107,9 +111,18 @@ class List extends Component {
       );
     });
   }
+  exportInvoices() {
+    const fname = `${Date.now()}_Invoices.xlsx`;
+    const getFile = (res) => FileDownload.get(res, fname);
+    const logError = (err) => console.error(err);
+    CRUD.export("/invoices/export", this.props.user.token, {
+      onSuccess: getFile,
+      onFail: logError,
+    });
+  }
 
   render() {
-    let { invoices, pages, pageNo, invoiceable } = this.state;
+    let { invoices, pages, pageNo, invoiceable, selected } = this.state;
     console.log(invoices);
     let data = {
       records: invoices,
@@ -167,9 +180,12 @@ class List extends Component {
           <h5>{data.title}</h5>
           <div className="wrap">
             <div className="btn-group float-right">
-              {/* <button className="btn btn-sm btn-outline-primary">
+              <button
+                className="btn btn-sm btn-outline-primary"
+                onClick={this.exportInvoices.bind(this)}
+              >
                 <MatIcon name="arrow_downward" /> Export Invoices
-              </button> */}
+              </button>
               {UserHelper.hasPriv(this.props.user, "Sales.create.invoice") && (
                 <button
                   className="btn btn-sm btn-primary"
@@ -181,9 +197,27 @@ class List extends Component {
             </div>
           </div>
         </div>
-        <BasicCrudView pagination={pagination} data={data} toolbar={true} />
+        <BasicCrudView
+          pagination={pagination}
+          data={data}
+          toolbar={true}
+          onRowClick={this.onRowClick.bind(this)}
+        />
         {this.state.isLoading && (
           <LoadingIndicator isLoading={this.state.isLoading} />
+        )}
+        {selected && (
+          <Modal
+            modalId="invoices-create"
+            title="Invoice Summary"
+            handleClose={() => this.setState({ selected: null })}
+            content={
+              <InvoiceDetails
+                token={this.props.user.token}
+                selected={selected}
+              />
+            }
+          />
         )}
         {this.state.create && invoiceable && (
           <Modal

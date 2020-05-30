@@ -17,6 +17,8 @@ urlpatterns = [
     path('reports/export', reports.SalesReportExport.as_view()),
     path('reports/search', reports.SalesReportList.as_view()),
     path('invoices', invoices.InvoiceListView.as_view()),
+    path('invoices/sales/<int:invoice_id>', invoices.InvoiceSaleListView.as_view()),
+    path('invoices/export', invoices.InvoiceReportExportView.as_view()),
     path('invoices/manage', invoices.InvoiceManageView.as_view()),
     path('invoices/manage/<int:invoice_id>', invoices.InvoiceManageView.as_view()),
 ]

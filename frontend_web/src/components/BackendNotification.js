@@ -32,7 +32,6 @@ class BackendNotification extends React.Component {
   render() {
     const { stack } = this.state;
     const message = stack.length ? stack[0] : null;
-    console.log("Server Url: ", SERVER_URL);
     return (
       message && (
         <div className="backend-notification">

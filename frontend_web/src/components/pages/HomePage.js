@@ -123,7 +123,7 @@ class HomePage extends Component {
         { field: "destination", title: "Destination" },
         { field: "agent", title: "Agent" },
       ],
-      title: "List of sales2",
+      title: "List of sales",
     };
     const pagination = { pages, pageNo, onPageChange: this.onPageChange };
 
