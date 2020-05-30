@@ -65,7 +65,7 @@
 .sidebar-menu li a {
   text-decoration: none;
   line-height: 2.4rem;
-  padding: 0 1rem;
+  /* padding: 0 1rem; */
   font-size: 16px;
   display: block;
   color: var(--sidebar-menu-text-color);
