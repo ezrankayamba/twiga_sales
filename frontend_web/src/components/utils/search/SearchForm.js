@@ -33,7 +33,7 @@ export const SearchForm = ({ searchFields, onSearch }) => {
                 field={fld.search}
                 name={fld.search.name}
                 id={fld.search.name}
-                className="form-control p-2 mt-1"
+                className="form-control p-2"
                 onChange={handleChange}
               />
             );
