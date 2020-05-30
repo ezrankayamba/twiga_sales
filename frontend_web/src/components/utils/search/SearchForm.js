@@ -33,13 +33,13 @@ export const SearchForm = ({ searchFields, onSearch }) => {
                 field={fld.search}
                 name={fld.search.name}
                 id={fld.search.name}
-                className="form-control p-2"
+                className="form-control p-2 mt-1"
                 onChange={handleChange}
               />
             );
           })}
         </div>
-        <div className="form-footer2">
+        <div className="form-footer">
           <button className="btn btn-sm btn-outline-secondary">
             <MatIcon name="search" /> Search
           </button>
