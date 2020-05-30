@@ -40,12 +40,38 @@ class CreateUserView(APIView):
         profile.save()
 
         agent_code = data.get('agent_code', None)
+        commission = data.get('commission', 0)
         if agent_code:
-            models.Agent.objects.create(user=user, code=agent_code)
+            models.Agent.objects.create(user=user, code=agent_code, commission=commission)
 
         return Response({
             'status': 0,
             'message': f'Successfully created user'
+        })
+
+    def put(self, request, pk, format=None):
+        data = request.data
+
+        user = User.objects.get(pk=pk)
+        profile = user.profile
+        profile.role_id = data['role']
+        profile.save()
+
+        agent_code = data.get('agent_code', None)
+        commission = data.get('commission', None)
+        if not commission:
+            commission = 0.00
+        agent = user.agent
+        if not agent and agent_code:
+            models.Agent.objects.create(user=user, code=agent_code, commission=commission)
+        else:
+            agent.code = agent_code
+            agent.commission = commission
+            agent.save()
+
+        return Response({
+            'status': 0,
+            'message': f'Successfully updated user'
         })
 
 

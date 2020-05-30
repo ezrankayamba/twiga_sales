@@ -4,48 +4,48 @@ import {
   apiGet,
   apiGetPaginated,
   apiPost,
-  apiUpdate
+  apiUpdate,
 } from "./WebService";
 
-export const getPrivileges = user =>
+export const getPrivileges = (user) =>
   user && user.profile && user.profile.role ? user.profile.role.privileges : [];
 export const loginPost = (username, password, cb) => {
   let data = `username=${username}&password=${password}&grant_type=password&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}`;
   fetch(BASE_URL + "/oauth2/token/", {
     method: "POST",
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
+      "Content-Type": "application/x-www-form-urlencoded",
     },
-    body: data
+    body: data,
   })
-    .then(res => res.json())
-    .then(res => {
+    .then((res) => res.json())
+    .then((res) => {
       apiGet(BASE_URL + "/users/me/", res.access_token)
-        .then(userRes => {
+        .then((userRes) => {
           cb({ ...userRes, ...res });
         })
-        .catch(reason => {
+        .catch((reason) => {
           cb(false);
         });
     })
-    .catch(reason => {
+    .catch((reason) => {
       cb(false);
     });
 };
 
 export const fetchUsers = (token, page, cb) => {
   apiGetPaginated(BASE_URL + "/users", token, page)
-    .then(res => {
+    .then((res) => {
       if (res.status === 200) {
         let { pages, records } = res.headers;
         cb({
           data: res.data,
           pages,
-          records
+          records,
         });
       } else throw Error("Failure response: " + res.status);
     })
-    .catch(e => {
+    .catch((e) => {
       console.error(e);
       cb(false);
     });
@@ -53,17 +53,17 @@ export const fetchUsers = (token, page, cb) => {
 
 export const fetchRoles = (token, page = 1, cb) => {
   apiGetPaginated(BASE_URL + "/users/roles", token, page)
-    .then(res => {
+    .then((res) => {
       if (res.status === 200) {
         let { pages, records } = res.headers;
         cb({
           data: res.data,
           pages,
-          records
+          records,
         });
       } else throw Error("Failure response: " + res.status);
     })
-    .catch(e => {
+    .catch((e) => {
       console.error(e);
       cb(false);
     });
@@ -71,7 +71,15 @@ export const fetchRoles = (token, page = 1, cb) => {
 export const createUser = (token, body, cb) => {
   apiPost(BASE_URL + "/users/create", body, token)
     .then(cb)
-    .catch(e => {
+    .catch((e) => {
+      console.error(e);
+      cb(false);
+    });
+};
+export const updateUser = (token, body, id, cb) => {
+  apiUpdate(BASE_URL + "/users/update/", body, id, token)
+    .then(cb)
+    .catch((e) => {
       console.error(e);
       cb(false);
     });
@@ -79,9 +87,9 @@ export const createUser = (token, body, cb) => {
 export const createOrUpdateRole = (token, params, cb) => {
   let id = params.id;
   let fp = [];
-  Object.keys(params).forEach(key => {
+  Object.keys(params).forEach((key) => {
     if (Array.isArray(params[key])) {
-      params[key].forEach(o => {
+      params[key].forEach((o) => {
         fp.push(`${key}=${o}`);
       });
     } else {
@@ -93,14 +101,14 @@ export const createOrUpdateRole = (token, params, cb) => {
   if (id) {
     apiUpdate(url, body, id, token, "application/x-www-form-urlencoded")
       .then(cb)
-      .catch(e => {
+      .catch((e) => {
         console.error(e);
         cb(false);
       });
   } else {
     apiPost(url, body, token, "application/x-www-form-urlencoded")
       .then(cb)
-      .catch(e => {
+      .catch((e) => {
         console.error(e);
         cb(false);
       });
@@ -110,7 +118,7 @@ export const createOrUpdateRole = (token, params, cb) => {
 export const deleteUser = (token, id, cb) => {
   apiDelete(BASE_URL + "/users/details/" + id, token)
     .then(cb)
-    .catch(e => {
+    .catch((e) => {
       console.error(e);
       cb(false);
     });
@@ -118,7 +126,7 @@ export const deleteUser = (token, id, cb) => {
 export const deleteRole = (token, id, cb) => {
   apiDelete(BASE_URL + "/users/roles/" + id, token)
     .then(cb)
-    .catch(e => {
+    .catch((e) => {
       console.error(e);
       cb(false);
     });
@@ -127,5 +135,5 @@ export const deleteRole = (token, id, cb) => {
 export const fetchPrivs = (token, cb) => {
   apiGet(BASE_URL + "/users/privileges", token)
     .then(cb)
-    .catch(e => cb(false));
+    .catch((e) => cb(false));
 };

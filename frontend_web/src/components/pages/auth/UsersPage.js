@@ -5,6 +5,7 @@ import {
   deleteUser,
   fetchRoles,
   fetchUsers,
+  updateUser,
 } from "../../../_services/AuthService";
 import { clearNewOption } from "../../../redux/forms/actions";
 import MatIcon from "../../utils/icons/MatIcon";
@@ -32,8 +33,10 @@ class UsersPage extends Component {
       isLoading: false,
       snackbar: null,
       openAdd: false,
+      openUpdate: false,
       pages: 1,
       pageNo: 1,
+      selected: null,
     };
     this.snackDone = this.snackDone.bind(this);
     this.newComplete = this.newComplete.bind(this);
@@ -71,6 +74,7 @@ class UsersPage extends Component {
                     ? u.profile.role.name
                     : "No role assigned",
                 agent_code: u.agent ? u.agent.code : "N/A",
+                commission: u.agent ? u.agent.commission : "N/A",
               };
             }),
             isLoading: false,
@@ -91,25 +95,33 @@ class UsersPage extends Component {
 
   onRowClick(e, row) {
     console.log(row);
+    this.setState({ selected: row, openForm: true });
   }
 
-  newComplete(param) {
-    this.setState({ openAdd: false });
+  newComplete() {
+    this.setState({ openForm: false });
   }
 
   onAdd(params, cb) {
     createUser(this.props.user.token, params, (res) => {
       if (res) {
         cb(true);
-        this.setState({ openAdd: false }, this.refresh);
+        this.setState({ openForm: false }, this.refresh);
+      }
+    });
+  }
+  onUpdate(params, cb) {
+    updateUser(this.props.user.token, params, params.id, (res) => {
+      if (res) {
+        cb(true);
+        this.setState({ openForm: false }, this.refresh);
       }
     });
   }
 
   render() {
-    const { loggedIn } = this.props;
-    const { isLoading, snackbar, openAdd } = this.state;
-    let { users, pages, pageNo, roles } = this.state;
+    const { isLoading, snackbar, openForm } = this.state;
+    let { users, pages, pageNo, roles, selected } = this.state;
 
     let data = {
       records: users,
@@ -118,6 +130,7 @@ class UsersPage extends Component {
         { field: "username", title: "Username" },
         { field: "role", title: "Role" },
         { field: "agent_code", title: "Agent Code" },
+        { field: "commission", title: "Commission" },
         {
           field: "action",
           title: "Action",
@@ -139,18 +152,36 @@ class UsersPage extends Component {
     let form = {
       title: "User Form",
       fields: [
+        { name: "id", type: "hidden", value: selected ? selected.id : null },
         {
           name: "username",
           label: "Username",
+          value: selected ? selected.username : "",
           validator: {
             valid: (val) => (val ? val.length >= 5 : false),
             error: "Username should be at least 5 characters",
           },
         },
-        { name: "role", label: "Role", type: "select", options: roles },
-        { name: "agent_code", label: "Agent Code" },
+        {
+          name: "role",
+          label: "Role",
+          type: "select",
+          options: roles,
+          value: selected ? selected.profile.role.id : "",
+        },
+        {
+          name: "agent_code",
+          label: "Agent Code",
+          value: selected && selected.agent ? selected.agent.code : "",
+        },
+        {
+          name: "commission",
+          label: "Commission",
+          type: "number",
+          value: selected && selected.agent ? selected.agent.commission : "",
+        },
       ],
-      onSubmit: this.onAdd.bind(this),
+      onSubmit: selected ? this.onUpdate.bind(this) : this.onAdd.bind(this),
     };
 
     return (
@@ -188,12 +219,11 @@ class UsersPage extends Component {
               error={snackbar.error}
             />
           )}
-          {openAdd && (
+          {openForm && (
             <Modal
               title={form.title}
               modalId="addUserForm"
-              handleClose={() => this.newComplete(false)}
-              show={openAdd}
+              handleClose={() => this.newComplete()}
               content={
                 <CommonForm
                   meta={{ ...form, title: null }}

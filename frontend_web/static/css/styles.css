@@ -51,6 +51,12 @@ body {
   width: 100vw;
   height: 100vh;
 }
+.list-toolbar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+  align-items: center;
+}
 .main-content {
   padding: 0.4rem;
 }

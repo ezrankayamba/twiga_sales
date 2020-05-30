@@ -9,5 +9,6 @@ urlpatterns = [
     path('', views.UserListView.as_view()),
     path('roles/', views.RoleListView.as_view()),
     path('create', views.CreateUserView.as_view()),
+    path('update/<int:pk>', views.CreateUserView.as_view()),
     path('privileges', views.privileges),
 ]

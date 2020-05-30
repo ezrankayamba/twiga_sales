@@ -250,7 +250,10 @@ class SaleDocsView(APIView):
             sale.total_value2 = data['total_value2']
             sale.save()
             for doc in docs:
+                exist = models.Document.objects.filter(doc_type=doc['doc_type'], sale=sale).first()
                 models.Document.objects.create(**doc)
+                if exist:
+                    models.Document.objects.get(pk=exist.id).delete()
             return Response({
                 'status': 0,
                 'message': f'Successfully uploaded documents'
