@@ -66,8 +66,9 @@ class CreateUserView(APIView):
             agent = user.agent
         except Exception as e:
             pass
-        if not agent and agent_code:
-            models.Agent.objects.create(user=user, code=agent_code, commission=commission)
+        if not agent:
+            if agent_code:
+                models.Agent.objects.create(user=user, code=agent_code, commission=commission)
         else:
             agent.code = agent_code
             agent.commission = commission
