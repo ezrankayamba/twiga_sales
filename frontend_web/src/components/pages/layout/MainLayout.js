@@ -2,7 +2,12 @@ import React, { Component } from "react";
 import Pages from "../../menus/Pages";
 import SideMenu from "../../menus/SideMenu";
 import BackendNotification from "../../BackendNotification";
-
+import { connect } from "react-redux";
+@connect((state) => {
+  return {
+    user: state.auth.user,
+  };
+})
 class MainLayout extends Component {
   state = { avatarOn: false };
   componentDidMount() {
@@ -16,6 +21,7 @@ class MainLayout extends Component {
   }
   render() {
     const { avatarOn } = this.state;
+    const { user } = this.props;
     return (
       <>
         <header class="navbar">
@@ -27,7 +33,7 @@ class MainLayout extends Component {
           </div>
           <div class={`avatar${avatarOn ? " on" : ""}`}>
             <img
-              src="https://via.placeholder.com/150"
+              src={user.profile.image}
               alt=""
               onClick={this.toggleAvatar.bind(this)}
             />
