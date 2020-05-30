@@ -32,8 +32,6 @@ class UsersPage extends Component {
       roles: [],
       isLoading: false,
       snackbar: null,
-      openAdd: false,
-      openUpdate: false,
       pages: 1,
       pageNo: 1,
       selected: null,
@@ -106,7 +104,7 @@ class UsersPage extends Component {
     createUser(this.props.user.token, params, (res) => {
       if (res) {
         cb(true);
-        this.setState({ openForm: false }, this.refresh);
+        this.setState({ openForm: false, selected: null }, this.refresh);
       }
     });
   }
@@ -114,7 +112,7 @@ class UsersPage extends Component {
     updateUser(this.props.user.token, params, params.id, (res) => {
       if (res) {
         cb(true);
-        this.setState({ openForm: false }, this.refresh);
+        this.setState({ openForm: false, selected: null }, this.refresh);
       }
     });
   }
@@ -195,7 +193,7 @@ class UsersPage extends Component {
               <div className="btn-group float-md-right">
                 <button
                   className="btn btn-link p-0"
-                  onClick={() => this.setState({ openAdd: true })}
+                  onClick={() => this.setState({ openForm: true })}
                 >
                   <MatIcon name="add" extra="size-2" />
                 </button>
