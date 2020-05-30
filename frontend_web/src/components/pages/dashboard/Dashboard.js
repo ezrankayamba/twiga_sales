@@ -37,8 +37,7 @@ class Dashboard extends React.Component {
           completed.volume.push(withdocs.volume);
         });
         let lineProps = {
-          borderColor: "#3FF",
-          backgroundColor: "transparent",
+          backgroundColor: "#3FF",
           borderWidth: 1,
         };
         let barProps = {
@@ -57,7 +56,6 @@ class Dashboard extends React.Component {
                 ...lineProps,
                 label: "Quantity with completed docs",
                 data: completed.qty,
-                type: "line",
               },
             ],
             labels,
@@ -69,7 +67,6 @@ class Dashboard extends React.Component {
                 ...lineProps,
                 label: "Value with complete docs",
                 data: completed.value,
-                type: "line",
               },
             ],
             labels,
@@ -81,7 +78,6 @@ class Dashboard extends React.Component {
                 ...lineProps,
                 label: "Volume with complete docs",
                 data: completed.volume,
-                type: "line",
               },
             ],
             labels,
