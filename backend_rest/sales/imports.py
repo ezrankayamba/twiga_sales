@@ -128,7 +128,7 @@ def read_entries(zip, row, docs_list, agent):
                     else:
                         docs.append({
                             'ref_number': ref_number,
-                            'file': File(pdf_data, name=filename.split(' ')[1]),
+                            'file': File(pdf_data, name=filename),
                             'sale': sale,
                             'doc_type': name,
                             'truck': truck
