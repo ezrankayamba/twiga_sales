@@ -121,7 +121,8 @@ def read_entries(zip, row, docs_list, agent):
                 ret = re.search(regex, ocr.extract_from_file(pdf_data, **args))
                 error = None
                 if ret:
-                    ref_number = ret.group(1)
+                    prefix = d.get('prefix', '')
+                    ref_number = f'{prefix}{ret.group(1)}'
                     duplicate = models.Document.objects.filter(ref_number=ref_number, truck=truck).first()
                     if duplicate:
                         error = f'Duplicate {name} document'
