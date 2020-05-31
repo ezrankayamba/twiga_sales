@@ -21,7 +21,7 @@ def doc_key(name):
 
 docs_schema = [
     {'name': models.Document.DOC_C2, 'letter': models.Document.LETTER_C2, 'key': doc_key(
-        models.Document.DOC_C2), 'regex': '[\\n[]{1,}(\w{5,})[\({ ]', 'params': {'x': 700, 'y': 600, 'h': 200, 'w': 600, 'threshold': 237}},
+        models.Document.DOC_C2), 'regex': '[\\n[]{1,}(\w{5,})[\({ ]', 'params': {'x': 700, 'y': 600, 'h': 300, 'w': 600, 'threshold': 237}},
     {'name': models.Document.DOC_ASSESSMENT, 'prefix': 'C ', 'letter': models.Document.LETTER_ASSESSMENT, 'key': doc_key(models.Document.DOC_ASSESSMENT), 'regex': ' (\d{2,})', 'params': {
         'x': 900, 'y': 120, 'h': 300, 'w': 600, 'threshold': 225}},
     {'name': models.Document.DOC_EXIT, 'letter': models.Document.LETTER_EXIT, 'key': doc_key(
