@@ -151,8 +151,8 @@ def de_skew(image):
     return rotated
 
 
-# file = 'C:/Users/godfred.nkayamba/Downloads/SO2945062001/SO2945172001/E .pdf'
-# with open(file, 'rb') as pdf_data:
-#     image = get_image(pdf_data)
-#     image = np.array(image)
-#     de_skew(image)
+file = 'C:/Users/godfred.nkayamba/Downloads/SO2945062001/SO2945062001/E .pdf'
+with open(file, 'rb') as pdf_data:
+    image = get_image(pdf_data)
+    image = np.array(image)
+    de_skew(image)
