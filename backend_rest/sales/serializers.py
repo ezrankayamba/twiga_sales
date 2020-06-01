@@ -33,3 +33,18 @@ class InvoiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Invoice
         fields = '__all__'
+
+
+class ParamsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Params
+        fields = ['x', 'y', 'h', 'w', 'threshold']
+
+
+class SchemaSerializer(serializers.ModelSerializer):
+    params = ParamsSerializer(many=False, read_only=True)
+
+    class Meta:
+        model = models.Schema
+        fields = '__all__'

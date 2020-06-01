@@ -19,14 +19,16 @@ def doc_key(name):
     return f'{name.lower()}_doc'
 
 
-docs_schema = [
-    {'name': models.Document.DOC_C2, 'letter': models.Document.LETTER_C2, 'key': doc_key(
-        models.Document.DOC_C2), 'regex': '[\\n[]{1,}(\w{5,})[\({ ]', 'params': {'x': 700, 'y': 600, 'h': 300, 'w': 600, 'threshold': 225}},
-    {'name': models.Document.DOC_ASSESSMENT, 'prefix': 'C ', 'letter': models.Document.LETTER_ASSESSMENT, 'key': doc_key(models.Document.DOC_ASSESSMENT), 'regex': ' (\d{2,})', 'params': {
-        'x': 900, 'y': 120, 'h': 300, 'w': 600, 'threshold': 225}},
-    {'name': models.Document.DOC_EXIT, 'letter': models.Document.LETTER_EXIT, 'key': doc_key(
-        models.Document.DOC_EXIT), 'regex': '(\d{4} [\w/]+)', 'params': {'x': 140, 'y': 920, 'h': 300, 'w': 600, 'threshold': 220}}
-]
+def docs_schema():
+    # return serializers.SchemaSerializer(models.Schema.objects.all(), many=True).data
+    return [
+        {'name': models.Document.DOC_C2, 'letter': models.Document.LETTER_C2, 'key': doc_key(
+            models.Document.DOC_C2), 'regex': '[\\n[]{1,}(\w{5,})[\({ ]', 'params': {'x': 700, 'y': 600, 'h': 300, 'w': 600, 'threshold': 225}, 'mandatory': True},
+        {'name': models.Document.DOC_ASSESSMENT, 'prefix': 'C ', 'letter': models.Document.LETTER_ASSESSMENT, 'key': doc_key(models.Document.DOC_ASSESSMENT), 'regex': ' (\d{2,})', 'params': {
+            'x': 900, 'y': 120, 'h': 300, 'w': 600, 'threshold': 210}, 'mandatory': True},
+        {'name': models.Document.DOC_EXIT, 'letter': models.Document.LETTER_EXIT, 'key': doc_key(
+            models.Document.DOC_EXIT), 'regex': '(\d{4} [\w/]+)', 'params': {'x': 140, 'y': 870, 'h': 300, 'w': 600, 'threshold': 220}, 'mandatory': False}
+    ]
 
 
 def import_sales(batch):
@@ -106,7 +108,7 @@ def read_entries(zip, row, docs_list, agent):
                 doc_type = filename[0]
                 d = None
                 try:
-                    d = next(x for x in docs_schema if doc_type == x['letter'])
+                    d = next(x for x in docs_schema() if doc_type == x['letter'])
                 except Exception as e:
                     print(e)
                     res = {'sale': sale, 'result': -1, 'errors': [{'sale': 'Sales order number is not valid'}]}
@@ -118,11 +120,13 @@ def read_entries(zip, row, docs_list, agent):
                     continue
 
                 args, name, regex, pdf_data = (d['params'], d['name'], d['regex'], io.BytesIO(file.read()))
+                print(name, f'"{regex}"')
                 ret = re.search(regex, ocr.extract_from_file(pdf_data, **args))
                 error = None
                 if ret:
                     prefix = d.get('prefix', '')
                     ref_number = f'{prefix}{ret.group(1)}'
+                    print(ref_number)
                     duplicate = models.Document.objects.filter(ref_number=ref_number, truck=truck).first()
                     if duplicate:
                         error = f'Duplicate {name} document'
@@ -142,7 +146,8 @@ def read_entries(zip, row, docs_list, agent):
                         'name': name,
                         'message': error,
                     })
-        if len(errors):
+
+        if len(list(filter(lambda x: x.mandatory, errors))):
             print('Errors: ', errors)
         else:
             print('Docs: ', docs)

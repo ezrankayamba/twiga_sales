@@ -12,6 +12,7 @@ import io
 import re
 from django.db import models as d_models
 from . import reports
+import ast
 
 
 class SaleListView(generics.ListCreateAPIView):
@@ -128,7 +129,7 @@ class SaleDocsView(APIView):
 
         errors = []
         docs = []
-        for d in imports.docs_schema:
+        for d in imports.docs_schema():
             if d['key'] not in request.FILES:
                 continue
             print()
@@ -168,7 +169,7 @@ class SaleDocsView(APIView):
                 })
         print()
         print("======================")
-        if len(errors):
+        if len(list(filter(lambda x: x.mandatory, errors))):
             print('Errors: ', errors)
             return Response({
                 'status': -1,
@@ -185,7 +186,8 @@ class SaleDocsView(APIView):
                 models.Document.objects.create(**doc)
             return Response({
                 'status': 0,
-                'message': f'Successfully uploaded documents'
+                'message': f'Successfully uploaded documents',
+                'errors': errors
             })
 
     def put(self, request, format=None):
@@ -196,7 +198,7 @@ class SaleDocsView(APIView):
 
         errors = []
         docs = []
-        for d in imports.docs_schema:
+        for d in imports.docs_schema():
             if d['key'] not in request.FILES:
                 continue
             print()
@@ -236,7 +238,7 @@ class SaleDocsView(APIView):
                 })
         print()
         print("======================")
-        if len(errors):
+        if len(list(filter(lambda x: x.mandatory, errors))):
             print('Errors: ', errors)
             return Response({
                 'status': -1,
@@ -256,7 +258,8 @@ class SaleDocsView(APIView):
                     models.Document.objects.get(pk=exist.id).delete()
             return Response({
                 'status': 0,
-                'message': f'Successfully uploaded documents'
+                'message': f'Successfully uploaded documents',
+                'errors': errors
             })
 
 
@@ -280,12 +283,14 @@ class TestOCRView(APIView):
         text = ocr.extract_from_file(pdf_data, **args)
         print(text)
         schema = None
-        for d in imports.docs_schema:
+        for d in imports.docs_schema():
             if d['letter'] != letter:
                 continue
             schema = d
             prefix = d.get('prefix', '')
-            ret = re.search(d['regex'], text)
+            regex = d['regex']
+            print(regex)
+            ret = re.search(regex, text)
             if ret:
                 return Response({
                     'status': 0,

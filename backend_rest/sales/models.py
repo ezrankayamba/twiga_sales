@@ -5,6 +5,12 @@ from users import models as u_models
 TRUCK_THRESHOLD = 25.00
 
 
+class NonStrippingCharField(models.CharField):
+    def formfield(self, **kwargs):
+        kwargs['strip'] = False
+        return super(NonStrippingCharField, self).formfield(**kwargs)
+
+
 class Invoice(models.Model):
     number = models.CharField(max_length=20)
     commission = models.DecimalField(max_digits=20, decimal_places=2)
@@ -78,3 +84,26 @@ class Batch(models.Model):
 
     def __str__(self):
         return f'{self.user} - {self.created_at}'
+
+
+class Params(models.Model):
+    x = models.IntegerField()
+    y = models.IntegerField()
+    h = models.IntegerField()
+    w = models.IntegerField()
+    threshold = models.IntegerField()
+
+    def __str__(self):
+        return f'{self.schema} params'
+
+
+class Schema(models.Model):
+    name = models.CharField(max_length=40)
+    letter = models.CharField(max_length=40)
+    key = models.CharField(max_length=40)
+    regex = NonStrippingCharField(max_length=40)
+    prefix = NonStrippingCharField(max_length=40, null=True, blank=True)
+    params = models.OneToOneField(Params, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name

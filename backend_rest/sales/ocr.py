@@ -61,7 +61,7 @@ def extract_from_file(file, **kwargs):
         del kwargs['threshold']
     res = extract(crop(auto_crop(get_image(file), threshold=threshold), **kwargs))
     res = ''.join(filter(lambda x: x in set(string.printable), res))
-    print(res)
+    print("Result: ", res)
     return res.upper()
 
 
