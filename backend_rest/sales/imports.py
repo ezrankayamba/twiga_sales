@@ -116,7 +116,7 @@ def read_entries(zip, row, docs_list, agent):
                         'key': 'Unknown',
                         'name': "Unknown",
                         'message': "Not valid document or invalid prefix",
-                        'mandatory': doc_entry['mandatory']
+                        'mandatory': True
                     })
                     continue
 
@@ -146,7 +146,7 @@ def read_entries(zip, row, docs_list, agent):
                         'key': d['key'],
                         'name': name,
                         'message': error,
-                        'mandatory': doc_entry['mandatory']
+                        'mandatory': d['mandatory']
                     })
 
         if len(list(filter(lambda x: x['mandatory'], errors))):
