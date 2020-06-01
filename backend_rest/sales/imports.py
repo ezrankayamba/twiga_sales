@@ -147,7 +147,7 @@ def read_entries(zip, row, docs_list, agent):
                         'message': error,
                     })
 
-        if len(list(filter(lambda x: x.mandatory, errors))):
+        if len(list(filter(lambda x: x['mandatory'], errors))):
             print('Errors: ', errors)
         else:
             print('Docs: ', docs)

@@ -169,7 +169,7 @@ class SaleDocsView(APIView):
                 })
         print()
         print("======================")
-        if len(list(filter(lambda x: x.mandatory, errors))):
+        if len(list(filter(lambda x: x['mandatory'], errors))):
             print('Errors: ', errors)
             return Response({
                 'status': -1,
@@ -238,7 +238,7 @@ class SaleDocsView(APIView):
                 })
         print()
         print("======================")
-        if len(list(filter(lambda x: x.mandatory, errors))):
+        if len(list(filter(lambda x: x['mandatory'], errors))):
             print('Errors: ', errors)
             return Response({
                 'status': -1,
