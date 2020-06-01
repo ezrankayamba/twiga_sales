@@ -91,7 +91,7 @@ def new_extract_from_file(regex, pdf_data, **kwargs):
     ref_number = None
     image = get_image(pdf_data)
     img = np.array(image)
-    img = crop(img, **kwargs)
+    img = crop(de_skew(img), **kwargs)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     print(img.shape)
     ret, thresh1 = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU | cv2.THRESH_BINARY_INV)
@@ -132,3 +132,27 @@ def remove_lines():
 
 
 # remove_lines()
+
+
+def de_skew(image):
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    gray = 255 - gray
+    thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+    coords = np.column_stack(np.where(thresh > 0))
+    angle = cv2.minAreaRect(coords)[-1]
+    if angle < -45:
+        angle = -(90 + angle)
+    else:
+        angle = -angle
+    (h, w) = image.shape[:2]
+    center = (w // 2, h // 2)
+    M = cv2.getRotationMatrix2D(center, angle, 1.0)
+    rotated = cv2.warpAffine(image, M, (w, h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
+    return rotated
+
+
+# file = 'C:/Users/godfred.nkayamba/Downloads/SO2945062001/SO2945172001/E .pdf'
+# with open(file, 'rb') as pdf_data:
+#     image = get_image(pdf_data)
+#     image = np.array(image)
+#     de_skew(image)
