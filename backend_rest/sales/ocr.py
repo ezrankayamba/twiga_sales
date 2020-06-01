@@ -134,25 +134,33 @@ def remove_lines():
 # remove_lines()
 
 
-def de_skew(image):
+def de_skew(image, show=False):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     gray = 255 - gray
     thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
     coords = np.column_stack(np.where(thresh > 0))
     angle = cv2.minAreaRect(coords)[-1]
+    print(angle)
+    if abs(angle) < 0.50:
+        return image
     if angle < -45:
-        angle = -(90 + angle)
+        angle = (90 + angle)
     else:
         angle = -angle
+    print(angle)
     (h, w) = image.shape[:2]
     center = (w // 2, h // 2)
     M = cv2.getRotationMatrix2D(center, angle, 1.0)
     rotated = cv2.warpAffine(image, M, (w, h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
+    if show:
+        cv2.imshow("Unrotated", image)
+        cv2.imshow("Rotated", rotated)
+        cv2.waitKey(0)
     return rotated
 
 
-file = 'C:/Users/godfred.nkayamba/Downloads/SO2945062001/SO2945062001/E .pdf'
-with open(file, 'rb') as pdf_data:
-    image = get_image(pdf_data)
-    image = np.array(image)
-    de_skew(image)
+# file = 'C:/Users/godfred.nkayamba/Downloads/SO2945062001/SO2945062001/E .pdf'
+# with open(file, 'rb') as pdf_data:
+#     image = get_image(pdf_data)
+#     image = np.array(image)
+#     de_skew(image, show=True)
