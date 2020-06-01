@@ -122,11 +122,11 @@ def read_entries(zip, row, docs_list, agent):
 
                 args, name, regex, pdf_data = (d['params'], d['name'], d['regex'], io.BytesIO(file.read()))
                 print(name, f'"{regex}"')
-                ret = re.search(regex, ocr.extract_from_file(pdf_data, **args))
+                ref_number = ocr.new_extract_from_file(regex, pdf_data, **args)
                 error = None
-                if ret:
+                if ref_number:
                     prefix = d.get('prefix', '')
-                    ref_number = f'{prefix}{ret.group(1)}'
+                    ref_number = f'{prefix}{ref_number}'
                     print(ref_number)
                     duplicate = models.Document.objects.filter(ref_number=ref_number, truck=truck).first()
                     if duplicate:
