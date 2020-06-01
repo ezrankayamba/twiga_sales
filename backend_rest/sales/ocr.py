@@ -5,6 +5,23 @@ import io
 import cv2
 import numpy as np
 from pdf2image import convert_from_bytes
+import re
+from time import time
+
+
+class Timer():
+    def __init__(self, message, name=None, writer=None):
+        self.message = message
+        self.writer = writer
+        self.name = name
+
+    def __enter__(self):
+        self.start = time()
+        return None  # could return anything, to be used like this: with Timer("Message") as value:
+
+    def __exit__(self, type, value, traceback):
+        elapsed_time = (time() - self.start) * 1000
+        print(self.message.format(elapsed_time))
 
 
 def get_image(data):
@@ -65,22 +82,53 @@ def extract_from_file(file, **kwargs):
     return res.upper()
 
 
+def new_extract_from_file(regex, pdf_data, **kwargs):
+    threshold = kwargs.get('threshold')
+    if not threshold:
+        threshold = 210
+    else:
+        del kwargs['threshold']
+    ref_number = None
+    image = get_image(pdf_data)
+    img = np.array(image)
+    img = crop(img, **kwargs)
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    print(img.shape)
+    ret, thresh1 = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU | cv2.THRESH_BINARY_INV)
+    rect_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (100, 100))
+    dilation = cv2.dilate(thresh1, rect_kernel, iterations=1)
+    contours, hierarchy = cv2.findContours(dilation, cv2.RETR_EXTERNAL,
+                                           cv2.CHAIN_APPROX_NONE)
+    im2 = img.copy()
+    count = 0
+    for cnt in contours:
+        x, y, w, h = cv2.boundingRect(cnt)
+        rect = cv2.rectangle(im2, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        cropped = im2[y:y + h, x:x + w]
+        text = pytesseract.image_to_string(auto_crop(cropped, threshold)).strip()
+        if text:
+            print(text)
+            ret = re.search(regex, text.strip())
+            if ret:
+                ref_number = ret.group(1)
+                print(ref_number)
+                break
+        count += 1
+    print(f'{count} iteration(s): {ref_number}')
+    return ref_number
+
+
 def remove_lines():
     print("Test")
-    file = 'C:\\Users\\godfred.nkayamba\\Downloads\\Bulk Upload Export Docs (2)\\SOC200004272\\E .pdf'
-    with open(file, 'rb') as pdf_data:
-        print(pdf_data)
-        image = get_image(pdf_data)
-        img = np.array(image)
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    file = 'C:/Users/godfred.nkayamba/Downloads/SO2945062001/SO2945052001/E .pdf'
 
-        img_med = cv2.medianBlur(gray, ksize=15)
-        ret, th_img = cv2.threshold(img_med, thresh=220, maxval=255, type=cv2.THRESH_BINARY)
-        # cv2.imshow("Img", th_img)
-        img_dest = gray.copy()
-        img_dest[th_img == 0] = 255
-        cv2.imshow("Img", img_dest)
-        cv2.waitKey()
+    with open(file, 'rb') as pdf_data:
+        # kwargs = {'x': 20, 'y': 900, 'h': 400, 'w': 600}
+        kwargs = {'x': 20, 'y': 700, 'h': 400, 'w': 600, 'threshold': 220, 'show': True}
+        regex = 'Declaration[\w :]{1,}(\d{4} [\w/]+)'
+        with Timer("Elapsed time to extract text: {:,.2f} ms"):
+            new_extract_from_file(regex, pdf_data, **kwargs)
+    print(file)
 
 
 # remove_lines()

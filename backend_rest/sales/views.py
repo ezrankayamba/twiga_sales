@@ -137,11 +137,12 @@ class SaleDocsView(APIView):
             file = request.FILES[d['key']]
             pdf_data = io.BytesIO(file.read())
             args = d['params']
-            text = ocr.extract_from_file(pdf_data, **args)
-            ret = re.search(d['regex'], text)
-            if ret:
+            regex = d['regex']
+            ref_number = ocr.new_extract_from_file(regex, pdf_data, **args)
+            # ret = re.search(d['regex'], text)
+            if ref_number:
                 prefix = d.get('prefix', '')
-                ref_number = f'{prefix}{ret.group(1)}'
+                ref_number = f'{prefix}{ref_number}'
                 print(d['name'], ref_number)
                 name = d['name']
                 duplicate = models.Document.objects.filter(ref_number=ref_number, truck=truck).first()
@@ -150,6 +151,7 @@ class SaleDocsView(APIView):
                         'key': d['key'],
                         'name': d['name'],
                         'message': f'Duplicate {name} document',
+                        'mandatory': d['mandatory']
                     })
                 else:
                     docs.append({
@@ -160,12 +162,12 @@ class SaleDocsView(APIView):
                         'truck': truck
                     })
             else:
-                print(d['name'], text)
                 name = d['name']
                 errors.append({
                     'key': d['key'],
                     'name': d['name'],
                     'message': f'Invalid {name} document',
+                    'mandatory': d['mandatory']
                 })
         print()
         print("======================")
@@ -206,11 +208,12 @@ class SaleDocsView(APIView):
             file = request.FILES[d['key']]
             pdf_data = io.BytesIO(file.read())
             args = d['params']
-            text = ocr.extract_from_file(pdf_data, **args)
-            ret = re.search(d['regex'], text)
-            if ret:
+            regex = d['regex']
+            ref_number = ocr.new_extract_from_file(regex, pdf_data, **args)
+            # ret = re.search(d['regex'], text)
+            if ref_number:
                 prefix = d.get('prefix', '')
-                ref_number = f'{prefix}{ret.group(1)}'
+                ref_number = f'{prefix}{ref_number}'
                 print(d['name'], ref_number)
                 name = d['name']
                 duplicate = models.Document.objects.filter(ref_number=ref_number, truck=truck).first()
@@ -219,6 +222,7 @@ class SaleDocsView(APIView):
                         'key': d['key'],
                         'name': d['name'],
                         'message': f'Duplicate {name} document',
+                        'mandatory': d['mandatory']
                     })
                 else:
                     docs.append({
@@ -229,12 +233,12 @@ class SaleDocsView(APIView):
                         'truck': truck
                     })
             else:
-                print(d['name'], text)
                 name = d['name']
                 errors.append({
                     'key': d['key'],
                     'name': d['name'],
                     'message': f'Invalid {name} document',
+                    'mandatory': d['mandatory']
                 })
         print()
         print("======================")
@@ -280,29 +284,32 @@ class TestOCRView(APIView):
         for p in params:
             args[p] = int(params.get(p))
         print('Args: ', args)
-        text = ocr.extract_from_file(pdf_data, **args)
-        print(text)
-        schema = None
-        for d in imports.docs_schema():
-            if d['letter'] != letter:
-                continue
-            schema = d
-            prefix = d.get('prefix', '')
-            regex = d['regex']
-            print(regex)
-            ret = re.search(regex, text)
-            if ret:
-                return Response({
-                    'status': 0,
-                    'message': 'Successfully extracted text',
-                    'text': f'{prefix}{ret.group(1)}',
-                    'name': d['name'],
-                    'raw': text
-                })
+        with ocr.Timer("Elapsed time to extract text: {:,.2f} ms"):
+
+            schema = None
+
+            for d in imports.docs_schema():
+                if d['letter'] != letter:
+                    continue
+
+                schema = d
+                prefix = d.get('prefix', '')
+                regex = d['regex']
+                ref_number = ocr.new_extract_from_file(regex, pdf_data, **args)
+                print(ref_number)
+                # print(regex)
+                # ret = re.search(regex, text)
+                if ref_number:
+                    return Response({
+                        'status': 0,
+                        'message': 'Successfully extracted text',
+                        'text': f'{prefix}{ref_number}',
+                        'name': d['name'],
+                    })
 
         return Response({
             'status': -1,
             'message': 'System was not able to validate the document',
-            'text': text,
+            'text': ref_number,
             'schema': schema
         })
