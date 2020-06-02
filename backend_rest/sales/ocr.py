@@ -94,48 +94,37 @@ def new_extract_from_file(regex, pdf_data, **kwargs):
     img = np.array(image)
     img = crop(auto_crop(de_skew(img), threshold), **kwargs)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    # print(img.shape)
-    # ret, thresh1 = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU | cv2.THRESH_BINARY_INV)
-    # rect_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (64, 64))
-    # dilation = cv2.dilate(thresh1, rect_kernel, iterations=1)
-    # contours, hierarchy = cv2.findContours(dilation, cv2.RETR_EXTERNAL,
-    #                                        cv2.CHAIN_APPROX_NONE)
-    # im2 = img.copy()
-    # count = 0
-    # print()
-    # print()
-    # print()
-    # print()
-    # print("==========================")
-    # for cnt in contours:
-    #     x, y, w, h = cv2.boundingRect(cnt)
-    #     rect = cv2.rectangle(im2, (x, y), (x + w, y + h), (0, 255, 0), 2)
-    #     cropped = im2[y:y + h, x:x + w]
-    #     text = pytesseract.image_to_string(cropped).strip()
-    #     text = ''.join(filter(lambda x: x in set(string.printable), text))
-    #     # text = text.replace('\n', '')
-    #     text = text.replace('\t', '')
-    #     print(text)
-    #     if text:
-    #         print(text)
-    #         ret = re.search(regex, text.strip())
-    #         if ret:
-    #             ref_number = ret.group(1)
-    #             print(ref_number)
-    #             break
-    #     count += 1
-    text = pytesseract.image_to_string(gray).strip()
-    text = ''.join(filter(lambda x: x in set(string.printable), text))
-    # text = text.replace('\n', '')
-    text = text.replace('\t', '')
-    print(text)
-    if text:
+    print(img.shape)
+    ret, thresh1 = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU | cv2.THRESH_BINARY_INV)
+    rect_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (64, 64))
+    dilation = cv2.dilate(thresh1, rect_kernel, iterations=1)
+    contours, hierarchy = cv2.findContours(dilation, cv2.RETR_EXTERNAL,
+                                           cv2.CHAIN_APPROX_NONE)
+    im2 = img.copy()
+    count = 0
+    print()
+    print()
+    print()
+    print()
+    print("==========================")
+    for cnt in contours:
+        x, y, w, h = cv2.boundingRect(cnt)
+        rect = cv2.rectangle(im2, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        cropped = im2[y:y + h, x:x + w]
+        text = pytesseract.image_to_string(cropped).strip()
+        text = ''.join(filter(lambda x: x in set(string.printable), text))
+        # text = text.replace('\n', '')
+        text = text.replace('\t', '')
         print(text)
-        ret = re.search(regex, text.strip())
-        if ret:
-            ref_number = ret.group(1)
-            print(ref_number)
-    print(f'Ref No: {ref_number}')
+        if text:
+            print(text)
+            ret = re.search(regex, text.strip())
+            if ret:
+                ref_number = ret.group(1)
+                print(ref_number)
+                break
+        count += 1
+    print(f'{count} iteration(s): {ref_number}')
     return ref_number
 
 

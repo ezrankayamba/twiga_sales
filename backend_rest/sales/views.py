@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from rest_framework.renderers import JSONRenderer
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.parsers import FormParser, MultiPartParser
-from . import imports, ocr, serializers, models
+from . import imports, ocr, serializers, models, ocr2
 from django.db.models import Count
 import io
 import re
@@ -295,7 +295,8 @@ class TestOCRView(APIView):
                 schema = d
                 prefix = d.get('prefix', '')
                 regex = d['regex']
-                ref_number = ocr.new_extract_from_file(regex, pdf_data, **args)
+                # ref_number = ocr.new_extract_from_file(regex, pdf_data, **args)
+                ref_number = ocr2.extract_ref_number(pdf_data, regex)
                 print(ref_number)
                 # print(regex)
                 # ret = re.search(regex, text)
