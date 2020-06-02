@@ -24,7 +24,7 @@ def docs_schema():
     return [
         {'name': models.Document.DOC_C2, 'letter': models.Document.LETTER_C2, 'key': doc_key(
             models.Document.DOC_C2), 'regex': '[ ]{0,1}(\w{15,})[\({ ]', 'params': {'x': 800, 'y': 450, 'h': 400, 'w': 600, 'threshold': 230}, 'mandatory': True},
-        {'name': models.Document.DOC_ASSESSMENT, 'prefix': 'C ', 'letter': models.Document.LETTER_ASSESSMENT, 'key': doc_key(models.Document.DOC_ASSESSMENT), 'regex': '[ CcG]{2,}(\d{2,})', 'params': {
+        {'name': models.Document.DOC_ASSESSMENT, 'prefix': 'C ', 'letter': models.Document.LETTER_ASSESSMENT, 'key': doc_key(models.Document.DOC_ASSESSMENT), 'regex': '[ CcG]{1,}(\d{2,})', 'params': {
             'x': 800, 'y': 20, 'h': 400, 'w': 600, 'threshold': 230}, 'mandatory': True},
         {'name': models.Document.DOC_EXIT, 'letter': models.Document.LETTER_EXIT, 'key': doc_key(
             models.Document.DOC_EXIT), 'regex': 'laration[ +\d:]{1,}(\d{4} [\w/]+)', 'params': {'x': 20, 'y': 700, 'h': 500, 'w': 600, 'threshold': 236}, 'mandatory': False}
