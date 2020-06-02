@@ -160,8 +160,7 @@ def de_skew(image, show=False):
     print(angle)
     (h, w) = image.shape[:2]
     center = (w // 2, h // 2)
-    # Try to divide the angle in half
-    M = cv2.getRotationMatrix2D(center, angle/2, 1.0)
+    M = cv2.getRotationMatrix2D(center, angle, 1.0)
     rotated = cv2.warpAffine(image, M, (w, h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
     if show:
         cv2.imshow("Unrotated", image)
