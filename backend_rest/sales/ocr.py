@@ -92,10 +92,10 @@ def new_extract_from_file(regex, pdf_data, **kwargs):
     ref_number = None
     image = get_image(pdf_data)
     img = np.array(image)
-    img = crop(de_skew(img), **kwargs)
+    img = crop(auto_crop(de_skew(img), threshold), **kwargs)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     print(img.shape)
-    ret, thresh1 = cv2.threshold(gray, threshold, 255, cv2.THRESH_OTSU | cv2.THRESH_BINARY_INV)
+    ret, thresh1 = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU | cv2.THRESH_BINARY_INV)
     rect_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (64, 64))
     dilation = cv2.dilate(thresh1, rect_kernel, iterations=1)
     contours, hierarchy = cv2.findContours(dilation, cv2.RETR_EXTERNAL,
