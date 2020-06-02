@@ -151,8 +151,8 @@ def de_skew(image, show=False):
     coords = np.column_stack(np.where(thresh > 0))
     angle = cv2.minAreaRect(coords)[-1]
     print(angle)
-    if abs(angle) < 4.00:
-        return image
+    # if abs(angle) < 4.00:
+    #     return image
     if angle < -45:
         angle = -(90 + angle)
     else:
