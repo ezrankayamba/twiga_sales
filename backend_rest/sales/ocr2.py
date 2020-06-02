@@ -89,9 +89,10 @@ def extract_ref_number(pdf_data, regex, **kwargs):
     if threshold:
         del kwargs['threshold']
     img = np.array(get_image(pdf_data))
-    img = de_skew(img, show=False)
+    # img = de_skew(img, show=True)
     # img = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2GRAY)
     img = crop(img, **kwargs)
+    img = de_skew(img, show=False)
     ref_number = get_ref_number(img, regex)
     if ref_number:
         return ref_number
