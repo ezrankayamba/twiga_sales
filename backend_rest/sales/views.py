@@ -285,18 +285,15 @@ class TestOCRView(APIView):
             args[p] = int(params.get(p))
         print('Args: ', args)
         with ocr.Timer("Elapsed time to extract text: {:,.2f} ms"):
-
             schema = None
-
             for d in imports.docs_schema():
                 if d['letter'] != letter:
                     continue
-
                 schema = d
                 prefix = d.get('prefix', '')
                 regex = d['regex']
                 # ref_number = ocr.new_extract_from_file(regex, pdf_data, **args)
-                ref_number = ocr2.extract_ref_number(pdf_data, regex)
+                ref_number = ocr2.extract_ref_number(pdf_data, regex, **args)
                 print(ref_number)
                 # print(regex)
                 # ret = re.search(regex, text)

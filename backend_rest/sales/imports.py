@@ -123,7 +123,7 @@ def read_entries(zip, row, docs_list, agent):
                 args, name, regex, pdf_data = (d['params'], d['name'], d['regex'], io.BytesIO(file.read()))
                 print(name, f'"{regex}"')
                 # ref_number = ocr.new_extract_from_file(regex, pdf_data, **args)
-                ref_number = ocr2.extract_ref_number(pdf_data, regex)
+                ref_number = ocr2.extract_ref_number(pdf_data, regex,  **args)
                 error = None
                 if ref_number:
                     prefix = d.get('prefix', '')

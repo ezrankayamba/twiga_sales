@@ -7,7 +7,7 @@ import numpy as np
 from pdf2image import convert_from_bytes
 import re
 
-from .ocr import get_image, Timer, remove_noise, de_skew
+from .ocr import get_image, Timer, remove_noise, de_skew, crop
 
 
 def get_grayscale(image):
@@ -67,10 +67,16 @@ def get_ref_number(text, regex):
         return ret.group(1)
 
 
-def extract_ref_number(pdf_data, regex):
+def extract_ref_number(pdf_data, regex, **kwargs):
+    threshold = kwargs.get('threshold')
+    if not threshold:
+        threshold = 210
+    else:
+        del kwargs['threshold']
     img = np.array(get_image(pdf_data))
     img = de_skew(img, show=False)
     # img = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2GRAY)
+    img = crop(img, **kwargs)
     config = r'--oem 3 --psm 6'
     text = pytesseract.image_to_string(img, lang='eng', config=config)
     lines = text.split("\n")
