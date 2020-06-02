@@ -95,7 +95,7 @@ def new_extract_from_file(regex, pdf_data, **kwargs):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     print(img.shape)
     ret, thresh1 = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU | cv2.THRESH_BINARY_INV)
-    rect_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (100, 100))
+    rect_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (100, 48))
     dilation = cv2.dilate(thresh1, rect_kernel, iterations=1)
     contours, hierarchy = cv2.findContours(dilation, cv2.RETR_EXTERNAL,
                                            cv2.CHAIN_APPROX_NONE)
@@ -141,16 +141,17 @@ def de_skew(image, show=False):
     coords = np.column_stack(np.where(thresh > 0))
     angle = cv2.minAreaRect(coords)[-1]
     print(angle)
-    if abs(angle) < 0.50:
+    if abs(angle) < 4.00:
         return image
     if angle < -45:
-        angle = (90 + angle)
+        angle = -(90 + angle)
     else:
         angle = -angle
     print(angle)
     (h, w) = image.shape[:2]
     center = (w // 2, h // 2)
-    M = cv2.getRotationMatrix2D(center, angle, 1.0)
+    # Try to divide the angle in half
+    M = cv2.getRotationMatrix2D(center, angle/2, 1.0)
     rotated = cv2.warpAffine(image, M, (w, h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
     if show:
         cv2.imshow("Unrotated", image)
