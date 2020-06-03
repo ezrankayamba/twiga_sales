@@ -2,6 +2,7 @@ import React, { Component, useState } from "react";
 import { connect } from "react-redux";
 import "./Reports.css";
 import DateRangeReport from "./forms/DateRangeReport";
+import CustomerReport from "./forms/CustomerReport";
 
 @connect((state) => {
   return {
@@ -15,6 +16,10 @@ class IndexPage extends Component {
       {
         name: "General Report",
         form: <DateRangeReport user={this.props.user} />,
+      },
+      {
+        name: "Customer Performance Report",
+        form: <CustomerReport user={this.props.user} />,
       },
     ];
     this.setState({ tab: tabs[0], tabs: tabs });

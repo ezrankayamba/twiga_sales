@@ -194,6 +194,29 @@ class DestinationReportView(APIView):
         })
 
 
+class CustomerReportView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None):
+        sql = 'select max(id) as id, customer_name, count(id) as qty, sum(total_value) as total_value, sum(quantity) as total_volume, sum(total_value2) as total_value2, sum(quantity2) as total_volume2  from sales_sale group by customer_name'
+        qs = models.Sale.objects.raw(sql)
+        data = []
+        columns = ['customer_name', 'qty', 'total_value', 'total_volume', 'total_value2', 'total_volume2']
+        for row in qs:
+            cust = {}
+            for col in columns:
+                cust[col] = getattr(row, col)
+            data.append(cust)
+
+        print(data)
+
+        return Response({
+            'status': 0,
+            'message': f'Successfully fetched report',
+            'data': data
+        })
+
+
 class UnmatchedValuesReportView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 

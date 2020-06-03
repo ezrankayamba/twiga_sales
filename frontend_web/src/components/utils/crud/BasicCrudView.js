@@ -33,7 +33,7 @@ class BasicCrudView extends React.Component {
     let options = this.props.options ? this.props.options : {};
 
     return (
-      <div>
+      <>
         <CrudTable
           title={title}
           columns={headers}
@@ -56,7 +56,7 @@ class BasicCrudView extends React.Component {
             description="Are you sure you want to delete selected records?"
           />
         )}
-      </div>
+      </>
     );
   }
 }
