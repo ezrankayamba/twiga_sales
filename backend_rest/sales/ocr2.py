@@ -89,8 +89,6 @@ def extract_ref_number(pdf_data, regex, **kwargs):
     if threshold:
         del kwargs['threshold']
     img = np.array(get_image(pdf_data))
-    # img = de_skew(img, show=True)
-    # img = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2GRAY)
     img = crop(img, **kwargs)
     img = de_skew(img, show=False)
     ref_number = get_ref_number(img, regex)
@@ -98,15 +96,16 @@ def extract_ref_number(pdf_data, regex, **kwargs):
         return ref_number
     else:
         print("Try with threshold: ", threshold)
+        orign_img = img
         img = thresholding(np.array(img), threshold=threshold)
-        return get_ref_number(img, regex)
-
-
-# with Timer(message='Extract lasted for {} ms'):
-#     file = 'C:\\Users\\godfred.nkayamba\\Downloads\\SOC200004184\\SOC200004276\\E.pdf'
-#     letter = 'E'
-#     config = r'--oem 3 --psm 6'
-#     regex = 'laration[ +\d:]{1,}(\d{4} [\w/]+)'
-#     with open(file, 'rb') as pdf_data:
-#         ref_number = extract_ref_number(pdf_data, regex)
-#         print("Result: ", ref_number)
+        ref_number = get_ref_number(img, regex)
+        if ref_number:
+            return ref_number
+        else:
+            img = thresholding(np.array(orign_img), threshold=(threshold+7))
+            ref_number = get_ref_number(img, regex)
+            if ref_number:
+                return ref_number
+            else:
+                img = thresholding(np.array(orign_img), threshold=(threshold-7))
+                ref_number = get_ref_number(img, regex)

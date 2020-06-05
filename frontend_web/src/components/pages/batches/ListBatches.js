@@ -10,7 +10,7 @@ import MatIcon from "../../utils/icons/MatIcon";
   };
 })
 class ListBatches extends Component {
-  state = { batches: [] };
+  state = { batches: [], pageNo: 1 };
   refresh(pageNo = 1) {
     CRUD.listPaginated(`/batches`, this.props.user.token, {
       onSuccess: (res) =>
