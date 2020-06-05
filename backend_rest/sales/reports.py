@@ -82,6 +82,7 @@ class SalesReportList(APIView):
             filt['vehicle_number__contains'] = self.get_filter('vehicle_number')
             filt['tax_invoice__contains'] = self.get_filter('tax_invoice')
             filt['sales_order__contains'] = self.get_filter('sales_order')
+            filt['delivery_note__contains'] = self.get_filter('delivery_note')
             date_from = self.get_filter('date_from')
             date_to = self.get_filter('date_to')
             if date_from:

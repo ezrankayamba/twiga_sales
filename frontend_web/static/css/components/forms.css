@@ -82,8 +82,12 @@ fieldset .checkbox-label span {
   }
   .search .form-content {
     flex: auto;
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     justify-content: left;
+  }
+  .search .form-content input {
+    width: 100%;
   }
   .search .form-group {
     margin-right: 0.5rem;

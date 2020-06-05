@@ -197,8 +197,24 @@ class List extends Component {
     let data = {
       records: sales,
       headers: [
-        { field: "id", title: "ID" },
-        { field: "transaction_date", title: "Trans Date" },
+        {
+          field: "id",
+          title: "ID",
+          search: {
+            type: "date",
+            label: "From",
+            name: "date_from",
+          },
+        },
+        {
+          field: "transaction_date",
+          title: "Trans Date",
+          search: {
+            type: "date",
+            label: "To",
+            name: "date_to",
+          },
+        },
         {
           field: "customer_name",
           title: "Customer",
