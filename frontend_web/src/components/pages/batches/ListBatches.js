@@ -48,6 +48,10 @@ class ListBatches extends Component {
       pageNo,
       onPageChange: this.onPageChange.bind(this),
     };
+    const getUrl = (file) => {
+      let url = `${SERVER_URL}${file}`;
+      console.log(url);
+    };
     const data = {
       records: batches,
       headers: [
@@ -61,7 +65,7 @@ class ListBatches extends Component {
             let parts = row.file_in.split("/");
             let name = parts[parts.length - 1];
             return (
-              <a className="btn btn-sm" href={`${SERVER_URL}${row.file_in}`}>
+              <a className="btn btn-sm" href={`${row.file_in}`}>
                 <MatIcon name="arrow_downward" /> {name}
               </a>
             );
@@ -77,7 +81,7 @@ class ListBatches extends Component {
             let parts = row.file_out.split("/");
             let name = parts[parts.length - 1];
             return (
-              <a className="btn btn-sm" href={`${SERVER_URL}${row.file_out}`}>
+              <a className="btn btn-sm" href={`${row.file_out}`}>
                 <MatIcon name="arrow_downward" /> {name}
               </a>
             );
