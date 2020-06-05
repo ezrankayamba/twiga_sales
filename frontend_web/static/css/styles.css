@@ -47,6 +47,10 @@ body {
 .table-scrollable {
   overflow-x: auto;
 }
+a {
+  text-decoration: none;
+  color: #333;
+}
 
 #app {
   background: rgb(255, 255, 255);

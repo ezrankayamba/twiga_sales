@@ -11,6 +11,7 @@ class DocumentSerializer(serializers.ModelSerializer):
 
 
 class BatchSerializer(serializers.ModelSerializer):
+    user = UserSerializer(many=False, read_only=True)
 
     class Meta:
         model = models.Batch

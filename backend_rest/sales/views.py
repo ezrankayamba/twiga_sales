@@ -59,6 +59,33 @@ class SaleListView(generics.ListCreateAPIView):
         return Response(self.get_serializer(entity).data)
 
 
+class BatchListView(generics.ListAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = serializers.BatchSerializer
+
+    def get_queryset(self):
+        return models.Batch.objects.filter(user=self.request.user)
+
+
+class BatchUnreadView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        return Response({
+            'result': 0,
+            'message': 'Fetched unread count',
+            'data': models.Batch.objects.filter(user=request.user, read=False).count()
+        })
+
+    def put(self, request):
+        models.Batch.objects.filter(user=request.user, read=False).update(read=True)
+        return Response({
+            'result': 0,
+            'message': 'Updated unread count',
+            'data': models.Batch.objects.filter(user=request.user, read=False).count()
+        })
+
+
 class ImportSalesView(APIView):
     permission_classes = [permissions.IsAuthenticated, TokenHasScope]
     required_scopes = ['sales']

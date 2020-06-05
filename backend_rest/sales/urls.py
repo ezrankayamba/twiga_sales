@@ -22,4 +22,6 @@ urlpatterns = [
     path('invoices/export', invoices.InvoiceReportExportView.as_view()),
     path('invoices/manage', invoices.InvoiceManageView.as_view()),
     path('invoices/manage/<int:invoice_id>', invoices.InvoiceManageView.as_view()),
+    path('batches', views.BatchListView.as_view()),
+    path('batches/unread', views.BatchUnreadView.as_view()),
 ]

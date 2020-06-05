@@ -10,6 +10,7 @@ import RolesPage from "../pages/auth/RolesPage";
 import React from "react";
 import MatIcon from "../utils/icons/MatIcon";
 import MyProfile from "../pages/auth/MyProfile";
+import ListBatches from "../pages/batches/ListBatches";
 const getMenus = (loggedIn, privileges) => {
   let pFilter = (m) => {
     return (
@@ -84,6 +85,15 @@ const getMenus = (loggedIn, privileges) => {
           name: "Sign Out",
           component: LogoutPage,
           Icon: () => <MatIcon name="lock" />,
+          privilege: "Anonymous",
+        },
+        {
+          id: getId(),
+          path: "/batches",
+          name: "Batches",
+          hide: true,
+          component: ListBatches,
+          Icon: () => <MatIcon name="notifications" />,
           privilege: "Anonymous",
         },
       ]

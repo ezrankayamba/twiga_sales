@@ -3,64 +3,45 @@ import WsHandler from "../_helpers/WsHandler";
 import UUID from "../_helpers/UUID";
 import { BASE_URL, SERVER_HOST, SERVER_URL } from "../conf";
 import MatIcon from "./utils/icons/MatIcon";
+import CRUD from "../_services/CRUD";
+import { connect } from "react-redux";
 const localUuid = UUID.get();
+@connect((state) => {
+  return {
+    user: state.auth.user,
+  };
+})
 class BatchBuble extends React.Component {
-  state = { ws: null, stack: [] };
+  state = { ws: null, count: 0 };
 
-  closeMsg(e) {
-    e.stopPropagation();
-    const { stack } = this.state;
-    if (stack.length) {
-      stack.pop();
-      this.setState({ stack: [...stack] });
-    }
+  refresh() {
+    CRUD.list("/batches/unread", this.props.user.token, {
+      onSuccess: (res) => this.setState({ count: res.data }),
+    });
   }
-
   componentDidMount() {
     this.setState({
       ws: WsHandler(
         (msg) => {
           console.log(msg, this);
-          this.setState({ stack: [...this.state.stack, msg.data] });
+          this.refresh();
         },
         () => {
           console.log("Connected");
+          this.refresh();
         }
       ),
     });
   }
   render() {
-    const { stack } = this.state;
-    const message = stack.length ? stack[0] : null;
+    const { count } = this.state;
     return (
-      message && (
-        <div className="backend-notification">
-          <button
-            className="close text-warning btn btn-sm btn-link"
-            onClick={this.closeMsg.bind(this)}
-          >
-            X
-          </button>
-          {message.file_in && (
-            <a
-              download
-              className="btn btn-sm btn-outline-secondary btn-sm"
-              href={`${SERVER_URL}${message.file_in}`}
-            >
-              <MatIcon name="arrow_downward" /> Uploaded file
-            </a>
-          )}
-          {message.file_out && (
-            <a
-              download
-              className="btn btn-sm btn-outline-primary btn-sm"
-              href={`${SERVER_URL}${message.file_out}`}
-            >
-              <MatIcon name="arrow_downward" /> Result file
-            </a>
-          )}
-        </div>
-      )
+      <div className="batch-buble">
+        <a href="/batches">
+          <MatIcon name="notifications" />
+          {count ? <span className="notifications-count">{count}</span> : null}
+        </a>
+      </div>
     );
   }
 }

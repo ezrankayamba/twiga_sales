@@ -78,9 +78,11 @@ class Batch(models.Model):
     file_in = models.FileField(upload_to='batches')
     file_out = models.FileField(upload_to='batches', null=True)
     status = models.IntegerField(default=0)
+    read = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = 'Batches'
+        ordering = ['-created_at']
 
     def __str__(self):
         return f'{self.user} - {self.created_at}'

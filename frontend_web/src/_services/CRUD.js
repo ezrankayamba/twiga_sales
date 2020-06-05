@@ -5,14 +5,35 @@ import {
   apiSearch,
   apiUpdate,
   apiDelete,
+  apiGetPaginated,
 } from "./WebService";
 import { BASE_URL } from "../conf";
 
 const CRUD = {
   list: (path, token, { onSuccess, onFail }) => {
     apiGet(`${BASE_URL}${path}`, token)
-      .then((list) => {
-        onSuccess(list);
+      .then((res) => {
+        console.log(res);
+        onSuccess(res);
+      })
+      .catch((error) => (onFail ? onFail(error) : console.log(error)));
+  },
+  listPaginated: (path, token, { onSuccess, onFail, page }) => {
+    apiGetPaginated(`${BASE_URL}${path}`, token, page)
+      .then((res) => {
+        console.log(res);
+        if (res.status === 200) {
+          let { pages, records } = res.headers;
+          onSuccess({
+            data: res.data,
+            pages,
+            records,
+          });
+        } else {
+          onFail({
+            data: res.data,
+          });
+        }
       })
       .catch((error) => (onFail ? onFail(error) : console.log(error)));
   },

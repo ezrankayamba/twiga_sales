@@ -3,6 +3,7 @@ import Pages from "../../menus/Pages";
 import SideMenu from "../../menus/SideMenu";
 import BackendNotification from "../../BackendNotification";
 import { connect } from "react-redux";
+import BatchBuble from "../../BatchBuble";
 @connect((state) => {
   return {
     user: state.auth.user,
@@ -31,20 +32,23 @@ class MainLayout extends Component {
           <div class="navbar-title">
             EXPORTS <i className="small text-warning">TRACKING TOOL</i>
           </div>
-          <div class={`avatar${avatarOn ? " on" : ""}`}>
-            <img
-              src={user.profile.image}
-              alt=""
-              onClick={this.toggleAvatar.bind(this)}
-            />
-            <ul className="avatar-menu">
-              <li>
-                <a href="/my-profile">My Profile</a>
-              </li>
-              <li>
-                <a href="/logout">Logout</a>
-              </li>
-            </ul>
+          <div className="right-controls">
+            <BatchBuble />
+            <div class={`avatar${avatarOn ? " on" : ""}`}>
+              <img
+                src={user.profile.image}
+                alt=""
+                onClick={this.toggleAvatar.bind(this)}
+              />
+              <ul className="avatar-menu">
+                <li>
+                  <a href="/my-profile">My Profile</a>
+                </li>
+                <li>
+                  <a href="/logout">Logout</a>
+                </li>
+              </ul>
+            </div>
           </div>
         </header>
         <SideMenu />
@@ -53,9 +57,9 @@ class MainLayout extends Component {
             <Pages />
           </div>
         </section>
-        <footer>
+        {/* <footer>
           <BackendNotification />
-        </footer>
+        </footer> */}
       </>
     );
   }

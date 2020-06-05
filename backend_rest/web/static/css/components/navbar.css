@@ -16,3 +16,28 @@
   justify-content: space-around;
   align-items: center;
 }
+.navbar .right-controls {
+  display: flex;
+  align-items: center;
+  padding-right: 0.4rem;
+  justify-content: center;
+}
+.navbar .right-controls > * {
+  padding-left: 0.4rem;
+  padding-right: 0.4rem;
+}
+.navbar .right-controls .mat-icon {
+  font-size: 1.4em;
+  color: aliceblue;
+}
+
+.batch-buble .notifications-count {
+  position: relative;
+  top: -0.9rem;
+  right: 0.5rem;
+  background: rgb(245, 108, 45);
+  border-radius: 0.5rem;
+  font-size: 0.6em;
+  padding: 0.2rem;
+  color: aliceblue;
+}
