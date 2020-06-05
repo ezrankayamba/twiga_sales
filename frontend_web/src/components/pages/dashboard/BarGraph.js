@@ -1,5 +1,6 @@
 import React from "react";
 import { ColorsHelper } from "../../../_helpers/ColorsHelper";
+import Numbers from "../../../_helpers/Numbers";
 
 class BarGraph extends React.Component {
   componentDidMount() {
@@ -16,11 +17,19 @@ class BarGraph extends React.Component {
           display: false,
         },
       },
+      hover: {
+        mode: "index",
+        intersect: false,
+      },
       tooltips: {
+        mode: "index",
+        intersect: false,
         callbacks: {
-          label: function (tooltipItems, data) {
-            let val = data.datasets[0].data[tooltipItems.index];
-            return ` ${val.toLocaleString()}`;
+          label: function (tooltipItem, data) {
+            let ds = data.datasets[tooltipItem.datasetIndex];
+            let val = ds.data[tooltipItem.index];
+            let lab = ds.label;
+            return `${Numbers.fmt(val)} : ${lab}`;
           },
         },
       },
