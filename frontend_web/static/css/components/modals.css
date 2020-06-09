@@ -29,6 +29,7 @@
   padding: 0.4rem;
   overflow-y: auto;
   height: calc(100% - 40px);
+  max-width: 97vw;
 }
 .modal-footer {
   padding: 0.4rem;

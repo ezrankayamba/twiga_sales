@@ -78,6 +78,50 @@ def export_report(request, sales):
     return xlsx_data
 
 
+def export_report_inv_details(request, sales):
+    output = io.BytesIO()
+    workbook = xlsxwriter.Workbook(output)
+
+    main = workbook.add_worksheet("Report")
+    headers = ['ID', 'TRANS_DATE', 'CUSTOMER', 'DELIVERY NOTE', 'VEH#',
+               'TAX INVOICE', 'SO#', 'PRODUCT', 'QTY(TONS)', 'DESTINATION', 'VEH# TRAILER', 'AGENT', 'C2', 'ASSESSMENT', 'EXIT', 'RATE/T',	'TOTAL VALUE EX VAT',	'VAT AMOUNT 18%',	'TOTAL VALUE INC VAT',	'INV NUMBER'
+               ]
+    rows = []
+
+    for prj in sales:
+        comm_amt = prj.quantity2 * prj.invoice.commission
+        row = []
+        row.append(prj.id)
+        row.append(date_fmt(date_parse(prj.transaction_date)))
+        row.append(prj.customer_name)
+        row.append(prj.delivery_note)
+        row.append(prj.vehicle_number)
+        row.append(prj.tax_invoice)
+        row.append(prj.sales_order)
+        row.append(prj.product_name)
+        row.append(float(prj.quantity2))
+        row.append(prj.destination)
+        row.append(prj.vehicle_number_trailer)
+        row.append(prj.agent.code if prj.agent else 'None')
+        row.extend(get_refs(prj))
+        row.append(float(prj.invoice.commission))
+        row.append(float(comm_amt))
+        row.append(float(comm_amt * decimal.Decimal(0.18)))
+        row.append(float(comm_amt*decimal.Decimal(1.18)))
+        row.append(prj.invoice.number)
+        rows.append(row)
+
+    for j, col in enumerate(headers, start=1):
+        main.write(f'{cell(1, j)}', col)
+
+    for i, row in enumerate(rows, start=2):
+        for j, col in enumerate(row, start=1):
+            main.write(f'{cell(i, j)}', col)
+    workbook.close()
+    xlsx_data = output.getvalue()
+    return xlsx_data
+
+
 def export_invoices(request, invoices):
     output = io.BytesIO()
     workbook = xlsxwriter.Workbook(output)

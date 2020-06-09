@@ -50,7 +50,7 @@ class InvoiceSaleListView(APIView):
         export_id = datetime.now().strftime("%Y%m%d%H%M%S")
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = f'attachment; filename="{export_id}_Sales.xlsx"'
-        xlsx_data = exports.export_report(request, data)
+        xlsx_data = exports.export_report_inv_details(request, data)
         response.write(xlsx_data)
         return response
 
