@@ -50,8 +50,11 @@
   transition: background 0s;
 }
 
-.btn .mat-icon {
+.btn .mat-icon:last-child {
   padding: 0 0.4rem 0 0.2rem;
+}
+.btn .mat-icon:first-child {
+  padding: 0 0.2rem 0 0.4rem;
 }
 .btn.btn-sm {
   padding: 6px 6px;
