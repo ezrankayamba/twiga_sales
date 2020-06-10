@@ -11,7 +11,6 @@ let initialState = {
 };
 
 let authReducer = (state = initialState, action) => {
-  console.log(action);
   switch (action.type) {
     case USERS_LOGIN_REQUEST:
       return {

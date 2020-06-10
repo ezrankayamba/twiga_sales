@@ -5,8 +5,6 @@ import Numbers from "../../../_helpers/Numbers";
 class BarGraph extends React.Component {
   componentDidMount() {
     const { graphId, meta } = this.props;
-    console.log("datasets", meta.data);
-    console.log("labels", meta.labels);
     const data = {
       datasets: meta.data,
       labels: meta.labels,

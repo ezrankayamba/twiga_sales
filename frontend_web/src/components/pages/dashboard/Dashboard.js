@@ -4,12 +4,10 @@ import "./Dashboard.css";
 import { fetchSalesSummary } from "../../../_services/SalesService";
 import CRUD from "../../../_services/CRUD";
 import BarGraph from "./BarGraph";
-import ChartJsUtil from "../../../_helpers/ChartJsUtil";
 
 class Dashboard extends React.Component {
   state = { meta1: null, destQty: null, destVal: null, destVol: null };
   componentDidMount() {
-    ChartJsUtil.init();
     const token = this.props.user.token;
     fetchSalesSummary(token, 1, (res) => {
       let meta1 = {
@@ -90,8 +88,6 @@ class Dashboard extends React.Component {
   render() {
     const { meta1, colors, destQty, destVal, destVol } = this.state;
     const { onDataClick } = this.props;
-
-    console.log(destQty);
 
     return (
       <div className="dashboard">

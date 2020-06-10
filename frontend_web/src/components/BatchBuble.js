@@ -27,7 +27,6 @@ class BatchBuble extends React.Component {
           this.refresh();
         },
         () => {
-          console.log("Connected");
           this.refresh();
         }
       ),

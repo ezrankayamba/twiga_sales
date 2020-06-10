@@ -28,7 +28,6 @@ const init = () => {
     sidebar.addEventListener("animationend", hideCompleted);
     console.log("Closing ...");
   };
-  console.log(sidebar, toggle);
   if (sidebar && toggle) {
     toggle.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -67,7 +66,6 @@ const init = () => {
       menu.addEventListener("click", (e) => selected(menu));
     });
   }
-  console.log("Loaded...");
 };
 
 @connect(

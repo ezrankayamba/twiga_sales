@@ -7,9 +7,6 @@ export const apiGet = (url, token) => {
     },
   }).then((res) => {
     if (res.status == 200) {
-      for (let entry in res.headers.keys()) {
-        console.log("Entry", entry);
-      }
       return res.json();
     }
     throw Error("Failure response: " + res.status);

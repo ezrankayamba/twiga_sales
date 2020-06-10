@@ -57,7 +57,7 @@ export const refreshUser = (user, cb) => {
 
 export const logout = (params) => {
   let cb = params ? params.cb : null;
-  localStorage.removeItem("accessToken");
+  sessionStorage.removeItem("accessToken");
   if (cb) {
     cb();
   }
