@@ -20,6 +20,7 @@ urlpatterns = [
     path('invoices', invoices.InvoiceListView.as_view()),
     path('invoices/sales/<int:invoice_id>', invoices.InvoiceSaleListView.as_view()),
     path('invoices/export', invoices.InvoiceReportExportView.as_view()),
+    path('invoices/docs', invoices.InvoiceDocsView.as_view()),
     path('invoices/manage', invoices.InvoiceManageView.as_view()),
     path('invoices/manage/<int:invoice_id>', invoices.InvoiceManageView.as_view()),
     path('batches', views.BatchListView.as_view()),

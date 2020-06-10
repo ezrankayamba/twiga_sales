@@ -7,7 +7,33 @@ import numpy as np
 from pdf2image import convert_from_bytes
 import re
 
-from .ocr import get_image, Timer, remove_noise, de_skew
+
+def de_skew(image, show=False):
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    gray = 255 - gray
+    thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+    coords = np.column_stack(np.where(thresh > 0))
+    angle = cv2.minAreaRect(coords)[-1]
+    print(angle)
+    if angle < -45:
+        angle = -(90 + angle)
+    else:
+        angle = -angle
+    print(angle)
+    (h, w) = image.shape[:2]
+    center = (w // 2, h // 2)
+    M = cv2.getRotationMatrix2D(center, angle, 1.0)
+    rotated = cv2.warpAffine(image, M, (w, h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
+    if show:
+        cv2.imshow("Unrotated", image)
+        cv2.imshow("Rotated", rotated)
+        cv2.waitKey(0)
+    return rotated
+
+
+def get_image(data):
+    image = convert_from_bytes(data.read())[0]
+    return image
 
 
 def crop(image, x=0, y=0, h=2338, w=1653, show=False):
@@ -50,29 +76,33 @@ def canny(image):
     return cv2.Canny(image, 100, 200)
 
 
-def deskew(image):
-    coords = np.column_stack(np.where(image > 0))
-    angle = cv2.minAreaRect(coords)[-1]
-    print(angle)
-    if angle < -45:
-        angle = -(90 + angle)
-    else:
-        angle = -angle
-    print(angle)
-    (h, w) = image.shape[:2]
-    center = (w // 2, h // 2)
-    M = cv2.getRotationMatrix2D(center, angle, 1.0)
-    rotated = cv2.warpAffine(image, M, (w, h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
-    return rotated
+# def deskew(image):
+#     coords = np.column_stack(np.where(image > 0))
+#     angle = cv2.minAreaRect(coords)[-1]
+#     print(angle)
+#     if angle < -45:
+#         angle = -(90 + angle)
+#     else:
+#         angle = -angle
+#     print(angle)
+#     (h, w) = image.shape[:2]
+#     center = (w // 2, h // 2)
+#     M = cv2.getRotationMatrix2D(center, angle, 1.0)
+#     rotated = cv2.warpAffine(image, M, (w, h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
+#     return rotated
 
 
 def match_template(image, template):
     return cv2.matchTemplate(image, template, cv2.TM_CCOEFF_NORMED)
 
 
-def get_ref_number(image, regex):
+def image_to_string(image):
     config = r'--oem 3 --psm 6'
-    text = pytesseract.image_to_string(image, lang='eng', config=config)
+    return pytesseract.image_to_string(image, lang='eng', config=config)
+
+
+def get_ref_number(image, regex):
+    text = image_to_string(image)
     lines = text.split("\n")
     print("\n\n\n")
     print("========================================================")

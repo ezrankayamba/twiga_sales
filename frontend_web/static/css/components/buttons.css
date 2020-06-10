@@ -102,3 +102,8 @@
 .btn-group .btn:last-child {
   margin-right: 0;
 }
+
+.action-buttons {
+  display: flex;
+  align-items: center;
+}

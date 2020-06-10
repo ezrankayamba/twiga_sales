@@ -10,6 +10,12 @@ class DocumentSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class InvoiceDocSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.InvoiceDoc
+        fields = '__all__'
+
+
 class BatchSerializer(serializers.ModelSerializer):
     user = UserSerializer(many=False, read_only=True)
 
@@ -30,6 +36,7 @@ class SaleSerializer(serializers.ModelSerializer):
 class InvoiceSerializer(serializers.ModelSerializer):
     sales = SaleSerializer(many=True, read_only=True)
     agent = AgentSerializer(many=False, read_only=True)
+    docs = InvoiceDocSerializer(many=True, read_only=True)
 
     class Meta:
         model = models.Invoice

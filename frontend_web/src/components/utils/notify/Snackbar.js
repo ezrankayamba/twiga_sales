@@ -16,8 +16,9 @@ class Snackbar extends React.Component {
 
   render() {
     console.log(this.state);
+    const { error } = this.props;
     return this.state.show ? (
-      <div id="snackbar" className={`${this.props.error && "error "}show`}>
+      <div id="snackbar" className={`${error ? "error " : ""}show`}>
         {this.props.message}
       </div>
     ) : (

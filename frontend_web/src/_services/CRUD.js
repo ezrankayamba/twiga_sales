@@ -76,6 +76,24 @@ const CRUD = {
       })
       .catch((error) => (onFail ? onFail(error) : console.log(error)));
   },
+  uploadDocs: (path, token, body, cb, newDoc = true) => {
+    console.log("Upload docs");
+    if (newDoc) {
+      apiPost(`${BASE_URL}${path}`, body, token, "multipart/form-data")
+        .then(cb)
+        .catch((e) => {
+          console.error(e);
+          cb(false);
+        });
+    } else {
+      apiUpdate(`${BASE_URL}${path}`, body, null, token, "multipart/form-data")
+        .then(cb)
+        .catch((e) => {
+          console.error(e);
+          cb(false);
+        });
+    }
+  },
 };
 
 export default CRUD;

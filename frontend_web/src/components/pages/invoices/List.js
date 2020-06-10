@@ -9,6 +9,8 @@ import Numbers from "../../../_helpers/Numbers";
 import { UserHelper } from "../../../_helpers/UserHelper";
 import InvoiceDetails from "./forms/InvoiceDetails";
 import FileDownload from "../../../_helpers/FileDownload";
+import InvoiceDocsForm from "./forms/InvoiceDocsForm";
+import { SERVER_URL } from "../../../conf";
 
 @connect((state) => {
   return {
@@ -73,7 +75,7 @@ class List extends Component {
   onRowClick(e, row) {
     e.stopPropagation();
     console.log(row);
-    this.setState({ selected: row });
+    this.setState({ selected: row, openDetails: true });
   }
 
   handleComplete(e, row) {
@@ -120,9 +122,22 @@ class List extends Component {
       onFail: logError,
     });
   }
+  getUrl(file) {
+    let url = `${SERVER_URL}${file}`;
+    console.log(url);
+    return url;
+  }
 
   render() {
-    let { invoices, pages, pageNo, invoiceable, selected } = this.state;
+    let {
+      invoices,
+      pages,
+      pageNo,
+      invoiceable,
+      selected,
+      attachDocs,
+      openDetails,
+    } = this.state;
     console.log(invoices);
     let data = {
       records: invoices,
@@ -144,6 +159,49 @@ class List extends Component {
         { field: "value_vat", title: "Value(VAT Incl.)" },
         { field: "num_sales", title: "Count" },
         { field: "status", title: "Status" },
+        {
+          field: "docs",
+          title: "Docs",
+          render: (row) =>
+            row.docs.length ? (
+              <div className="action-buttons">
+                {row.docs.map((d) => (
+                  <a
+                    href={`${this.getUrl(d.file)}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="inline-item"
+                    target="_blank"
+                  >
+                    <MatIcon name="arrow_downward" /> {d.doc_type}
+                  </a>
+                ))}
+                <button
+                  className="btn btn-link"
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    this.setState({ attachDocs: true, selected: row });
+                  }}
+                >
+                  <MatIcon name="attach_file" />
+                </button>
+              </div>
+            ) : (
+              <div className="action-buttons">
+                <span>Not attached</span>
+                <button
+                  className="btn btn-link"
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    this.setState({ attachDocs: true, selected: row });
+                  }}
+                >
+                  <MatIcon name="attach_file" />
+                </button>
+              </div>
+            ),
+        },
         {
           field: "action",
           title: "Action",
@@ -203,14 +261,24 @@ class List extends Component {
           toolbar={true}
           onRowClick={this.onRowClick.bind(this)}
         />
+        {attachDocs && (
+          <InvoiceDocsForm
+            invoice={selected}
+            complete={() =>
+              this.setState({ attachDocs: false, selected: false })
+            }
+          />
+        )}
         {this.state.isLoading && (
           <LoadingIndicator isLoading={this.state.isLoading} />
         )}
-        {selected && (
+        {openDetails && (
           <Modal
             modalId="invoices-create"
             title="Invoice Summary"
-            handleClose={() => this.setState({ selected: null })}
+            handleClose={() =>
+              this.setState({ selected: null, openDetails: false })
+            }
             content={
               <InvoiceDetails
                 token={this.props.user.token}

@@ -17,6 +17,8 @@ from decimal import Decimal
 from datetime import datetime, timedelta
 from django.http import HttpResponse
 from . import exports
+from . import invoice_ocr
+import io
 
 INVOICES_SEQUENCE_KEY = 'INVOICES'
 INVOICES_DIGITS = 5
@@ -66,6 +68,35 @@ class InvoiceReportExportView(APIView):
         xlsx_data = exports.export_invoices(request, data)
         response.write(xlsx_data)
         return response
+
+
+class InvoiceDocsView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        data = request.data
+        invoice = models.Invoice.objects.get(pk=data['invoice_id'])
+        inv_file = request.FILES['invoice']
+        let_file = request.FILES['letter']
+        invoice_res, letter_res = invoice_ocr.extract_invoice_copy(
+            io.BytesIO(inv_file.read()), io.BytesIO(let_file.read()))
+        print(invoice_res, letter_res)
+        result = -1
+        msg = f'Attached invoice docs failed. Check the docs and reupload'
+        try:
+            if invoice_res and letter_res:
+                if invoice_res['invoice_number'] == letter_res['invoice_number']:
+                    ref_number = invoice_res['invoice_number']
+                    models.InvoiceDoc.objects.create(
+                        ref_number=ref_number, doc_type=models.InvoiceDoc.DOC_INVOICE, file=inv_file, invoice=invoice)
+                    models.InvoiceDoc.objects.create(
+                        ref_number=ref_number, doc_type=models.InvoiceDoc.DOC_LETTER, file=let_file, invoice=invoice)
+                    result = 0
+                    msg = f'Successfully attached invoice docs'
+        except Exception as e:
+            print(dir(e))
+            msg = f'${e}'
+        return Response({'result': result, 'message': msg, 'data': {'letter': letter_res, 'invoice': invoice_res}})
 
 
 class InvoiceManageView(APIView):
