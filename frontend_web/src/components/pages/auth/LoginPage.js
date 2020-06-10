@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import CommonForm from "../../utils/form/CommonForm";
 import LoadingIndicator from "../../utils/loading/LoadingIndicator";
 import Snackbar from "../../utils/notify/Snackbar";
+import MatIcon from "../../utils/icons/MatIcon";
 
 @connect(
   (state) => {
@@ -65,6 +66,11 @@ class LoginPage extends Component {
         { name: "password", label: "Password", type: "password" },
       ],
       onSubmit: this.submitLogin.bind(this),
+      btnLabel: (
+        <>
+          Login <MatIcon name="arrow_forward" />
+        </>
+      ),
     };
 
     if (loggedIn) {

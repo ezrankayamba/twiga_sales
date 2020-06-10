@@ -236,7 +236,7 @@ class CommonForm extends Component {
             })}
           </div>
           <div className="submit form-footer pb-2">
-            <button className="btn btn-outline-primary">
+            <button className="btn btn-sm btn-primary ">
               {meta.btnLabel || "Submit"}
             </button>
           </div>
