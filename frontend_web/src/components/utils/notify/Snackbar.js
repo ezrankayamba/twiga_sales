@@ -8,9 +8,12 @@ class Snackbar extends React.Component {
   }
 
   componentDidMount() {
+    const { done } = this.props;
     setTimeout(() => {
       this.setState({ show: false });
-      this.props.done();
+      if (done) {
+        done();
+      }
     }, this.props.timeout);
   }
 

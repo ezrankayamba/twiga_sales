@@ -208,8 +208,10 @@ def import_docs(batch):
             with zip.open(excel, 'r') as file:
                 ws = openpyxl.load_workbook(ContentFile(file.read())).active
                 i = 0
+
                 for row in ws.values:
-                    if i and len(row) == 3:
+                    print("Data ........", row)
+                    if i and len(row) >= 3:
                         print(row)
                         rec = {}
                         try:

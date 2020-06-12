@@ -18,6 +18,7 @@ import MatIcon from "../../utils/icons/MatIcon";
 import BasicCrudView from "../../utils/crud/BasicCrudView";
 import LoadingIndicator from "../../utils/loading/LoadingIndicator";
 import Numbers from "../../../_helpers/Numbers";
+import Snackbar from "../../utils/notify/Snackbar";
 
 @connect((state) => {
   return {
@@ -157,8 +158,18 @@ class List extends Component {
       this.setState({ isLoading: true });
       attachDocs(this.props.user.token, data, (res) => {
         console.log(res);
-        this.setState({ isLoading: true });
-        this.refresh();
+        if (res.status === 0) {
+          this.setState({ isLoading: true });
+          this.refresh();
+        } else {
+          this.setState({
+            snackbar: {
+              error: true,
+              message: "Failed: " + res || "Unknown error occured",
+              timeout: 10000,
+            },
+          });
+        }
       });
     }
   }
@@ -193,7 +204,7 @@ class List extends Component {
   }
 
   render() {
-    let { sales, pages, pageNo, selected, openDetail } = this.state;
+    let { sales, pages, pageNo, selected, openDetail, snackbar } = this.state;
     let data = {
       records: sales,
       headers: [
@@ -349,6 +360,7 @@ class List extends Component {
             sale={selected}
           />
         )}
+        {snackbar && <Snackbar {...snackbar} />}
       </div>
     );
   }
