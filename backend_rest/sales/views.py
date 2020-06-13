@@ -329,6 +329,8 @@ class TestOCRView(APIView):
                 regex = d['regex']
                 # ref_number = ocr.new_extract_from_file(regex, pdf_data, **args)
                 ref_number = ocr2.extract_ref_number(pdf_data, regex, **args)
+                if 'corrections' in d:
+                    ref_number = ocr2.apply_corrections(ref_number, d['corrections'])
                 print(ref_number)
                 # print(regex)
                 # ret = re.search(regex, text)

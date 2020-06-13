@@ -23,7 +23,7 @@ def docs_schema():
     # return serializers.SchemaSerializer(models.Schema.objects.all(), many=True).data
     return [
         {'name': models.Document.DOC_C2, 'letter': models.Document.LETTER_C2, 'key': doc_key(
-            models.Document.DOC_C2), 'regex': '[ ]{0,1}(\w{15,})[\({ ]', 'params': {'x': 700, 'y': 600, 'h': 400, 'w': 800, 'threshold': 225}, 'mandatory': True},
+            models.Document.DOC_C2), 'regex': '[ ]{0,1}(\w{15,})[\({ ]', 'params': {'x': 700, 'y': 600, 'h': 400, 'w': 800, 'threshold': 225}, 'mandatory': True, 'corrections': [{'pos': 1, 'val': '2', 'rep': 'Z'}]},
         {'name': models.Document.DOC_ASSESSMENT, 'prefix': 'C ', 'letter': models.Document.LETTER_ASSESSMENT, 'key': doc_key(models.Document.DOC_ASSESSMENT), 'regex': '[CcG]{1,}[ ]{0,}(\d{2,})', 'params': {
             'x': 700, 'y': 20, 'h': 500, 'w': 800, 'threshold': 230}, 'mandatory': True},
         {'name': models.Document.DOC_EXIT, 'letter': models.Document.LETTER_EXIT, 'key': doc_key(
@@ -127,6 +127,8 @@ def read_entries(zip, row, docs_list, agent):
                 print("Resulting Ref No: ", ref_number)
                 error = None
                 if ref_number:
+                    if 'corrections' in d:
+                        ref_number = ocr2.apply_corrections(ref_number, d['corrections'])
                     prefix = d.get('prefix', '')
                     ref_number = f'{prefix}{ref_number}'
                     print(ref_number)

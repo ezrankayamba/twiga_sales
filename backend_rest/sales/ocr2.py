@@ -104,14 +104,29 @@ def image_to_string(image):
 def get_ref_number(image, regex):
     text = image_to_string(image)
     lines = text.split("\n")
-    print("\n\n\n")
-    print("========================================================")
-    print(regex)
+    print("\n")
+    # print("========================================================")
+    # print(regex)
+    i = 0
     for line in lines:
-        print(line)
         ret = re.search(regex, line.strip())
+        i = i+1
+        print(i, '. ', line)
         if ret:
             return ret.group(1)
+
+
+def threshold_trials(orig_img, regex,  thresholds, i=0):
+    img = orig_img.copy()
+    threshold = thresholds[i]
+    print("Try with threshold: ", threshold)
+    img = thresholding(np.array(img), threshold=threshold)
+    ref_number = get_ref_number(img, regex)
+    if ref_number:
+        return ref_number
+    j = i+1
+    if j < len(thresholds):
+        return threshold_trials(orig_img, regex,  thresholds, i=j)
 
 
 def extract_ref_number(pdf_data, regex, **kwargs):
@@ -122,20 +137,82 @@ def extract_ref_number(pdf_data, regex, **kwargs):
     img = crop(img, **kwargs)
     img = de_skew(img, show=False)
     ref_number = get_ref_number(img, regex)
-    if ref_number:
-        return ref_number
-    else:
-        print("Try with threshold: ", threshold)
-        orign_img = img
-        img = thresholding(np.array(img), threshold=threshold)
-        ref_number = get_ref_number(img, regex)
-        if ref_number:
-            return ref_number
-        else:
-            img = thresholding(np.array(orign_img), threshold=(threshold+7))
-            ref_number = get_ref_number(img, regex)
-            if ref_number:
-                return ref_number
-            else:
-                img = thresholding(np.array(orign_img), threshold=(threshold-7))
-                ref_number = get_ref_number(img, regex)
+    if not ref_number:
+        thresholds = [threshold, threshold+7, threshold-1,  threshold*2/3.5, threshold*2/3]
+        print("Try with thresholds: ", thresholds)
+        ref_number = threshold_trials(img, regex, thresholds)
+    return ref_number
+    # orign_img = img
+    # img = thresholding(np.array(img), threshold=threshold)
+    # ref_number = get_ref_number(img, regex)
+    # if ref_number:
+    #     return ref_number
+    # else:
+    #     print("Try with threshold: ", threshold+7)
+    #     img = thresholding(np.array(orign_img), threshold=(threshold+7))
+    #     ref_number = get_ref_number(img, regex)
+    #     if ref_number:
+    #         return ref_number
+    #     else:
+    #         print("Try with threshold: ", threshold-7)
+    #         img = thresholding(np.array(orign_img), threshold=(threshold-7))
+    #         ref_number = get_ref_number(img, regex)
+    #         if ref_number:
+    #             return ref_number
+    #         else:
+    #             print("Try with threshold: ", threshold*2/3.5)
+    #             img = thresholding(np.array(orign_img), threshold=(threshold*2/3))
+    #             ref_number = get_ref_number(img, regex)
+    #             return ref_number
+
+
+def show_wait_destroy(winname, img):
+    cv2.imshow(winname, img)
+    cv2.moveWindow(winname, 500, 0)
+    cv2.waitKey(0)
+    cv2.destroyWindow(winname)
+
+
+def apply_corrections(ref_number, corrections):
+    res = list(ref_number)
+    for c in corrections:
+        pos = c['pos']
+        x = res[pos]
+        if x == c['val']:
+            res[pos] = c['rep']
+    return ''.join(res)
+
+
+def auto_remove_scratches():
+    print("Removing scratches...")
+    file = "C:\\Users\\godfred.nkayamba\\Downloads\\failed\\C.pdf"
+    with open(file, 'rb') as pdf_data:
+        img = np.array(get_image(pdf_data))
+        print(img.shape)
+        corrections = [{'pos': 1, 'val': '2', 'rep': 'Z'}]
+        C_regex = '[ ]{0,1}(\w{15,})[\({ ]'
+        A_kwargs = {'x': 700, 'y': 20, 'h': 500, 'w': 800, 'threshold': 230}
+        C_kwargs = {'x': 700, 'y': 600, 'h': 400, 'w': 800, 'threshold': 225}
+        kwargs = C_kwargs
+        regex = C_regex
+        threshold = kwargs.get('threshold')
+        if threshold:
+            del kwargs['threshold']
+        img = crop(img, **kwargs)
+        img = de_skew(img, show=False)
+
+        # ret, binary = cv2.threshold(img, threshold*2/3.5, 255, cv2.THRESH_BINARY)
+        # ref_number = get_ref_number(binary, regex)
+        thresholds = [threshold, threshold+7, threshold-1,  threshold*2/3.5, threshold*2/3]
+        print("Try with thresholds: ", thresholds)
+        ref_number = threshold_trials(img, regex, thresholds)
+        print(corrections)
+        if ref_number and corrections and len(corrections):
+            ref_number = apply_corrections(ref_number, corrections)
+        print(ref_number)
+        # cv2.imshow("Orig", orig)
+        # cv2.imshow("Binary", binary)
+        # cv2.waitKey(0)
+
+
+# auto_remove_scratches()
