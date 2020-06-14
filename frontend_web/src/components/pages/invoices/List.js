@@ -11,7 +11,12 @@ import InvoiceDetails from "./forms/InvoiceDetails";
 import FileDownload from "../../../_helpers/FileDownload";
 import InvoiceDocsForm from "./forms/InvoiceDocsForm";
 import { SERVER_URL } from "../../../conf";
-
+const STATUS_MAP = [
+  "Created",
+  "Copy attached",
+  "Awaiting payment",
+  "Completed",
+];
 @connect((state) => {
   return {
     user: state.auth.user,
@@ -37,6 +42,23 @@ class List extends Component {
     this.refresh();
   }
 
+  getStatus(code) {
+    return STATUS_MAP[code];
+  }
+  getAction(status) {
+    const { user } = this.props;
+    if (UserHelper.hasPriv(user, "Sales.update.invoice")) {
+      if (status === "Copy attached") {
+        return "Verify";
+      }
+      if (status === "Awaiting payment") {
+        return "Complete";
+      }
+    }
+
+    return null;
+  }
+
   refresh(page = 1, filter = null) {
     this.setState({ isLoading: true, filter }, () => {
       CRUD.search("/invoices", this.props.user.token, filter, {
@@ -53,7 +75,7 @@ class List extends Component {
                 quantity: Numbers.fmt(item.quantity),
                 value: Numbers.fmt(item.value),
                 value_vat: Numbers.fmt(item.value * 1.18),
-                status: item.status ? "Completed" : "Pending",
+                status: this.getStatus(item.status),
               };
             }),
           });
@@ -138,7 +160,8 @@ class List extends Component {
       attachDocs,
       openDetails,
     } = this.state;
-    console.log(invoices);
+    const { user } = this.props;
+
     let data = {
       records: invoices,
       headers: [
@@ -175,56 +198,49 @@ class List extends Component {
                     <MatIcon name="arrow_downward" /> {d.doc_type}
                   </a>
                 ))}
-                <button
-                  className="btn btn-link"
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    this.setState({ attachDocs: true, selected: row });
-                  }}
-                >
-                  <MatIcon name="attach_file" />
-                </button>
               </div>
             ) : (
               <div className="action-buttons">
                 <span>Not attached</span>
-                <button
-                  className="btn btn-link"
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    this.setState({ attachDocs: true, selected: row });
-                  }}
-                >
-                  <MatIcon name="attach_file" />
-                </button>
+                {user.agent && (
+                  <button
+                    className="btn btn-link"
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      this.setState({ attachDocs: true, selected: row });
+                    }}
+                  >
+                    <MatIcon name="attach_file" />
+                  </button>
+                )}
               </div>
             ),
         },
         {
           field: "action",
           title: "Action",
-          render: (row) =>
-            row.status === "Pending" &&
-            UserHelper.hasPriv(this.props.user, "Sales.update.invoice") ? (
+          render: (row) => {
+            let action = this.getAction(row.status);
+            return action ? (
               <div className="actions">
                 <button
                   className="btn btn-sm btn-link text-success"
                   onClick={(e) => this.handleComplete(e, row)}
                 >
-                  <MatIcon name="done_all" />
+                  <MatIcon name="done_all" /> {action}
                 </button>
-                <button
+                {/* <button
                   className="btn btn-sm btn-link text-warning"
                   onClick={(e) => this.handleDelete(e, row)}
                 >
                   <MatIcon name="delete" />
-                </button>
+                </button> */}
               </div>
             ) : (
               <span>None</span>
-            ),
+            );
+          },
         },
       ],
       title: "List of invoices",
@@ -264,9 +280,10 @@ class List extends Component {
         {attachDocs && (
           <InvoiceDocsForm
             invoice={selected}
-            complete={() =>
-              this.setState({ attachDocs: false, selected: false })
-            }
+            complete={() => {
+              this.setState({ attachDocs: false, selected: null });
+              this.refresh();
+            }}
           />
         )}
         {this.state.isLoading && (

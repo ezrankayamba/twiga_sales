@@ -32,14 +32,20 @@ class InvoiceDocsForm extends Component {
       form.append(entry[0], entry[1]);
     });
     this.setState({ isLoading: true, snackbar: null });
+    const { complete } = this.props;
     CRUD.uploadDocs("/invoices/docs", this.props.user.token, form, (res) => {
       console.log(res);
       this.setState({
         isLoading: false,
         snackbar: {
           message: res.message,
-          timeout: 20000,
+          timeout: 5000,
           error: res.result !== 0,
+          done: () => {
+            if (complete) {
+              complete(res);
+            }
+          },
         },
       });
     });
@@ -90,14 +96,7 @@ class InvoiceDocsForm extends Component {
             />
           }
         />
-        {snackbar && (
-          <Snackbar
-            message={snackbar.message}
-            timeout={snackbar.timeout}
-            error={snackbar.error}
-            done={() => console.log("Done")}
-          />
-        )}
+        {snackbar && <Snackbar {...snackbar} />}
         {isLoading && <LoadingIndicator isLoading={true} />}
       </>
     );

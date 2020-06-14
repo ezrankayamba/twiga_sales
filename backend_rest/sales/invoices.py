@@ -86,13 +86,21 @@ class InvoiceDocsView(APIView):
         try:
             if invoice_res and letter_res:
                 if invoice_res['invoice_number'] == letter_res['invoice_number']:
-                    ref_number = invoice_res['invoice_number']
-                    models.InvoiceDoc.objects.create(
-                        ref_number=ref_number, doc_type=models.InvoiceDoc.DOC_INVOICE, file=inv_file, invoice=invoice)
-                    models.InvoiceDoc.objects.create(
-                        ref_number=ref_number, doc_type=models.InvoiceDoc.DOC_LETTER, file=let_file, invoice=invoice)
-                    result = 0
-                    msg = f'Successfully attached invoice docs'
+                    volume = Decimal(letter_res['volume'])
+                    if volume == invoice.quantity:
+                        ref_number = invoice_res['invoice_number']
+                        models.InvoiceDoc.objects.create(
+                            ref_number=ref_number, doc_type=models.InvoiceDoc.DOC_INVOICE, file=inv_file, invoice=invoice)
+                        models.InvoiceDoc.objects.create(
+                            ref_number=ref_number, doc_type=models.InvoiceDoc.DOC_LETTER, file=let_file, invoice=invoice)
+
+                        invoice.status = 1
+                        invoice.save()
+
+                        msg = f'Successfully attached invoice docs'
+                        result = 0
+                    else:
+                        msg = f'Quantity mismatch. Invoice Qty: {invoice.quantity}, Uploaded Qty: {volume} tons'
         except Exception as e:
             print(dir(e))
             msg = f'${e}'
@@ -151,7 +159,7 @@ class InvoiceManageView(APIView):
 
     def put(self, request, invoice_id):
         invoice = models.Invoice.objects.get(pk=invoice_id)
-        invoice.status = 1
+        invoice.status = invoice.status + 1
         invoice.save()
         return Response({'result': 0, 'message': f'Successfully updated invoice number: {invoice.number}'})
 
