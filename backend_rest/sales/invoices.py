@@ -67,7 +67,7 @@ class InvoiceReportExportView(APIView):
     def post(self, request):
         agent = request.user.agent if hasattr(request.user, 'agent') else None
         if agent:
-            data = models.Invoice.objects.filter(agent=agent)
+            data = models.Invoice.objects.filter(agent__code=agent.code)
         else:
             data = models.Invoice.objects.all()
         export_id = datetime.now().strftime("%Y%m%d%H%M%S")
@@ -135,15 +135,15 @@ class InvoiceManageView(APIView):
 
     def eligible_summary(self, request):
         agent = request.user.agent if hasattr(request.user, 'agent') else None
-        agent_id = agent.id if agent else 0
-        sql = "select max(id) as id, complete, count(id) as volume, sum(total_value2) as value_sum, sum(quantity2) as quantity_sum from (select *, (case when (select count(*) from sales_document d where d.sale_id=s.id and d.doc_type in ('C2','Assessment'))=2 then 1 else 0 end) as complete from sales_sale s where s.invoice_id is null and s.agent_id = %s) as sales group by complete"
-        return models.Sale.objects.raw(sql, [agent_id])
+        agent_code = agent.code if agent else 0
+        sql = "select max(id) as id, complete, count(id) as volume, sum(total_value2) as value_sum, sum(quantity2) as quantity_sum from (select *, (case when (select count(*) from sales_document d where d.sale_id=s.id and d.doc_type in ('C2','Assessment'))=2 then 1 else 0 end) as complete from sales_sale s left join users_agent a on s.agent_id=a.id where s.invoice_id is null and a.code = %s) as sales group by complete"
+        return models.Sale.objects.raw(sql, [agent_code])
 
     def eligible_list(self, request):
         agent = request.user.agent if hasattr(request.user, 'agent') else None
-        agent_id = agent.id if agent else 0
-        sql = "select *, (case when (select count(*) from sales_document d where d.sale_id=s.id and d.doc_type in ('C2','Assessment'))=2 then 1 else 0 end) as complete from sales_sale s where complete=1 and s.agent_id = %s"
-        return models.Sale.objects.raw(sql, [agent_id])
+        agent_code = agent.code if agent else 0
+        sql = "select *, (case when (select count(*) from sales_document d where d.sale_id=s.id and d.doc_type in ('C2','Assessment'))=2 then 1 else 0 end) as complete from sales_sale s left join users_agent a on s.agent_id=a.id where s.invoice_id is null and a.code = %s and complete=1"
+        return models.Sale.objects.raw(sql, [agent_code])
 
     def post(self, request):
         agent = request.user.agent if hasattr(request.user, 'agent') else None
