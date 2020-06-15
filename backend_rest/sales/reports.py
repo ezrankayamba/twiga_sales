@@ -12,7 +12,7 @@ import io
 import re
 from django.db import models as d_models
 from datetime import datetime, timedelta
-from django.db.models import Q, F
+from django.db.models import Q, F, Count
 from . import exports
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -25,15 +25,16 @@ def threshold_date():
 
 
 def get_sales(q):
+    mandatory = ['C2', 'Assessment']
+    qs = models.Sale.objects.annotate(doc_count=Count('docs', filter=Q(docs__doc_type__in=mandatory)))
     if q == 'nodocs_old':
-        return models.Sale.objects.annotate(doc_count=d_models.Count('docs')).filter(
-            doc_count__lt=3, transaction_date__lte=threshold_date())
+        return qs.filter(doc_count__lt=2, transaction_date__lte=threshold_date())
     elif q == 'nodocs_new':
-        return models.Sale.objects.annotate(doc_count=d_models.Count('docs')).filter(doc_count__lt=3, transaction_date__gt=threshold_date())
+        return qs.filter(doc_count__lt=2, transaction_date__gt=threshold_date())
     elif q == 'docs_nomatch':
-        return models.Sale.objects.annotate(doc_count=d_models.Count('docs')).filter(doc_count=3).filter(~Q(total_value=F('total_value2'))).filter(~Q(quantity=F('quantity2')))
+        return qs.filter(doc_count=2).filter(~Q(total_value=F('total_value2'))).filter(~Q(quantity=F('quantity2')))
     else:
-        return models.Sale.objects.annotate(doc_count=d_models.Count('docs')).filter(doc_count=3).filter(Q(total_value=F('total_value2'))).filter(Q(quantity=F('quantity2')))
+        return qs.filter(doc_count=2).filter(Q(total_value=F('total_value2'))).filter(Q(quantity=F('quantity2')))
 
 
 class SummaryDetailExport(APIView):
