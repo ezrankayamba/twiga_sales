@@ -129,13 +129,23 @@ def threshold_trials(orig_img, regex,  thresholds, i=0):
         return threshold_trials(orig_img, regex,  thresholds, i=j)
 
 
+def zoom_in(img, zoom):
+    return cv2.resize(img, None, fx=zoom, fy=zoom)
+
+
 def extract_ref_number(pdf_data, regex, **kwargs):
     threshold = kwargs.get('threshold')
+    zoom = kwargs.get('zoom')
     if threshold:
         del kwargs['threshold']
+    if zoom:
+        del kwargs['zoom']
+    else:
+        zoom = 1.0
     img = np.array(get_image(pdf_data))
     img = crop(img, **kwargs)
     img = de_skew(img, show=False)
+    img = zoom_in(img, zoom)
     ref_number = get_ref_number(img, regex)
     if not ref_number:
         thresholds = [threshold, threshold+7, threshold-1,  threshold*2/3.5, threshold*2/3]
@@ -174,13 +184,16 @@ def show_wait_destroy(winname, img):
 
 
 def apply_corrections(ref_number, corrections):
-    res = list(ref_number)
-    for c in corrections:
-        pos = c['pos']
-        x = res[pos]
-        if x == c['val']:
-            res[pos] = c['rep']
-    return ''.join(res)
+    if corrections and ref_number:
+        res = list(ref_number)
+        for c in corrections:
+            pos = c['pos']
+            x = res[pos]
+            if x == c['val']:
+                res[pos] = c['rep']
+        return ''.join(res)
+    else:
+        return ref_number
 
 
 def auto_remove_scratches():

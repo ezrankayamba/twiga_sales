@@ -23,9 +23,9 @@ def docs_schema():
     # return serializers.SchemaSerializer(models.Schema.objects.all(), many=True).data
     return [
         {'name': models.Document.DOC_C2, 'letter': models.Document.LETTER_C2, 'key': doc_key(
-            models.Document.DOC_C2), 'regex': '[ ]{0,1}(\w{15,})[\({ ]', 'params': {'x': 700, 'y': 600, 'h': 400, 'w': 800, 'threshold': 225}, 'mandatory': True, 'corrections': [{'pos': 1, 'val': '2', 'rep': 'Z'}]},
+            models.Document.DOC_C2), 'regex': '[ ]{0,1}(T\w{14,})[\({ ]', 'params': {'x': 700, 'y': 600, 'h': 400, 'w': 800, 'threshold': 225}, 'mandatory': True, 'corrections': [{'pos': 1, 'val': '2', 'rep': 'Z'}]},
         {'name': models.Document.DOC_ASSESSMENT, 'prefix': 'C ', 'letter': models.Document.LETTER_ASSESSMENT, 'key': doc_key(models.Document.DOC_ASSESSMENT), 'regex': '[CcG]{1,}[ ]{0,}(\d{2,})', 'params': {
-            'x': 700, 'y': 20, 'h': 500, 'w': 800, 'threshold': 230}, 'mandatory': True},
+            'x': 700, 'y': 20, 'h': 500, 'w': 800, 'threshold': 230, 'zoom': 1.1}, 'mandatory': True},
         {'name': models.Document.DOC_EXIT, 'letter': models.Document.LETTER_EXIT, 'key': doc_key(
             models.Document.DOC_EXIT), 'regex': 'laration[ +\d:]{1,}(\d{4} [\w/]+)', 'params': {'x': 20, 'y': 600, 'h': 600, 'w': 600, 'threshold': 236}, 'mandatory': False}
     ]

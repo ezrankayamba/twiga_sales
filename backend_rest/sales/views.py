@@ -317,7 +317,10 @@ class TestOCRView(APIView):
         del params['letter']
         args = {}
         for p in params:
-            args[p] = int(params.get(p))
+            if p == 'zoom':
+                args[p] = float(params.get(p))
+            else:
+                args[p] = int(params.get(p))
         print('Args: ', args)
         with ocr.Timer("Elapsed time to extract text: {:,.2f} ms"):
             schema = None
