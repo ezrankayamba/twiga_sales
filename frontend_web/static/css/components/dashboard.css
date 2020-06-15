@@ -17,4 +17,5 @@
 .dashboard .row > div {
   border: 1px solid #ddd;
   padding: var(--dashboard-grid-padding);
+  background: #ffffff;
 }
