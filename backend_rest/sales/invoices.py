@@ -35,7 +35,7 @@ class InvoiceListView(APIView):
 
     def post(self, request):
         print(request.GET)
-        agent = request.user.agent
+        agent = request.user.agent if hasattr(request.user, 'agent') else None
         if agent:
             data = serializers.InvoiceSerializer(models.Invoice.objects.filter(agent=agent), many=True).data
         else:
@@ -65,7 +65,7 @@ class InvoiceReportExportView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        agent = request.user.agent
+        agent = request.user.agent if hasattr(request.user, 'agent') else None
         if agent:
             data = models.Invoice.objects.filter(agent=agent)
         else:
