@@ -120,11 +120,7 @@ class InvoiceManageView(APIView):
     required_scopes = []
 
     def get(self, request):
-        agent = None
-        try:
-            agent = request.user.agent
-        except Exception as e:
-            pass
+        agent = request.user.agent if hasattr(request.user, 'agent') else None
         qs = self.eligible_summary(request)
         data = {'complete': {'quantity': 0, 'quantity': 0}, 'incomplete': {
             'quantity': 0, 'quantity': 0}, 'commission': agent.commission if agent else 0}
@@ -138,19 +134,19 @@ class InvoiceManageView(APIView):
         return Response({'result': 0, 'message': 'Invoicable sales retrieved successfully', 'data': data})
 
     def eligible_summary(self, request):
-        agent = request.user.agent
+        agent = request.user.agent if hasattr(request.user, 'agent') else None
         agent_id = agent.id if agent else 0
         sql = "select max(id) as id, complete, count(id) as volume, sum(total_value2) as value_sum, sum(quantity2) as quantity_sum from (select *, (case when (select count(*) from sales_document d where d.sale_id=s.id and d.doc_type in ('C2','Assessment'))=2 then 1 else 0 end) as complete from sales_sale s where s.invoice_id is null and s.agent_id = %s) as sales group by complete"
         return models.Sale.objects.raw(sql, [agent_id])
 
     def eligible_list(self, request):
-        agent = request.user.agent
+        agent = request.user.agent if hasattr(request.user, 'agent') else None
         agent_id = agent.id if agent else 0
         sql = "select *, (case when (select count(*) from sales_document d where d.sale_id=s.id and d.doc_type in ('C2','Assessment'))=2 then 1 else 0 end) as complete from sales_sale s where complete=1 and s.agent_id = %s"
         return models.Sale.objects.raw(sql, [agent_id])
 
     def post(self, request):
-        agent = request.user.agent
+        agent = request.user.agent if hasattr(request.user, 'agent') else None
         qs = self.eligible_summary(request)
         data = {'quantity': 0, 'quantity': 0, 'number': generate_num(), 'commission': agent.commission, 'agent': agent}
         for row in qs:
