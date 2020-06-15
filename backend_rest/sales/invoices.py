@@ -35,7 +35,11 @@ class InvoiceListView(APIView):
 
     def post(self, request):
         print(request.GET)
-        data = serializers.InvoiceSerializer(models.Invoice.objects.all(), many=True).data
+        agent = request.user.agent
+        if agent:
+            data = serializers.InvoiceSerializer(models.Invoice.objects.filter(agent=agent), many=True).data
+        else:
+            data = serializers.InvoiceSerializer(models.Invoice.objects.all(), many=True).data
         return Response({'result': 0, 'message': 'Fetched invoices successfully', 'data': data})
 
 
@@ -61,7 +65,11 @@ class InvoiceReportExportView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        data = models.Invoice.objects.all()
+        agent = request.user.agent
+        if agent:
+            data = models.Invoice.objects.filter(agent=agent)
+        else:
+            data = models.Invoice.objects.all()
         export_id = datetime.now().strftime("%Y%m%d%H%M%S")
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = f'attachment; filename="{export_id}_Sales.xlsx"'
@@ -130,12 +138,16 @@ class InvoiceManageView(APIView):
         return Response({'result': 0, 'message': 'Invoicable sales retrieved successfully', 'data': data})
 
     def eligible_summary(self, request):
-        sql = "select max(id) as id, complete, count(id) as volume, sum(total_value2) as value_sum, sum(quantity2) as quantity_sum from (select *, (case when (select count(*) from sales_document d where d.sale_id=s.id and d.doc_type in ('C2','Assessment'))=2 then 1 else 0 end) as complete from sales_sale s where s.invoice_id is null) as sales group by complete"
-        return models.Sale.objects.raw(sql)
+        agent = request.user.agent
+        agent_id = agent.id if agent else 0
+        sql = "select max(id) as id, complete, count(id) as volume, sum(total_value2) as value_sum, sum(quantity2) as quantity_sum from (select *, (case when (select count(*) from sales_document d where d.sale_id=s.id and d.doc_type in ('C2','Assessment'))=2 then 1 else 0 end) as complete from sales_sale s where s.invoice_id is null and s.agent_id = %s) as sales group by complete"
+        return models.Sale.objects.raw(sql, [agent_id])
 
     def eligible_list(self, request):
-        sql = "select *, (case when (select count(*) from sales_document d where d.sale_id=s.id and d.doc_type in ('C2','Assessment'))=2 then 1 else 0 end) as complete from sales_sale s where complete=1"
-        return models.Sale.objects.raw(sql)
+        agent = request.user.agent
+        agent_id = agent.id if agent else 0
+        sql = "select *, (case when (select count(*) from sales_document d where d.sale_id=s.id and d.doc_type in ('C2','Assessment'))=2 then 1 else 0 end) as complete from sales_sale s where complete=1 and s.agent_id = %s"
+        return models.Sale.objects.raw(sql, [agent_id])
 
     def post(self, request):
         agent = request.user.agent
