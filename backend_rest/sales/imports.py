@@ -141,7 +141,8 @@ def read_entries(zip, row, docs_list, agent):
                             'file': File(pdf_data, name=filename),
                             'sale': sale,
                             'doc_type': name,
-                            'truck': truck
+                            'truck': truck,
+                            'user': agent.user
                         })
                 else:
                     error = f'Invalid {name} document'

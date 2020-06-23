@@ -193,7 +193,8 @@ class SaleDocsView(APIView):
                         'file': file,
                         'sale': sale,
                         'doc_type': name,
-                        'truck': truck
+                        'truck': truck,
+                        'user': request.user
                     })
             else:
                 name = d['name']
@@ -265,7 +266,8 @@ class SaleDocsView(APIView):
                         'file': file,
                         'sale': sale,
                         'doc_type': name,
-                        'truck': truck
+                        'truck': truck,
+                        'user': request.user
                     })
             else:
                 name = d['name']

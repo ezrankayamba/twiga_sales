@@ -35,6 +35,7 @@ class Document(models.Model):
     truck = models.CharField(max_length=10, default='trailer')
     file = models.FileField(upload_to='docs/')
     sale = models.ForeignKey('Sale', related_name='docs', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='docs', on_delete=models.PROTECT, null=True)
     created_at = models.DateTimeField(auto_now=False, auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, auto_now_add=False, null=True)
 
