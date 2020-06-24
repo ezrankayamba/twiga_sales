@@ -66,6 +66,11 @@ class List extends Component {
     let res = t ? t.ref_number : null;
     return res;
   }
+  getDocId(sale, type) {
+    let t = sale.docs.find((typ) => typ.doc_type === type);
+    let res = t ? t.id : null;
+    return res;
+  }
 
   refresh(page = 1, filter = null) {
     this.setState({ isLoading: true, filter }, () =>
@@ -113,6 +118,20 @@ class List extends Component {
   onDelete(e, params) {
     e.stopPropagation();
     console.log("onDelete", params);
+    switch (params.type) {
+      case "doc":
+        CRUD.delete(`/documents/${params.id}`, this.props.user.token, {
+          onSuccess: (res) => {
+            this.refresh();
+          },
+          onFail: (res) => {
+            console.log(res);
+          },
+        });
+        break;
+      default:
+        console.log("Not handled");
+    }
   }
 
   doAdd(params, cb) {
@@ -203,6 +222,24 @@ class List extends Component {
     });
   }
 
+  renderDoc(sale, type) {
+    let ref_number = this.getRef(sale, type);
+    let id = this.getDocId(sale, type);
+    return id ? (
+      <span>
+        {ref_number}
+        {sale.invoice ? null : (
+          <button
+            className="btn btn-link btn-inline p-1"
+            onClick={(e) => this.onDelete(e, { type: "doc", id: id })}
+          >
+            <MatIcon name="delete" extra="text-danger" />
+          </button>
+        )}
+      </span>
+    ) : null;
+  }
+
   render() {
     let { sales, pages, pageNo, selected, openDetail, snackbar } = this.state;
     let data = {
@@ -275,9 +312,21 @@ class List extends Component {
         { field: "quantity", title: "Qty(Tons)", hide: this.canAddDocs() },
         { field: "total_value", title: "Value", hide: this.canAddDocs() },
         { field: "agent", title: "Agent" },
-        { field: "c2_ref", title: "C2" },
-        { field: "assessment_ref", title: "Assessment" },
-        { field: "exit_ref", title: "Exit" },
+        {
+          field: "c2_ref",
+          title: "C2",
+          render: (row) => this.renderDoc(row, "C2"),
+        },
+        {
+          field: "assessment_ref",
+          title: "Assessment",
+          render: (row) => this.renderDoc(row, "Assessment"),
+        },
+        {
+          field: "exit_ref",
+          title: "Exit",
+          render: (row) => this.renderDoc(row, "Exit"),
+        },
       ],
       title: "List of sales",
       onSearch: (params) => this.refresh(1, params),

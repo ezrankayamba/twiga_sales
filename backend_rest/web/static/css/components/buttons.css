@@ -38,6 +38,9 @@
   background-position: center;
   transition: background 0.8s;
 }
+.btn.btn-inline {
+  display: inline;
+}
 
 /* Ripple effect */
 .btn:hover {
