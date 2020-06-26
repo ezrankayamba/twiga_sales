@@ -34,7 +34,7 @@ def get_sales(q):
     elif q == 'docs_nomatch':
         return qs.filter(doc_count=2).filter(~Q(total_value=F('total_value2'))).filter(~Q(quantity=F('quantity2')))
     else:
-        return qs.filter(doc_count=2).filter(Q(total_value=F('total_value2'))).filter(Q(quantity=F('quantity2')))
+        return qs.filter(doc_count=2)
 
 
 class SummaryDetailExport(APIView):
