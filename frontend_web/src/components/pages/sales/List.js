@@ -52,7 +52,7 @@ class List extends Component {
 
   onPageChange(pageNo) {
     this.setState({ pageNo });
-    this.refresh(pageNo);
+    this.refresh(pageNo, this.state.filter);
   }
 
   getDoc(sale, type) {
