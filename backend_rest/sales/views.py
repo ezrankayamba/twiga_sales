@@ -48,7 +48,11 @@ class SaleListView(generics.ListCreateAPIView):
             if date_to:
                 filt['transaction_date__lte'] = date_to
             print(filt)
-            sales = models.Sale.objects.annotate(doc_count=d_models.Count('docs')).filter(**filt)
+            q_more = self.request.query_params.get('more_filter')
+            if q_more:
+                sales = reports.get_sales(q=q_more).filter(**filt)
+            else:
+                sales = models.Sale.objects.annotate(doc_count=d_models.Count('docs')).filter(**filt)
         else:
             sales = models.Sale.objects.annotate(doc_count=d_models.Count('docs')).all()
         return sales

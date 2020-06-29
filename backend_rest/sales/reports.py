@@ -199,7 +199,7 @@ class DestinationReportView(APIView):
 class CustomerReportView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, request, format=None):
+    def get_data(self, request):
         sql = 'select max(id) as id, customer_name, count(id) as qty, sum(total_value) as total_value, sum(quantity) as total_volume, sum(total_value2) as total_value2, sum(quantity2) as total_volume2  from sales_sale group by customer_name'
         qs = models.Sale.objects.raw(sql)
         data = []
@@ -210,6 +210,10 @@ class CustomerReportView(APIView):
                 cust[col] = getattr(row, col)
             data.append(cust)
 
+        return data
+
+    def get(self, request, format=None):
+        data = self.get_data(request)
         print(data)
 
         return Response({
@@ -217,6 +221,15 @@ class CustomerReportView(APIView):
             'message': f'Successfully fetched report',
             'data': data
         })
+
+    def post(self, request):
+        customers = self.get_data(request)
+        export_id = datetime.now().strftime("%Y%m%d%H%M%S")
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = f'attachment; filename="{export_id}_Customers.xlsx"'
+        xlsx_data = exports.export_customers(request, customers)
+        response.write(xlsx_data)
+        return response
 
 
 class UnmatchedValuesReportView(APIView):

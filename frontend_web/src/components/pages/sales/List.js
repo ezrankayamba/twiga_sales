@@ -72,7 +72,9 @@ class List extends Component {
     return res;
   }
 
-  refresh(page = 1, filter = null) {
+  refresh(page = 1, filterIn = null) {
+    let { filter } = this.state;
+    filter = filterIn ? filterIn : filter;
     this.setState({ isLoading: true, filter }, () =>
       fetchSales(
         this.props.user.token,
@@ -199,9 +201,11 @@ class List extends Component {
     return UserHelper.hasPriv(this.props.user, "Sales.manage.docs");
   }
   canViewDocs() {
-    let res =
-      UserHelper.hasPriv(this.props.user, "Sales.view.docs") &&
-      this.state.selected.docs.length > 0;
+    const { user } = this.props;
+
+    let priv = UserHelper.hasPriv(user, "Sales.view.docs");
+    console.log(priv);
+    let res = priv && this.state.selected.docs.length > 0;
     console.log("canViewDocs: ", res);
 
     return res;
@@ -308,7 +312,21 @@ class List extends Component {
             name: "sales_order",
           },
         },
-        { field: "product_name", title: "Product" },
+        {
+          field: "product_name",
+          title: "Product",
+          search: {
+            type: "select",
+            label: "More Filter",
+            name: "more_filter",
+            options: [
+              { id: "withdocs", name: "With mandatory documents" },
+              { id: "docs_nomatch", name: "Docs with value mismatch" },
+              { id: "nodocs_new", name: "No docs new sales" },
+              { id: "nodocs_old", name: "No docs above 14 days" },
+            ],
+          },
+        },
         { field: "quantity", title: "Qty(Tons)", hide: this.canAddDocs() },
         { field: "total_value", title: "Value", hide: this.canAddDocs() },
         { field: "agent", title: "Agent" },
@@ -333,6 +351,9 @@ class List extends Component {
     };
 
     const pagination = { pages, pageNo, onPageChange: this.onPageChange };
+    const allowAdd = selected ? this.canAddDocs() : false;
+    const allowView = selected ? this.canViewDocs() || allowAdd : false;
+    console.log("Allow view: ", allowView);
     return (
       <div className="">
         <div className="list-toolbar">
@@ -402,9 +423,9 @@ class List extends Component {
         {this.state.isLoading && (
           <LoadingIndicator isLoading={this.state.isLoading} />
         )}
-        {openDetail && (this.canViewDocs() || this.canAddDocs()) && (
+        {openDetail && allowView && (
           <SaleDocsForm
-            readOnly={!this.canAddDocs()}
+            readOnly={!allowAdd}
             complete={this.complete.bind(this)}
             sale={selected}
           />

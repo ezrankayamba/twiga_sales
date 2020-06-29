@@ -84,7 +84,7 @@ class RolesPage extends Component {
     });
   }
 
-  onRowClick(row) {
+  onRowClick(_, row) {
     this.setState({ selected: row, openEdit: true });
   }
 
@@ -93,6 +93,7 @@ class RolesPage extends Component {
   }
 
   getForm(data = null) {
+    console.log(data);
     return {
       fields: [
         {

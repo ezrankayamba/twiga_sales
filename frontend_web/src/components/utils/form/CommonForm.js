@@ -175,7 +175,7 @@ class CommonForm extends Component {
 
   render() {
     const { errors, data } = this.state;
-    const { meta, onClose, newOptions } = this.props;
+    const { meta, onClose, newOptions, readOnly } = this.props;
     const defaultClose = () => console.log("Not handled...");
     const handleClose = onClose || defaultClose;
 
@@ -225,6 +225,7 @@ class CommonForm extends Component {
                     noValidate
                     errors={errors}
                     setChanged={this.setChanged}
+                    disabled={readOnly}
                   />
                   {f.info && (
                     <div className="info">
@@ -236,7 +237,7 @@ class CommonForm extends Component {
             })}
           </div>
           <div className="submit form-footer pb-2">
-            <button className="btn btn-sm btn-primary ">
+            <button className="btn btn-sm btn-primary" disabled={readOnly}>
               {meta.btnLabel || "Submit"}
             </button>
           </div>

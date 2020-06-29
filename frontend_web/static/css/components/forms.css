@@ -86,7 +86,8 @@ fieldset .checkbox-label span {
     grid-template-columns: repeat(4, 1fr);
     justify-content: left;
   }
-  .search .form-content input {
+  .search .form-content input,
+  .search .form-content select {
     width: 100%;
   }
   .search .form-group {

@@ -78,6 +78,41 @@ def export_report(request, sales):
     return xlsx_data
 
 
+def export_customers(request, customers):
+    output = io.BytesIO()
+    workbook = xlsxwriter.Workbook(output)
+
+    main = workbook.add_worksheet("Report")
+    headers = ['CUSTOMER', 'COUNT', 'FACTORY VALUE', 'FACTORY VOLUME', 'BORDER VALUE', 'BORDER VOLUME', '% VOLUME']
+    # columns = ['customer_name', 'qty', 'total_value', 'total_volume', 'total_value2', 'total_volume2']
+    rows = []
+
+    for prj in customers:
+        row = []
+        vol2 = prj['total_volume2'] if prj['total_volume2'] else 0
+        val2 = prj['total_value2'] if prj['total_value2'] else 0
+        pct = 100*(vol2/prj['total_volume'])
+        row.append(prj['customer_name'])
+        row.append(prj['qty'])
+        row.append(prj['total_value'])
+        row.append(prj['total_volume'])
+        row.append(val2)
+        row.append(vol2)
+        row.append(float(f'{pct:.2f}'))
+
+        rows.append(row)
+
+    for j, col in enumerate(headers, start=1):
+        main.write(f'{cell(1, j)}', col)
+
+    for i, row in enumerate(rows, start=2):
+        for j, col in enumerate(row, start=1):
+            main.write(f'{cell(i, j)}', col)
+    workbook.close()
+    xlsx_data = output.getvalue()
+    return xlsx_data
+
+
 def export_report_inv_details(request, sales):
     output = io.BytesIO()
     workbook = xlsxwriter.Workbook(output)

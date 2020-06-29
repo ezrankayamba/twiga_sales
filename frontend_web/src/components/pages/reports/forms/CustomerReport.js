@@ -10,8 +10,8 @@ import Numbers from "../../../../_helpers/Numbers";
 const CustomerReport = ({ user }) => {
   const [sales, setSales] = useState([]);
   const [filter, setFilter] = useState(null);
-  const exportSales = () => {
-    const fname = `${Date.now()}_Sales_Report.xlsx`;
+  const exportCustomers = () => {
+    const fname = `${Date.now()}_Customers_Report.xlsx`;
     const getFile = (res) => FileDownload.get(res, fname);
     const logError = (err) => console.error(err);
     const token = user.token;
@@ -80,6 +80,19 @@ const CustomerReport = ({ user }) => {
 
   return (
     <>
+      <div className="list-toolbar">
+        <h5>{data.title}</h5>
+        <div className="wrap">
+          <div className="btn-group float-right">
+            <button
+              className="btn btn-sm btn-outline-primary"
+              onClick={exportCustomers}
+            >
+              <MatIcon name="arrow_downward" /> Export Customers
+            </button>
+          </div>
+        </div>
+      </div>
       <BasicCrudView data={data} />
     </>
   );
