@@ -40,7 +40,6 @@ const getInput = (
                   type={type}
                   checked={isChecked}
                   onChange={rest.onChange}
-                  readOnly={readOnly}
                 />
                 <span className="pl-2">{o.name}</span>
               </label>
