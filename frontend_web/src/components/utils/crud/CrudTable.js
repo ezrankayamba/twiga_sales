@@ -44,6 +44,7 @@ class CrudTable extends React.Component {
       onSubmit: newRecord && newRecord.onAdd,
     };
     const searchFields = columns.filter((c) => c.search);
+    console.log("Pages? ", pages);
     return (
       <div className="bg-light p-2">
         {searchFields.length > 0 && (
