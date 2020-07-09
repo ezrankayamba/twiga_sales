@@ -299,8 +299,8 @@ class List extends Component {
           title: "Tax Invoice",
           search: {
             type: "input",
-            label: "Tax Invoice No",
-            name: "tax_invoice",
+            label: "Doc Reference",
+            name: "doc_ref",
           },
         },
         {

@@ -38,7 +38,7 @@ class SaleListView(generics.ListCreateAPIView):
             filt = {}
             filt['customer_name__contains'] = self.get_filter('customer_name')
             filt['vehicle_number__contains'] = self.get_filter('vehicle_number')
-            filt['tax_invoice__contains'] = self.get_filter('tax_invoice')
+            filt['docs__ref_number__contains'] = self.get_filter('doc_ref')
             filt['sales_order__contains'] = self.get_filter('sales_order')
             filt['delivery_note__contains'] = self.get_filter('delivery_note')
             date_from = self.get_filter('date_from')

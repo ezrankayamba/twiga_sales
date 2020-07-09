@@ -187,8 +187,6 @@ class DestinationReportView(APIView):
                 data[dest]['nodocs']['qty'] = row.quantity_sum
                 data[dest]['nodocs']['volume'] = row.volume
 
-        print(data)
-
         return Response({
             'status': 0,
             'message': f'Successfully fetched report',
@@ -214,7 +212,6 @@ class CustomerReportView(APIView):
 
     def get(self, request, format=None):
         data = self.get_data(request)
-        print(data)
 
         return Response({
             'status': 0,

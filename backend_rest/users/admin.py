@@ -12,10 +12,11 @@ from . import choices
 #         fields = ['role', 'privilege']
 
 
-# class RolePrivilegeAdmin(admin.ModelAdmin):
-#     form = RolePrivilegeForm
+class AuditAdmin(admin.ModelAdmin):
+    list_display = ('method', 'path', 'ip_address', 'username', 'created_on', 'updated_on', 'status')
 
 
 admin.site.register(models.Role)
 admin.site.register(models.Agent)
 admin.site.register(models.Profile)
+admin.site.register(models.Audit, AuditAdmin)

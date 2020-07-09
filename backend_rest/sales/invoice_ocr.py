@@ -17,6 +17,7 @@ def from_letter(pdf_data):
     img = ocr.crop(img, **kwargs)
     img = ocr.thresholding(np.array(img), threshold=threshold)
     text = ocr.image_to_string(img)
+    print(text)
     ret = re.search(regex, text)
     if ret:
         result = {}
@@ -51,9 +52,10 @@ def extract_invoice_copy(invoice, letter):
     return (invoice, letter)
 
 
-# folder = 'C:\\Users\\godfred.nkayamba\\Downloads\\exporttooltaxinvoicesample\\'
-# file1 = f'{folder}SKM_Sales20060907571_Breakdown_Rotated.pdf'
-# file2 = f'{folder}SKM_Sales20060907570.pdf'
-# with open(file1, 'rb') as pdf_data1, open(file2, 'rb') as pdf_data2:
-#     res = extract_invoice_copy(pdf_data1, pdf_data2)
-#     print(res)
+def test():
+    folder = 'C:\\Users\\godfred.nkayamba\\Downloads\\'
+    file1 = f'{folder}TI.pdf'
+    file2 = f'{folder}LE.pdf'
+    with open(file1, 'rb') as pdf_data1, open(file2, 'rb') as pdf_data2:
+        res = extract_invoice_copy(pdf_data1, pdf_data2)
+        print("Res: ", res)

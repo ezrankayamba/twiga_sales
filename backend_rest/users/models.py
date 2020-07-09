@@ -51,3 +51,16 @@ class Agent(models.Model):
     code = models.CharField(max_length=20, unique=True)
     commission = models.DecimalField(max_digits=10, decimal_places=2)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='agent')
+
+
+class Audit(models.Model):
+    method = models.CharField(max_length=1000)
+    ip_address = models.CharField(max_length=50)
+    created_on = models.DateTimeField(auto_now=False, auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True, auto_now_add=False, null=True)
+    path = models.CharField(max_length=50, blank=True, null=True)
+    status = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=50, blank=True, null=True)
+
+    def __str__(self):
+        return f'{self.method} {self.path}'
