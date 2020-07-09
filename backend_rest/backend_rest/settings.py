@@ -172,7 +172,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_PAGINATION_CLASS': 'core.paginators.CustomPagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 100
 }
 
 

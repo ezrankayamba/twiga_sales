@@ -20,13 +20,17 @@ class CrudTable extends React.Component {
       pagination,
       onSearch,
     } = this.props;
-    let pages = 1,
-      pageNo = 1,
-      onPageChange = console.log;
-    if (pagination)
-      (pages = pagination.pages),
-        (pageNo = pagination.pageNo),
-        (onPageChange = pagination.onPageChange);
+    let pages = 1;
+    let pageNo = 1;
+    let numRecords = 0;
+    let onPageChange = console.log("Not implemented");
+    onPageChange = console.log;
+    if (pagination) {
+      pages = pagination.pages;
+      pageNo = pagination.pageNo;
+      onPageChange = pagination.onPageChange;
+      numRecords = pagination.numRecords;
+    }
 
     let form = {
       title: "Add Record",
@@ -44,11 +48,19 @@ class CrudTable extends React.Component {
       onSubmit: newRecord && newRecord.onAdd,
     };
     const searchFields = columns.filter((c) => c.search);
-    console.log("Pages? ", pages);
+
     return (
       <div className="bg-light p-2">
         {searchFields.length > 0 && (
           <SearchForm onSearch={onSearch} searchFields={searchFields} />
+        )}
+        {pages > 1 && (
+          <Pagination
+            pageNo={pageNo}
+            pages={pages}
+            numRecords={numRecords}
+            onPageChange={onPageChange}
+          />
         )}
         <div className="table-scrollable">
           <table className="table table-sm table-hover table-bordered mb-0">
@@ -84,13 +96,7 @@ class CrudTable extends React.Component {
         </div>
 
         <LoadingIndicator isLoading={isLoading} />
-        {pages > 1 && (
-          <Pagination
-            pageNo={pageNo}
-            pages={pages}
-            onPageChange={onPageChange}
-          />
-        )}
+
         {newRecord && (
           <CloseableModel
             modalId="manageRecord"

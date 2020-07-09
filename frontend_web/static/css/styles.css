@@ -48,16 +48,13 @@ body {
   margin: 0;
 }
 
-.table-scrollable {
-  overflow-x: auto;
-}
 a {
   text-decoration: none;
   color: #333;
 }
 
 #app {
-  background: #f0f3f4;
+  background: #fcfcfc;
   width: 100vw;
   height: 100vh;
 }

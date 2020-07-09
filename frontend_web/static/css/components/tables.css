@@ -37,3 +37,15 @@ td .inline-item {
 td .actions {
   display: flex;
 }
+
+.table-scrollable {
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 50vh;
+}
+
+.table-scrollable thead th {
+  position: sticky;
+  top: 0;
+  background: #fcfcfc;
+}

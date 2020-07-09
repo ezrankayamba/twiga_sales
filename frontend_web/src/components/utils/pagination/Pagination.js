@@ -3,7 +3,7 @@ import MatIcon from "../icons/MatIcon";
 
 class Pagination extends Component {
   render() {
-    const { pageNo, pages, onPageChange } = this.props;
+    const { pageNo, pages, onPageChange, numRecords } = this.props;
     let pList = [];
     let from = pageNo - 2 > 1 ? pageNo - 2 : 1;
     let to = from + 5 < pages ? from + 5 : pages;
@@ -57,6 +57,7 @@ class Pagination extends Component {
             </>
           )}
         </div>
+        {numRecords && <div className="summary">Total: {numRecords}</div>}
       </div>
     );
   }

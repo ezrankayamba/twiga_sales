@@ -34,6 +34,7 @@ class List extends Component {
       fileUploadDocs: false,
       pages: 1,
       pageNo: 1,
+      numRecords: 0,
       isLoading: false,
       types: [],
       x: 0,
@@ -105,6 +106,7 @@ class List extends Component {
               }),
               isLoading: false,
               pages: parseInt(res.pages),
+              numRecords: parseInt(res.records),
             });
           }
         },
@@ -245,7 +247,15 @@ class List extends Component {
   }
 
   render() {
-    let { sales, pages, pageNo, selected, openDetail, snackbar } = this.state;
+    let {
+      sales,
+      pages,
+      pageNo,
+      selected,
+      openDetail,
+      snackbar,
+      numRecords,
+    } = this.state;
     let data = {
       records: sales,
       headers: [
@@ -350,7 +360,12 @@ class List extends Component {
       onSearch: (params) => this.refresh(1, params),
     };
 
-    const pagination = { pages, pageNo, onPageChange: this.onPageChange };
+    const pagination = {
+      pages,
+      pageNo,
+      onPageChange: this.onPageChange,
+      numRecords,
+    };
     const allowAdd = selected ? this.canAddDocs() : false;
     const allowView = selected ? this.canViewDocs() || allowAdd : false;
     console.log("Allow view: ", allowView);
