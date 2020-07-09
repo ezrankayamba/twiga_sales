@@ -15,6 +15,7 @@ class AuditMiddleware:
         # Code to be executed for each request/response after
         # the view is called.
 
+        # Record the audit after response
         username = request.user.username if request.user.is_authenticated else 'annonimous'
         req_data = {'path': request.path, 'method': request.method,
                     'ip_address': self.get_client_ip(request), 'username': username, 'status': response.status_code}
