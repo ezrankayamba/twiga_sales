@@ -112,7 +112,7 @@ class ImportSalesView(APIView):
 
 class SaleDetailView(generics.RetrieveUpdateDestroyAPIView):
     model = models.Sale
-    permission_classes = [permissions.IsAuthenticated, TokenHasScope]
+    permission_classes = [permissions.IsAuthenticated]
     required_scopes = []
     serializer_class = serializers.SaleSerializer
 
@@ -121,7 +121,7 @@ class SaleDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class DocumentListView(generics.ListCreateAPIView):
-    permission_classes = [permissions.IsAuthenticated, TokenHasScope]
+    permission_classes = [permissions.IsAuthenticated]
     required_scopes = []
     serializer_class = serializers.DocumentSerializer
 
@@ -159,6 +159,10 @@ class SaleDocsView(APIView):
     permission_classes = [permissions.IsAuthenticated, TokenHasScope]
     required_scopes = []
     parser_classes = [FormParser, MultiPartParser]
+
+    def delete(self, request, sale_id, *args, **kwargs):
+        models.Document.objects.filter(sale_id=sale_id).delete()
+        return Response({'result': 0, 'message': 'Documents deleted successfully'})
 
     def post(self, request, format=None):
         data = request.data

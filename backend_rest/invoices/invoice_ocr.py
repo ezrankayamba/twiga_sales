@@ -1,4 +1,4 @@
-from . import ocr2 as ocr
+from sales import ocr2 as ocr
 import numpy as np
 
 import pytesseract

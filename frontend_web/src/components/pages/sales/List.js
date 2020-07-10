@@ -99,6 +99,7 @@ class List extends Component {
                   created_at: DateTime.fmt(c.created_at),
                   agent: c.agent ? c.agent.code : null,
                   total_value: Numbers.fmt(c.total_value),
+                  total_value2: Numbers.fmt(c.total_value2),
                   vehicle_number: c.vehicle_number_trailer
                     ? `${c.vehicle_number}, ${c.vehicle_number_trailer}`
                     : c.vehicle_number,
@@ -123,8 +124,8 @@ class List extends Component {
     e.stopPropagation();
     console.log("onDelete", params);
     switch (params.type) {
-      case "doc":
-        CRUD.delete(`/documents/${params.id}`, this.props.user.token, {
+      case "sale_docs":
+        CRUD.delete(`/sales/docs/${params.id}`, this.props.user.token, {
           onSuccess: (res) => {
             this.refresh();
           },
@@ -232,15 +233,12 @@ class List extends Component {
     let ref_number = this.getRef(sale, type);
     let id = this.getDocId(sale, type);
     return id ? (
-      <span>
+      <span className="d-flex d-nowrap">
         {ref_number}
         {sale.invoice ? null : (
-          <button
-            className="btn btn-link btn-inline p-1"
-            onClick={(e) => this.onDelete(e, { type: "doc", id: id })}
-          >
-            <MatIcon name="delete" extra="text-danger" />
-          </button>
+          <a href="#">
+            <MatIcon name="open_in_new" />
+          </a>
         )}
       </span>
     ) : null;
@@ -339,6 +337,8 @@ class List extends Component {
         },
         { field: "quantity", title: "Qty(Tons)", hide: this.canAddDocs() },
         { field: "total_value", title: "Value", hide: this.canAddDocs() },
+        { field: "quantity2", title: "Qty2(Tons)" },
+        { field: "total_value2", title: "Value2" },
         { field: "agent", title: "Agent" },
         {
           field: "c2_ref",
@@ -354,6 +354,24 @@ class List extends Component {
           field: "exit_ref",
           title: "Exit",
           render: (row) => this.renderDoc(row, "Exit"),
+        },
+        {
+          field: "action",
+          title: "Delete",
+          render: (row) => (
+            <span>
+              {row.invoice | (row.docs.length === 0) ? null : (
+                <button
+                  className="btn btn-link d-flex"
+                  onClick={(e) =>
+                    this.onDelete(e, { type: "sale_docs", id: row.id })
+                  }
+                >
+                  <MatIcon name="delete" extra="text-danger" />
+                </button>
+              )}
+            </span>
+          ),
         },
       ],
       title: "List of sales",
@@ -413,7 +431,6 @@ class List extends Component {
           </div>
         </div>
         <BasicCrudView
-          onRowClick={this.onRowClick.bind(this)}
           pagination={pagination}
           data={data}
           onUpdate={this.doUpdate}

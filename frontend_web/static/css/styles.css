@@ -67,11 +67,6 @@ a {
 .main-content {
   padding: 0.4rem;
 }
-.d-flex {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
 
 #app {
   height: 100%;

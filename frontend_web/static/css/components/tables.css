@@ -7,7 +7,7 @@ table {
   width: 100%;
   text-align: left;
   border-collapse: collapse;
-  font-size: 0.6em;
+  font-size: 0.55em;
   table-layout: auto;
 }
 table thead tr {
@@ -25,6 +25,9 @@ th {
 th {
   padding: 10px 4px;
 }
+td {
+  line-height: 2em;
+}
 td .inline-item {
   padding: 0.2rem 0.4rem;
   border: 1px solid rgb(233, 227, 227);
@@ -41,11 +44,11 @@ td .actions {
 .table-scrollable {
   overflow-x: auto;
   overflow-y: auto;
-  max-height: 50vh;
+  max-height: 56vh;
 }
 
 .table-scrollable thead th {
   position: sticky;
   top: 0;
-  background: #fcfcfc;
+  background: #f9fcfc;
 }

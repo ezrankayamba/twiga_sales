@@ -1,24 +1,16 @@
 from rest_framework import generics, permissions
-from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope, TokenHasScope
-from rest_framework.views import APIView
-from rest_framework import generics, permissions
-from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope, TokenHasScope
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.contrib.auth.models import User
-from rest_framework.renderers import JSONRenderer
 from . import models
 from . import serializers
-from django.db.models import Q, F
-from django.db import models as d_models
-from sequences import get_next_value
-from django.db import transaction
-from decimal import Decimal
 from datetime import datetime, timedelta
+from sequences import get_next_value
 from django.http import HttpResponse
 from . import exports
 from . import invoice_ocr
-import io
+from decimal import Decimal
+from django.db import transaction
+from sales.models import Sale
 
 INVOICES_SEQUENCE_KEY = 'INVOICES'
 INVOICES_DIGITS = 5
@@ -116,7 +108,7 @@ class InvoiceDocsView(APIView):
 
 
 class InvoiceManageView(APIView):
-    permission_classes = [permissions.IsAuthenticated, TokenHasScope]
+    permission_classes = [permissions.IsAuthenticated]
     required_scopes = []
 
     def get(self, request):
@@ -137,7 +129,7 @@ class InvoiceManageView(APIView):
         agent = request.user.agent if hasattr(request.user, 'agent') else None
         agent_code = agent.code if agent else 0
         sql = "select max(id) as id, complete, count(id) as volume, sum(total_value2) as value_sum, sum(quantity2) as quantity_sum from (select *, (case when (select count(*) from sales_document d where d.sale_id=s.id and d.doc_type in ('C2','Assessment'))=2 then 1 else 0 end) as complete from sales_sale s left join users_agent a on s.agent_id=a.id where s.invoice_id is null and a.code = %s) as sales group by complete"
-        return models.Sale.objects.raw(sql, [agent_code])
+        return Sale.objects.raw(sql, [agent_code])
 
     def eligible_list(self, request):
         agent = request.user.agent if hasattr(request.user, 'agent') else None
