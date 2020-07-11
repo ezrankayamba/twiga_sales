@@ -11,6 +11,7 @@ from . import invoice_ocr
 from decimal import Decimal
 from django.db import transaction
 from sales.models import Sale
+from sales.serializers import SaleSerializer
 import io
 
 INVOICES_SEQUENCE_KEY = 'INVOICES'
@@ -41,11 +42,11 @@ class InvoiceSaleListView(APIView):
 
     def get(self, request, invoice_id):
         print(request.GET)
-        data = serializers.SaleSerializer(models.Sale.objects.filter(invoice_id=invoice_id), many=True).data
+        data = SaleSerializer(Sale.objects.filter(invoice_id=invoice_id), many=True).data
         return Response({'result': 0, 'message': 'Fetched invoices successfully', 'data': data})
 
     def post(self, request, invoice_id):
-        data = models.Sale.objects.filter(invoice_id=invoice_id)
+        data = Sale.objects.filter(invoice_id=invoice_id)
         export_id = datetime.now().strftime("%Y%m%d%H%M%S")
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = f'attachment; filename="{export_id}_Sales.xlsx"'
@@ -140,7 +141,7 @@ class InvoiceManageView(APIView):
         agent = request.user.agent if hasattr(request.user, 'agent') else None
         agent_code = agent.code if agent else 0
         sql = "select *, (case when (select count(*) from sales_document d where d.created_at <= %s and d.sale_id=s.id and d.doc_type in ('C2','Assessment'))=2 then 1 else 0 end) as complete from sales_sale s left join users_agent a on s.agent_id=a.id where s.invoice_id is null and a.code = %s and complete=1"
-        return models.Sale.objects.raw(sql, [max_date, agent_code])
+        return Sale.objects.raw(sql, [max_date, agent_code])
 
     def post(self, request):
         agent = request.user.agent if hasattr(request.user, 'agent') else None
@@ -156,7 +157,7 @@ class InvoiceManageView(APIView):
             inv = models.Invoice.objects.create(**data)
             qs2 = self.eligible_list(request)
             for row in qs2:
-                sale = models.Sale.objects.get(pk=row.id)
+                sale = Sale.objects.get(pk=row.id)
                 sale.invoice = inv
                 sale.save()
         return Response({'result': 0, 'message': f'Successfully created invoice with number: {inv.number}'})
