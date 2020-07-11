@@ -24,20 +24,21 @@
 }
 .navbar .right-controls > * {
   padding-left: 0.4rem;
-  padding-right: 0.4rem;
 }
 .navbar .right-controls .mat-icon {
   font-size: 1.4em;
   color: #7fa1bf;
 }
-
-.batch-buble .notifications-count {
+.batch-buble {
   position: relative;
-  top: -0.9rem;
-  right: 0.5rem;
+}
+.batch-buble .notifications-count {
+  position: absolute;
+  top: -0.5em;
+  right: 0.5em;
   background: rgb(245, 108, 45);
   border-radius: 0.5rem;
   font-size: 0.6em;
-  padding: 0.2rem 0.4rem;
+  padding: 0.2em 0.5em;
   color: aliceblue;
 }

@@ -3,7 +3,6 @@ import {
   createSale,
   fetchSales,
   importSales,
-  uploadDocs,
   attachDocs,
 } from "../../../_services/SalesService";
 import { connect } from "react-redux";
@@ -99,7 +98,9 @@ class List extends Component {
                   created_at: DateTime.fmt(c.created_at),
                   agent: c.agent ? c.agent.code : null,
                   total_value: Numbers.fmt(c.total_value),
-                  total_value2: Numbers.fmt(c.total_value2),
+                  total_value2: c.total_value2
+                    ? Numbers.fmt(c.total_value2)
+                    : c.total_value2,
                   vehicle_number: c.vehicle_number_trailer
                     ? `${c.vehicle_number}, ${c.vehicle_number_trailer}`
                     : c.vehicle_number,
@@ -126,7 +127,7 @@ class List extends Component {
     switch (params.type) {
       case "sale_docs":
         CRUD.delete(`/sales/docs/${params.id}`, this.props.user.token, {
-          onSuccess: (res) => {
+          onSuccess: () => {
             this.refresh();
           },
           onFail: (res) => {
@@ -214,7 +215,7 @@ class List extends Component {
     return res;
   }
   complete() {
-    this.setState({ selected: null, openDetail: false }, this.refresh);
+    this.setState({ selected: null, openAdd: false }, this.refresh);
   }
   exportSales() {
     const { filter } = this.state;
@@ -230,13 +231,12 @@ class List extends Component {
   }
 
   renderDoc(sale, type) {
-    let ref_number = this.getRef(sale, type);
-    let id = this.getDocId(sale, type);
-    return id ? (
+    let doc = sale.docs.find((typ) => typ.doc_type === type);
+    return doc ? (
       <span className="d-flex d-nowrap">
-        {ref_number}
+        {doc.ref_number}
         {sale.invoice ? null : (
-          <a href="#">
+          <a href={doc.file}>
             <MatIcon name="open_in_new" />
           </a>
         )}
@@ -250,7 +250,7 @@ class List extends Component {
       pages,
       pageNo,
       selected,
-      openDetail,
+      openAdd,
       snackbar,
       numRecords,
     } = this.state;
@@ -357,10 +357,21 @@ class List extends Component {
         },
         {
           field: "action",
-          title: "Delete",
+          title: "Docs",
           render: (row) => (
             <span>
-              {row.invoice | (row.docs.length === 0) ? null : (
+              {row.invoice | (row.docs.length === 0) ? (
+                allowAdd ? (
+                  <button
+                    className="btn btn-link d-flex"
+                    onClick={() =>
+                      this.setState({ openAdd: true, selected: row })
+                    }
+                  >
+                    <MatIcon name="attach_file" />
+                  </button>
+                ) : null
+              ) : (
                 <button
                   className="btn btn-link d-flex"
                   onClick={(e) =>
@@ -384,9 +395,7 @@ class List extends Component {
       onPageChange: this.onPageChange,
       numRecords,
     };
-    const allowAdd = selected ? this.canAddDocs() : false;
-    const allowView = selected ? this.canViewDocs() || allowAdd : false;
-    console.log("Allow view: ", allowView);
+    const allowAdd = this.canAddDocs();
     return (
       <div className="">
         <div className="list-toolbar">
@@ -397,7 +406,7 @@ class List extends Component {
                 className="btn btn-sm btn-outline-primary"
                 onClick={this.exportSales.bind(this)}
               >
-                <MatIcon name="arrow_downward" /> Export Sales
+                <MatIcon name="arrow_downward" text="Export Sales" />
               </button>
               {this.canAddSales() && (
                 <button
@@ -410,7 +419,7 @@ class List extends Component {
                     })
                   }
                 >
-                  <MatIcon name="arrow_upward" /> Import Sales
+                  <MatIcon name="arrow_upward" text="Import Sales" />
                 </button>
               )}
               {this.canAddDocs() && (
@@ -455,12 +464,8 @@ class List extends Component {
         {this.state.isLoading && (
           <LoadingIndicator isLoading={this.state.isLoading} />
         )}
-        {openDetail && allowView && (
-          <SaleDocsForm
-            readOnly={!allowAdd}
-            complete={this.complete.bind(this)}
-            sale={selected}
-          />
+        {openAdd && allowAdd && selected && (
+          <SaleDocsForm complete={this.complete.bind(this)} sale={selected} />
         )}
         {snackbar && <Snackbar {...snackbar} />}
       </div>

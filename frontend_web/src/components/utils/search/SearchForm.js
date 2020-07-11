@@ -40,8 +40,8 @@ export const SearchForm = ({ searchFields, onSearch }) => {
           })}
         </div>
         <div className="form-footer">
-          <button className="btn btn-sm btn-outline-secondary">
-            <MatIcon name="search" /> Search
+          <button className="btn btn-outline-secondary">
+            <MatIcon name="search" text="Search" />
           </button>
         </div>
       </form>
