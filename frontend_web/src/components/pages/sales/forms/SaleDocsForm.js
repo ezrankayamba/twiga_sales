@@ -38,7 +38,7 @@ class SaleDocsForm extends Component {
       (res) => {
         this.setState({ isLoading: false });
         if (res && res.status === 0) {
-          this.props.complete(true);
+          this.props.complete(res.message);
           cb(res);
         } else {
           this.setState({

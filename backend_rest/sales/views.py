@@ -13,6 +13,9 @@ import re
 from django.db import models as d_models
 from . import reports
 import ast
+from sequences import get_next_value
+
+SALE_DOCS_ASSIGN_SEQUENCE_KEY = 'DOCS_ASSIGN'
 
 
 class SaleListView(generics.ListCreateAPIView):
@@ -43,6 +46,9 @@ class SaleListView(generics.ListCreateAPIView):
                 filt['docs__ref_number__contains'] = self.get_filter('doc_ref')
             filt['sales_order__contains'] = self.get_filter('sales_order')
             filt['delivery_note__contains'] = self.get_filter('delivery_note')
+            assign_no = self.get_filter('assign_no')
+            if assign_no:
+                filt['assign_no'] = self.get_filter('assign_no')
             date_from = self.get_filter('date_from')
             date_to = self.get_filter('date_to')
             if date_from:
@@ -228,88 +234,13 @@ class SaleDocsView(APIView):
             sale.agent = request.user.agent
             sale.quantity2 = data['quantity2']
             sale.total_value2 = data['total_value2']
+            sale.assign_no = get_next_value(SALE_DOCS_ASSIGN_SEQUENCE_KEY)
             sale.save()
             for doc in docs:
                 models.Document.objects.create(**doc)
             return Response({
                 'status': 0,
-                'message': f'Successfully uploaded documents',
-                'errors': errors
-            })
-
-    def put(self, request, format=None):
-        data = request.data
-        print(data)
-        sale = models.Sale.objects.get(pk=data['sale_id'])
-        truck = 'trailer' if sale.quantity >= models.TRUCK_THRESHOLD else 'head'
-
-        errors = []
-        docs = []
-        for d in imports.docs_schema():
-            if d['key'] not in request.FILES:
-                continue
-            print()
-            print("======================")
-            file = request.FILES[d['key']]
-            pdf_data = io.BytesIO(file.read())
-            args = d['params']
-            regex = d['regex']
-            # ref_number = ocr.new_extract_from_file(regex, pdf_data, **args)
-            ref_number = ocr2.extract_ref_number(pdf_data, regex, **args)
-            # ret = re.search(d['regex'], text)
-            if ref_number:
-                prefix = d.get('prefix', '')
-                ref_number = f'{prefix}{ref_number}'
-                print(d['name'], ref_number)
-                name = d['name']
-                duplicate = models.Document.objects.filter(ref_number=ref_number, truck=truck).first()
-                if duplicate:
-                    errors.append({
-                        'key': d['key'],
-                        'name': d['name'],
-                        'message': f'Duplicate {name} document',
-                        'mandatory': d['mandatory']
-                    })
-                else:
-                    docs.append({
-                        'ref_number': ref_number,
-                        'file': file,
-                        'sale': sale,
-                        'doc_type': name,
-                        'truck': truck,
-                        'user': request.user
-                    })
-            else:
-                name = d['name']
-                errors.append({
-                    'key': d['key'],
-                    'name': d['name'],
-                    'message': f'Invalid {name} document',
-                    'mandatory': d['mandatory']
-                })
-        print()
-        print("======================")
-        if len(list(filter(lambda x: x['mandatory'], errors))):
-            print('Errors: ', errors)
-            return Response({
-                'status': -1,
-                'message': f'Invalid document(s)',
-                'errors': errors
-            })
-        else:
-            print('Docs: ', docs)
-            sale.agent = request.user.agent
-            sale.quantity2 = data['quantity2']
-            sale.total_value2 = data['total_value2']
-            sale.save()
-            for doc in docs:
-                exist = models.Document.objects.filter(doc_type=doc['doc_type'], sale=sale).first()
-                models.Document.objects.create(**doc)
-                if exist:
-                    models.Document.objects.get(pk=exist.id).delete()
-            return Response({
-                'status': 0,
-                'message': f'Successfully uploaded documents',
+                'message': f'Successfully attached documents and assigned serial no: {sale.assign_no}',
                 'errors': errors
             })
 

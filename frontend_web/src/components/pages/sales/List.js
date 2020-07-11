@@ -18,6 +18,7 @@ import BasicCrudView from "../../utils/crud/BasicCrudView";
 import LoadingIndicator from "../../utils/loading/LoadingIndicator";
 import Numbers from "../../../_helpers/Numbers";
 import Snackbar from "../../utils/notify/Snackbar";
+import Modal from "../../modal/Modal";
 
 @connect((state) => {
   return {
@@ -214,8 +215,11 @@ class List extends Component {
 
     return res;
   }
-  complete() {
-    this.setState({ selected: null, openAdd: false }, this.refresh);
+  complete(message) {
+    this.setState(
+      { selected: null, openAdd: false, openComplete: true, message },
+      this.refresh
+    );
   }
   exportSales() {
     const { filter } = this.state;
@@ -232,11 +236,14 @@ class List extends Component {
 
   renderDoc(sale, type) {
     let doc = sale.docs.find((typ) => typ.doc_type === type);
+    let parts = doc ? doc.file.split("/") : [];
+    let file = parts.length ? parts[parts.length - 1] : "none";
+    console.log(file);
     return doc ? (
       <span className="d-flex d-nowrap">
         {doc.ref_number}
         {sale.invoice ? null : (
-          <a href={doc.file}>
+          <a href={doc.file} download={file}>
             <MatIcon name="open_in_new" />
           </a>
         )}
@@ -253,6 +260,8 @@ class List extends Component {
       openAdd,
       snackbar,
       numRecords,
+      openComplete,
+      message,
     } = this.state;
     let data = {
       records: sales,
@@ -344,6 +353,15 @@ class List extends Component {
           field: "c2_ref",
           title: "C2",
           render: (row) => this.renderDoc(row, "C2"),
+        },
+        {
+          field: "assign_no",
+          title: "Assign#",
+          search: {
+            type: "number",
+            label: "Assign #",
+            name: "assign_no",
+          },
         },
         {
           field: "assessment_ref",
@@ -468,6 +486,16 @@ class List extends Component {
           <SaleDocsForm complete={this.complete.bind(this)} sale={selected} />
         )}
         {snackbar && <Snackbar {...snackbar} />}
+        {openComplete && (
+          <Modal
+            title="Complete"
+            handleClose={() => {
+              console.log("Complete closed...");
+              this.setState({ openComplete: false });
+            }}
+            content={<p>{message}</p>}
+          />
+        )}
       </div>
     );
   }

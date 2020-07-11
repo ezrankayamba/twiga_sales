@@ -11,6 +11,7 @@ from . import invoice_ocr
 from decimal import Decimal
 from django.db import transaction
 from sales.models import Sale
+import io
 
 INVOICES_SEQUENCE_KEY = 'INVOICES'
 INVOICES_DIGITS = 5
@@ -126,16 +127,20 @@ class InvoiceManageView(APIView):
         return Response({'result': 0, 'message': 'Invoicable sales retrieved successfully', 'data': data})
 
     def eligible_summary(self, request):
+        max_date = request.GET['max_date'] if 'max_date' in request.GET else datetime.now().strftime(
+            '%Y-%m-%d %H:%m:%S')
         agent = request.user.agent if hasattr(request.user, 'agent') else None
         agent_code = agent.code if agent else 0
-        sql = "select max(id) as id, complete, count(id) as volume, sum(total_value2) as value_sum, sum(quantity2) as quantity_sum from (select *, (case when (select count(*) from sales_document d where d.sale_id=s.id and d.doc_type in ('C2','Assessment'))=2 then 1 else 0 end) as complete from sales_sale s left join users_agent a on s.agent_id=a.id where s.invoice_id is null and a.code = %s) as sales group by complete"
-        return Sale.objects.raw(sql, [agent_code])
+        sql = "select max(id) as id, complete, count(id) as volume, sum(total_value2) as value_sum, sum(quantity2) as quantity_sum from (select *, (case when (select count(*) from sales_document d where d.created_at <= %s and d.sale_id=s.id and d.doc_type in ('C2','Assessment'))=2 then 1 else 0 end) as complete from sales_sale s left join users_agent a on s.agent_id=a.id where s.invoice_id is null and a.code = %s) as sales group by complete"
+        return Sale.objects.raw(sql, [max_date, agent_code])
 
     def eligible_list(self, request):
+        max_date = request.GET['max_date'] if 'max_date' in request.GET else datetime.now().strftime(
+            '%Y-%m-%d %H:%m:%S')
         agent = request.user.agent if hasattr(request.user, 'agent') else None
         agent_code = agent.code if agent else 0
-        sql = "select *, (case when (select count(*) from sales_document d where d.sale_id=s.id and d.doc_type in ('C2','Assessment'))=2 then 1 else 0 end) as complete from sales_sale s left join users_agent a on s.agent_id=a.id where s.invoice_id is null and a.code = %s and complete=1"
-        return models.Sale.objects.raw(sql, [agent_code])
+        sql = "select *, (case when (select count(*) from sales_document d where d.created_at <= %s and d.sale_id=s.id and d.doc_type in ('C2','Assessment'))=2 then 1 else 0 end) as complete from sales_sale s left join users_agent a on s.agent_id=a.id where s.invoice_id is null and a.code = %s and complete=1"
+        return models.Sale.objects.raw(sql, [max_date, agent_code])
 
     def post(self, request):
         agent = request.user.agent if hasattr(request.user, 'agent') else None
@@ -147,14 +152,13 @@ class InvoiceManageView(APIView):
                 data['value'] = Decimal(row.quantity_sum) * agent.commission
 
         with transaction.atomic():
+            print("Invoice Data: ", data)
             inv = models.Invoice.objects.create(**data)
             qs2 = self.eligible_list(request)
             for row in qs2:
                 sale = models.Sale.objects.get(pk=row.id)
                 sale.invoice = inv
                 sale.save()
-                print(sale)
-
         return Response({'result': 0, 'message': f'Successfully created invoice with number: {inv.number}'})
 
     def put(self, request, invoice_id):

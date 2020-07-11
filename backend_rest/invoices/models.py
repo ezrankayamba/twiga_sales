@@ -20,7 +20,7 @@ class InvoiceDoc(models.Model):
     ref_number = models.CharField(max_length=20)
     description = models.CharField(max_length=100, blank=True, null=True)
     doc_type = models.CharField(max_length=10)
-    file = models.FileField(upload_to='docs/')
+    file = models.FileField(upload_to='docs-invoice/')
     invoice = models.ForeignKey('Invoice', related_name='docs', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now=False, auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, auto_now_add=False, null=True)
