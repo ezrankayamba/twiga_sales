@@ -148,32 +148,10 @@ def extract_ref_number(pdf_data, regex, **kwargs):
     img = zoom_in(img, zoom)
     ref_number = get_ref_number(img, regex)
     if not ref_number:
-        thresholds = [threshold, threshold+7, threshold-1,  threshold*2/3.5, threshold*2/3]
+        thresholds = [threshold, threshold-7, threshold+7, threshold-14, threshold+14,  threshold*2/3.5, threshold*2/3]
         print("Try with thresholds: ", thresholds)
         ref_number = threshold_trials(img, regex, thresholds)
     return ref_number
-    # orign_img = img
-    # img = thresholding(np.array(img), threshold=threshold)
-    # ref_number = get_ref_number(img, regex)
-    # if ref_number:
-    #     return ref_number
-    # else:
-    #     print("Try with threshold: ", threshold+7)
-    #     img = thresholding(np.array(orign_img), threshold=(threshold+7))
-    #     ref_number = get_ref_number(img, regex)
-    #     if ref_number:
-    #         return ref_number
-    #     else:
-    #         print("Try with threshold: ", threshold-7)
-    #         img = thresholding(np.array(orign_img), threshold=(threshold-7))
-    #         ref_number = get_ref_number(img, regex)
-    #         if ref_number:
-    #             return ref_number
-    #         else:
-    #             print("Try with threshold: ", threshold*2/3.5)
-    #             img = thresholding(np.array(orign_img), threshold=(threshold*2/3))
-    #             ref_number = get_ref_number(img, regex)
-    #             return ref_number
 
 
 def show_wait_destroy(winname, img):

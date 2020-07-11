@@ -57,7 +57,7 @@ class Pagination extends Component {
             </>
           )}
         </div>
-        {numRecords && <div className="summary">Total: {numRecords}</div>}
+        {numRecords >= 0 && <div className="summary">Total: {numRecords}</div>}
       </div>
     );
   }

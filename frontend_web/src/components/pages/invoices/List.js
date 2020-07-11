@@ -78,6 +78,7 @@ class List extends Component {
                 status: this.getStatus(item.status),
               };
             }),
+            numRecords: parseInt(res.records),
           });
         },
         onFail: (err) => console.error(err),
@@ -159,6 +160,7 @@ class List extends Component {
       selected,
       attachDocs,
       openDetails,
+      numRecords,
     } = this.state;
     const { user } = this.props;
 
@@ -230,12 +232,6 @@ class List extends Component {
                 >
                   <MatIcon name="done_all" /> {action}
                 </button>
-                {/* <button
-                  className="btn btn-sm btn-link text-warning"
-                  onClick={(e) => this.handleDelete(e, row)}
-                >
-                  <MatIcon name="delete" />
-                </button> */}
               </div>
             ) : (
               <span>None</span>
@@ -247,7 +243,12 @@ class List extends Component {
       onSearch: (params) => this.refresh(1, params),
     };
 
-    const pagination = { pages, pageNo, onPageChange: this.onPageChange };
+    const pagination = {
+      pages,
+      pageNo,
+      onPageChange: this.onPageChange,
+      numRecords,
+    };
     return (
       <div>
         <div className="list-toolbar">

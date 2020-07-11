@@ -238,7 +238,6 @@ class List extends Component {
     let doc = sale.docs.find((typ) => typ.doc_type === type);
     let parts = doc ? doc.file.split("/") : [];
     let file = parts.length ? parts[parts.length - 1] : "none";
-    console.log(file);
     return doc ? (
       <span className="d-flex d-nowrap">
         {doc.ref_number}

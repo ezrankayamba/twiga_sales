@@ -240,7 +240,7 @@ class SaleDocsView(APIView):
                 models.Document.objects.create(**doc)
             return Response({
                 'status': 0,
-                'message': f'Successfully attached documents and assigned serial no: {sale.assign_no}',
+                'message': f'Successfully attached documents on sale: {sale.sales_order} and assigned serial no: {sale.assign_no} ',
                 'errors': errors
             })
 
