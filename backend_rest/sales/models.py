@@ -36,7 +36,7 @@ class Document(models.Model):
         ordering = ['-created_at']
         unique_together = ['ref_number', 'doc_type']
 
-
+#Sale
 class Sale(models.Model):
     sales_order = models.CharField(max_length=100, unique=True)
     transaction_date = models.CharField(max_length=20)
