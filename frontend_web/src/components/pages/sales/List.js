@@ -19,6 +19,8 @@ import LoadingIndicator from "../../utils/loading/LoadingIndicator";
 import Numbers from "../../../_helpers/Numbers";
 import Snackbar from "../../utils/notify/Snackbar";
 import Modal from "../../modal/Modal";
+import CommonForm from "../../utils/form/CommonForm";
+import { FormsHelper } from "../../../_helpers/FormsHelper";
 
 @connect((state) => {
   return {
@@ -120,6 +122,14 @@ class List extends Component {
 
   componentDidMount() {
     this.refresh();
+    CRUD.search(
+      "/makerchecker/types",
+      this.props.user.token,
+      { name: "Sales Documents Delete" },
+      {
+        onSuccess: (res) => this.setState({ deleteType: res.data.data }),
+      }
+    );
   }
 
   onDelete(e, params) {
@@ -250,6 +260,13 @@ class List extends Component {
     ) : null;
   }
 
+  requestDelete(data) {
+    CRUD.create("/makerchecker", this.props.user.token, data, {
+      onSuccess: (res) =>
+        this.setState({ openRequestDelete: false, selected: null }),
+    });
+  }
+
   render() {
     let {
       sales,
@@ -261,6 +278,8 @@ class List extends Component {
       numRecords,
       openComplete,
       message,
+      openRequestDelete,
+      deleteType,
     } = this.state;
     let data = {
       records: sales,
@@ -392,7 +411,7 @@ class List extends Component {
                 <button
                   className="btn btn-link d-flex"
                   onClick={(e) =>
-                    this.onDelete(e, { type: "sale_docs", id: row.id })
+                    this.setState({ openRequestDelete: true, selected: row })
                   }
                 >
                   <MatIcon name="delete" extra="text-danger" />
@@ -413,6 +432,7 @@ class List extends Component {
       numRecords,
     };
     const allowAdd = this.canAddDocs();
+    console.log("DeleteType: ", deleteType);
     return (
       <div className="">
         <div className="list-toolbar">
@@ -493,6 +513,38 @@ class List extends Component {
               this.setState({ openComplete: false });
             }}
             content={<p>{message}</p>}
+          />
+        )}
+        {openRequestDelete && selected && (
+          <Modal
+            title="Request Docs Delete"
+            handleClose={() => {
+              this.setState({ openRequestDelete: false, selected: null });
+            }}
+            content={
+              <CommonForm
+                meta={{
+                  fields: [
+                    {
+                      name: "task_type_id",
+                      value: deleteType.id,
+                      type: "hidden",
+                    },
+                    {
+                      name: "reference",
+                      value: selected.id,
+                      type: "hidden",
+                    },
+                    {
+                      name: "maker_comment",
+                      label: "Reason for delete",
+                      validator: FormsHelper.notEmpty(),
+                    },
+                  ],
+                  onSubmit: this.requestDelete.bind(this),
+                }}
+              />
+            }
           />
         )}
       </div>

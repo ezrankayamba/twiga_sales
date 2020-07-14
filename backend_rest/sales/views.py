@@ -14,6 +14,7 @@ from django.db import models as d_models
 from . import reports
 import ast
 from sequences import get_next_value
+import concurrent
 
 SALE_DOCS_ASSIGN_SEQUENCE_KEY = 'DOCS_ASSIGN'
 
@@ -178,9 +179,10 @@ class SaleDocsView(APIView):
 
         errors = []
         docs = []
-        for d in imports.docs_schema():
+
+        def extract(d):
             if d['key'] not in request.FILES:
-                continue
+                return
             print()
             print("======================")
             file = request.FILES[d['key']]
@@ -220,6 +222,10 @@ class SaleDocsView(APIView):
                     'message': f'Invalid {name} document',
                     'mandatory': d['mandatory']
                 })
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            results=executor.map(extract, imports.docs_schema())
+        # for d in imports.docs_schema():
+        #     extract(d)
         print()
         print("======================")
         if len(list(filter(lambda x: x['mandatory'], errors))):

@@ -11,6 +11,7 @@ urlpatterns = [
     path(f'{context_path}users/', include('users.urls')),
     path(f'{context_path}', include('sales.urls')),
     path(f'{context_path}', include('invoices.urls')),
+    path(f'{context_path}', include('makerchecker.urls')),
     path(f"{context_path}ws/", include("websocket.urls")),
     path('', include('web.urls')),
 ]

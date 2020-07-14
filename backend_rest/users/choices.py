@@ -1,3 +1,5 @@
+from makerchecker.executor import EXECUTOR_CHOICES
+
 PRIVILEGE_CHOICES = [
     ('Users.manage', 'Manage users'),
     ('Roles.manage', 'Manage roles'),
@@ -10,3 +12,7 @@ PRIVILEGE_CHOICES = [
     ('Sales.create.invoice', 'Create Invoice'),
     ('Sales.update.invoice', 'Update Invoice'),
 ]
+
+PRIVILEGE_CHOICES.extend(list(map(lambda x: (f'{x[0]}_maker', f'{ x[1]} Maker'), EXECUTOR_CHOICES)))
+PRIVILEGE_CHOICES.extend(list(map(lambda x: (f'{x[0]}_checker', f'{ x[1]} Checker'), EXECUTOR_CHOICES)))
+PRIVILEGE_CHOICES.extend(list(map(lambda x: (f'{x[0]}_view', f'{ x[1]} View'), EXECUTOR_CHOICES)))

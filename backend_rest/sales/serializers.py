@@ -1,6 +1,7 @@
 from . import models
 from rest_framework import serializers
 from users.serializers import UserSerializer, AgentSerializer
+from makerchecker.serializers import TaskSerializer
 
 
 class DocumentSerializer(serializers.ModelSerializer):
@@ -8,7 +9,6 @@ class DocumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Document
         fields = '__all__'
-
 
 
 class BatchSerializer(serializers.ModelSerializer):
@@ -22,6 +22,7 @@ class BatchSerializer(serializers.ModelSerializer):
 class SaleSerializer(serializers.ModelSerializer):
     docs = DocumentSerializer(many=True, read_only=True)
     agent = AgentSerializer(many=False, read_only=True)
+    task = TaskSerializer(many=False, read_only=True)
 
     class Meta:
         model = models.Sale

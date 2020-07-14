@@ -17,6 +17,7 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.99.101', 'sales.nezatech.co.
 INSTALLED_APPS = [
     'sales.apps.SalesConfig',
     'invoices.apps.InvoicesConfig',
+    'makerchecker.apps.MakercheckerConfig',
     'users.apps.UsersConfig',
     'web.apps.WebConfig',
     "websocket.apps.WebSocketConfig",
