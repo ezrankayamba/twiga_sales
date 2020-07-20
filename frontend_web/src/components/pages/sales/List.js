@@ -246,7 +246,7 @@ class List extends Component {
 
   renderDoc(sale, type) {
     let doc = sale.docs.find((typ) => typ.doc_type === type);
-    let parts = doc ? doc.file.split("/") : [];
+    let parts = doc && doc.file ? doc.file.split("/") : [];
     let file = parts.length ? parts[parts.length - 1] : "none";
     return doc ? (
       <span className="d-flex d-nowrap">
