@@ -223,7 +223,7 @@ class SaleDocsView(APIView):
                     'mandatory': d['mandatory']
                 })
         with concurrent.futures.ThreadPoolExecutor() as executor:
-            results=executor.map(extract, imports.docs_schema())
+            results = executor.map(extract, imports.docs_schema())
         # for d in imports.docs_schema():
         #     extract(d)
         print()
@@ -240,7 +240,7 @@ class SaleDocsView(APIView):
             sale.agent = request.user.agent
             sale.quantity2 = data['quantity2']
             sale.total_value2 = data['total_value2']
-            sale.assign_no = get_next_value(SALE_DOCS_ASSIGN_SEQUENCE_KEY)
+            sale.assign_no = sale.assign_no if sale.assign_no else get_next_value(SALE_DOCS_ASSIGN_SEQUENCE_KEY)
             sale.save()
             for doc in docs:
                 models.Document.objects.create(**doc)
