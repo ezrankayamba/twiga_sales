@@ -13,6 +13,8 @@ import json
 import traceback
 from . import serializers
 from websocket import alarms
+from .constants import SALE_DOCS_ASSIGN_SEQUENCE_KEY
+from sequences import get_next_value
 
 
 def doc_key(name):
@@ -85,7 +87,10 @@ def import_sales(batch):
 
     write_out(batch, rows, headers=['TRANS DATE', 'CUSTOMER', 'DELIVERY NOTE', 'VEH#',
                                     'TAX INVOICE', 'SO#', 'PRODUCT', 'QTY9TONS', 'VALUE', 'DESTINATION', 'STATUS', 'DETAILS', 'VEH# TRAILER'])
-    print('Completed processing the upload')
+    data = serializers.BatchSerializer(batch).data
+    print(data)
+    alarms.trigger(batch.user, {'file_in': batch.file_in.url, 'file_out': batch.file_out.url})
+    print('Completed processing the upload - sales')
 
 
 def map_error(error):
@@ -161,6 +166,7 @@ def read_entries(zip, row, docs_list, agent):
             sale.agent = agent
             sale.quantity2 = qty
             sale.total_value2 = val
+            sale.assign_no = sale.assign_no if sale.assign_no else get_next_value(SALE_DOCS_ASSIGN_SEQUENCE_KEY)
             sale.save()
             for doc in docs:
                 models.Document.objects.create(**doc)
@@ -237,7 +243,7 @@ def import_docs(batch):
     data = serializers.BatchSerializer(batch).data
     print(data)
     alarms.trigger(batch.user, {'file_in': batch.file_in.url, 'file_out': batch.file_out.url})
-    print('Completed processing the upload')
+    print('Completed processing the upload - docs')
 
 
 def sales_import_async(batch):

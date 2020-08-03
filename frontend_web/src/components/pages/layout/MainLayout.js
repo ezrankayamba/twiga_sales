@@ -25,16 +25,16 @@ class MainLayout extends Component {
     const { user } = this.props;
     return (
       <>
-        <header class="navbar">
-          <div class="menu sidebar-menu-toggle">
-            <i class="material-icons">menu</i>
+        <header className="navbar">
+          <div className="menu sidebar-menu-toggle">
+            <i className="material-icons">menu</i>
           </div>
-          <div class="navbar-title">
+          <div className="navbar-title">
             EXPORTS <i className="small text-warning">TRACKING TOOL</i>
           </div>
           <div className="right-controls">
             <BatchBuble />
-            <div class={`avatar${avatarOn ? " on" : ""}`}>
+            <div className={`avatar${avatarOn ? " on" : ""}`}>
               <img
                 src={user.profile.image}
                 alt=""
@@ -52,8 +52,8 @@ class MainLayout extends Component {
           </div>
         </header>
         <SideMenu />
-        <section class="main-content-wraper">
-          <div class="main-content">
+        <section className="main-content-wraper">
+          <div className="main-content">
             <Pages />
           </div>
         </section>

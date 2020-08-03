@@ -6,6 +6,7 @@ layer = get_channel_layer()
 
 
 def trigger(user, data):
+    print("Trigger: ", user, data)
     async_to_sync(layer.group_send)('events', {
         'type': 'events.alarm',
         'user_id': user.id,

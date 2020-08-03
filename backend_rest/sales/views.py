@@ -15,8 +15,8 @@ from . import reports
 import ast
 from sequences import get_next_value
 import concurrent
+from .constants import SALE_DOCS_ASSIGN_SEQUENCE_KEY
 
-SALE_DOCS_ASSIGN_SEQUENCE_KEY = 'DOCS_ASSIGN'
 
 
 class SaleListView(generics.ListCreateAPIView):
