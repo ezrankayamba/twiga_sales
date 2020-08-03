@@ -8,13 +8,14 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('makerchecker', '0001_initial'),
-        ('sales', '0003_auto_20200711_1626'),
+        # ('sales', '0003_auto_20200711_1626'),
     ]
 
     operations = [
         migrations.AddField(
             model_name='sale',
             name='task',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, related_name='sales', to='makerchecker.Task'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT,
+                                    related_name='sales', to='makerchecker.Task'),
         ),
     ]
