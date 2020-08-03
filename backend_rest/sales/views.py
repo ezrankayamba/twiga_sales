@@ -18,7 +18,6 @@ import concurrent
 from .constants import SALE_DOCS_ASSIGN_SEQUENCE_KEY
 
 
-
 class SaleListView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated, TokenHasScope]
     required_scopes = []
@@ -197,12 +196,13 @@ class SaleDocsView(APIView):
                 ref_number = f'{prefix}{ref_number}'
                 print(d['name'], ref_number)
                 name = d['name']
-                duplicate = models.Document.objects.filter(ref_number=ref_number, truck=truck).first()
+                duplicate = models.Document.objects.filter(ref_number=ref_number, doc_type=name, truck=truck).first()
                 if duplicate:
+                    error = f'Duplicate {name} document with ref# {ref_number}; existing document attached to sale: {duplicate.sale.sales_order}'
                     errors.append({
                         'key': d['key'],
                         'name': d['name'],
-                        'message': f'Duplicate {name} document',
+                        'message': error,
                         'mandatory': d['mandatory']
                     })
                 else:

@@ -137,9 +137,10 @@ def read_entries(zip, row, docs_list, agent):
                     prefix = d.get('prefix', '')
                     ref_number = f'{prefix}{ref_number}'
                     print(ref_number)
-                    duplicate = models.Document.objects.filter(ref_number=ref_number, truck=truck).first()
+                    duplicate = models.Document.objects.filter(
+                        ref_number=ref_number, doc_type=name, truck=truck).first()
                     if duplicate:
-                        error = f'Duplicate {name} document'
+                        error = f'Duplicate {name} document with ref# {ref_number}; existing document attached to sale: {duplicate.sale.sales_order}'
                     else:
                         docs.append({
                             'ref_number': ref_number,
