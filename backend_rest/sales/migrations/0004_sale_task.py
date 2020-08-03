@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('makerchecker', '0001_initial'),
-        # ('sales', '0003_auto_20200711_1626'),
+        ('sales', '0003_auto_20200711_1626'),
     ]
 
     operations = [
