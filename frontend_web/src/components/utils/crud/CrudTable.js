@@ -54,7 +54,7 @@ class CrudTable extends React.Component {
         {searchFields.length > 0 && (
           <SearchForm onSearch={onSearch} searchFields={searchFields} />
         )}
-        {pages >= 1 && (
+        {pagination && pages >= 1 && (
           <Pagination
             pageNo={pageNo}
             pages={pages}

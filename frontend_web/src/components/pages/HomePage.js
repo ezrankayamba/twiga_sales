@@ -122,6 +122,7 @@ class HomePage extends Component {
         { field: "total_value", title: "Value" },
         { field: "destination", title: "Destination" },
         { field: "agent", title: "Agent" },
+        { field: "assign_no", title: "Asign#" },
       ],
       title: "List of sales",
     };
@@ -164,7 +165,7 @@ class HomePage extends Component {
                     <span className="pl-2">Export Sales</span>
                   </button>
                 </div>
-                <BasicCrudView data={data} pagination={pagination} />
+                <BasicCrudView data={data} />
               </div>
             }
           />

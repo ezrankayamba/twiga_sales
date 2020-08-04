@@ -46,7 +46,7 @@ def export_report(request, sales):
 
     main = workbook.add_worksheet("Report")
     headers = ['ID', 'TRANS_DATE', 'CUSTOMER', 'DELIVERY NOTE', 'VEH#',
-               'TAX INVOICE', 'SO#', 'PRODUCT', 'QTY(TONS)', 'VALUE', 'DESTINATION', 'VEH# TRAILER', 'AGENT', 'C2', 'ASSESSMENT', 'EXIT']
+               'TAX INVOICE', 'SO#', 'PRODUCT', 'QTY(TONS)', 'VALUE', 'DESTINATION', 'VEH# TRAILER', 'AGENT', 'C2', 'ASSESSMENT', 'EXIT', 'ASSIGN#']
     rows = []
 
     for prj in sales:
@@ -65,6 +65,7 @@ def export_report(request, sales):
         row.append(prj.vehicle_number_trailer)
         row.append(prj.agent.code if prj.agent else 'None')
         row.extend(get_refs(prj))
+        row.append(prj.assign_no)
         rows.append(row)
 
     for j, col in enumerate(headers, start=1):

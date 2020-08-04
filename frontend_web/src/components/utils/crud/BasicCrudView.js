@@ -32,6 +32,8 @@ class BasicCrudView extends React.Component {
     const { open } = this.state;
     let options = this.props.options ? this.props.options : {};
 
+    console.log(pagination);
+
     return (
       <>
         <CrudTable

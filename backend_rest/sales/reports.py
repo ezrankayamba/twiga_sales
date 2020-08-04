@@ -124,8 +124,14 @@ class SalesReportExport(APIView):
             filt = {}
             filt['customer_name__contains'] = self.get_filter('customer_name')
             filt['vehicle_number__contains'] = self.get_filter('vehicle_number')
-            filt['tax_invoice__contains'] = self.get_filter('tax_invoice')
+            filt_ref_num = self.get_filter('doc_ref')
+            if(filt_ref_num):
+                filt['docs__ref_number__contains'] = self.get_filter('doc_ref')
             filt['sales_order__contains'] = self.get_filter('sales_order')
+            filt['delivery_note__contains'] = self.get_filter('delivery_note')
+            assign_no = self.get_filter('assign_no')
+            if assign_no:
+                filt['assign_no'] = self.get_filter('assign_no')
             date_from = self.get_filter('date_from')
             date_to = self.get_filter('date_to')
             if date_from:
@@ -133,7 +139,13 @@ class SalesReportExport(APIView):
             if date_to:
                 filt['transaction_date__lte'] = date_to
             print(filt)
-            sales = models.Sale.objects.annotate(doc_count=d_models.Count('docs')).filter(**filt)
+            q_more = self.get_filter('more_filter')
+            if not q_more:
+                q_more = self.request.query_params.get('more_filter')
+            if q_more:
+                sales = get_sales(q=q_more).filter(**filt)
+            else:
+                sales = models.Sale.objects.annotate(doc_count=d_models.Count('docs')).filter(**filt)
         else:
             sales = []
 
