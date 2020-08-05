@@ -29,7 +29,7 @@ export const SearchForm = ({ searchFields, onSearch }) => {
           {searchFields.map((fld) => {
             return (
               <InputControl
-                key={fld.name}
+                key={fld.search.name}
                 field={fld.search}
                 name={fld.search.name}
                 id={fld.search.name}

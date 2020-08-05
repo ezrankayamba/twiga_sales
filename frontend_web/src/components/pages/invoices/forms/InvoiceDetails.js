@@ -10,11 +10,6 @@ const InvoiceDetails = ({ token, selected }) => {
   const [pages, setPages] = useState(1);
   const [pageNo, setPageNo] = useState(1);
 
-  const pagination = {
-    pages,
-    pageNo,
-    onPageChange: (pageNo) => setPageNo(pageNo),
-  };
   const exportSales = () => {
     const fname = `${Date.now()}_Sales_Report_${selected.number}.xlsx`;
     const getFile = (res) => FileDownload.get(res, fname);
@@ -77,6 +72,7 @@ const InvoiceDetails = ({ token, selected }) => {
       { field: "total_value2", title: "TOTAL VALUE EX VAT" },
       { field: "vat_value", title: "VAT AMOUNT 18%" },
       { field: "value_with_vat", title: "TOTAL VALUE INC VAT" },
+      { field: "assign_no", title: "Assign#" },
       { field: "invoice_number", title: "Inv Number" },
     ],
     title: "List of sales",
@@ -92,7 +88,7 @@ const InvoiceDetails = ({ token, selected }) => {
           <span className="pl-2">Export Sales</span>
         </button>
       </div>
-      <BasicCrudView data={data} pagination={pagination} />
+      <BasicCrudView data={data} />
     </div>
   );
 };
