@@ -29,10 +29,7 @@ class BasicCrudView extends React.Component {
   render() {
     const { headers, records, title, onSearch } = this.props.data;
     const { isLoading, onRowClick, pagination } = this.props;
-    const { open } = this.state;
     let options = this.props.options ? this.props.options : {};
-
-    console.log(pagination);
 
     return (
       <>
@@ -49,15 +46,6 @@ class BasicCrudView extends React.Component {
           onRowClick={onRowClick}
           onSearch={onSearch}
         />
-        {open && (
-          <SimpleDialog
-            open={open}
-            handleClose={this.handleClose}
-            handleOk={this.handleOk}
-            title="Confirmation"
-            description="Are you sure you want to delete selected records?"
-          />
-        )}
       </>
     );
   }

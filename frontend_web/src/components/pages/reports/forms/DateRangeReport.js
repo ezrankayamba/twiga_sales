@@ -57,7 +57,7 @@ const DateRangeReport = ({ user }) => {
     CRUD.search("/reports/search", user.token, params, {
       onSuccess: (res) => {
         console.log(res);
-        setSales(res.data.map(mapSaleRecord));
+        setSales(res.data.data.map(mapSaleRecord));
       },
       onFail: (err) => console.log(err),
     });
@@ -67,7 +67,7 @@ const DateRangeReport = ({ user }) => {
     CRUD.search("/reports/search", user.token, params, {
       onSuccess: (res) => {
         console.log(res);
-        setSales(res.data.map(mapSaleRecord));
+        setSales(res.data.data.map(mapSaleRecord));
       },
       onFail: (err) => console.log(err),
     });

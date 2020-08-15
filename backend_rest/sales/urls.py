@@ -14,6 +14,7 @@ urlpatterns = [
     path('sales/summary', reports.SaleSummaryView.as_view()),
     path('sales/testocr', views.TestOCRView.as_view()),
     path('reports/destination', reports.DestinationReportView.as_view()),
+    path('sales/destinations', reports.destinations),
     path('reports/customers', reports.CustomerReportView.as_view()),
     path('reports/export', reports.SalesReportExport.as_view()),
     path('reports/search', reports.SalesReportList.as_view()),

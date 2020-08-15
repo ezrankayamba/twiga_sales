@@ -66,7 +66,7 @@ class List extends Component {
         (res) => {
           if (res) {
             this.setState({
-              sales: res.data.map((c) => {
+              sales: res.data.data.map((c) => {
                 const hasDocs = c.docs.length > 0;
                 return {
                   ...c,

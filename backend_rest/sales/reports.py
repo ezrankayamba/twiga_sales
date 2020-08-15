@@ -15,13 +15,20 @@ from datetime import datetime, timedelta
 from django.db.models import Q, F, Count
 from . import exports
 from django.http import HttpResponse
+import json
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 
 THRESHOLD_DAYS = 14
 
 
 def threshold_date():
     return datetime.now()-timedelta(days=THRESHOLD_DAYS)
+
+
+def destinations(request):
+    qs = models.Sale.objects.values('destination').annotate(count=Count('id')).order_by('destination')
+    return JsonResponse({'data': list(qs)})
 
 
 def get_sales(q):
@@ -210,7 +217,13 @@ class CustomerReportView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_data(self, request):
-        sql = 'select max(id) as id, customer_name, count(id) as qty, sum(total_value) as total_value, sum(quantity) as total_volume, sum(total_value2) as total_value2, sum(quantity2) as total_volume2  from sales_sale group by customer_name'
+        whereby = ''
+        print(request.data)
+        if 'destination' in request.data and request.data['destination']:
+            dest = request.data['destination']
+            whereby = f"where s.destination = '{dest}'"
+            print(dest)
+        sql = f'select max(id) as id, customer_name, count(id) as qty, sum(total_value) as total_value, sum(quantity) as total_volume, sum(total_value2) as total_value2, sum(quantity2) as total_volume2  from sales_sale s {whereby} group by customer_name'
         qs = models.Sale.objects.raw(sql)
         data = []
         columns = ['customer_name', 'qty', 'total_value', 'total_volume', 'total_value2', 'total_volume2']
@@ -232,13 +245,21 @@ class CustomerReportView(APIView):
         })
 
     def post(self, request):
-        customers = self.get_data(request)
-        export_id = datetime.now().strftime("%Y%m%d%H%M%S")
-        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = f'attachment; filename="{export_id}_Customers.xlsx"'
-        xlsx_data = exports.export_customers(request, customers)
-        response.write(xlsx_data)
-        return response
+        if 'export' in request.data:
+            customers = self.get_data(request)
+            export_id = datetime.now().strftime("%Y%m%d%H%M%S")
+            response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Content-Disposition'] = f'attachment; filename="{export_id}_Customers.xlsx"'
+            xlsx_data = exports.export_customers(request, customers)
+            response.write(xlsx_data)
+            return response
+        else:
+            data = self.get_data(request)
+            return Response({
+                'status': 0,
+                'message': f'Successfully fetched report',
+                'data': data
+            })
 
 
 class UnmatchedValuesReportView(APIView):

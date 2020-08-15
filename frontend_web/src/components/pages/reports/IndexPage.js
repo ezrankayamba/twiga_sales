@@ -15,11 +15,16 @@ class IndexPage extends Component {
     const tabs = [
       {
         name: "General Report",
-        form: <DateRangeReport user={this.props.user} />,
+        form: <DateRangeReport key={"general-report"} user={this.props.user} />,
       },
       {
         name: "Customer Performance Report",
-        form: <CustomerReport user={this.props.user} />,
+        form: (
+          <CustomerReport
+            key={"customer-performance-report"}
+            user={this.props.user}
+          />
+        ),
       },
     ];
     this.setState({ tab: tabs[0], tabs: tabs });
@@ -35,6 +40,7 @@ class IndexPage extends Component {
           {tabs.map((r) => {
             return (
               <li
+                key={r.name}
                 className={isActive(r) ? "active" : null}
                 onClick={() => this.setState({ tab: r })}
               >
