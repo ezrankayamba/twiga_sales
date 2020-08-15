@@ -6,7 +6,7 @@ export const UserHelper = {
   },
   hasPriv(user, priv) {
     let list = this.privs(user);
-    let prv = list.find(p => p === priv);
+    let prv = list.find((p) => p === priv);
     return prv ? true : false;
-  }
+  },
 };

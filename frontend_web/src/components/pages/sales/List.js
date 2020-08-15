@@ -227,8 +227,17 @@ class List extends Component {
   }
   complete(message) {
     this.setState(
-      { selected: null, openAdd: false, openComplete: true, message },
-      this.refresh
+      {
+        selected: null,
+        openAdd: false,
+        openComplete: message ? true : false,
+        message,
+      },
+      () => {
+        if (message) {
+          this.refresh();
+        }
+      }
     );
   }
   exportSales() {
@@ -251,11 +260,9 @@ class List extends Component {
     return doc ? (
       <span className="d-flex d-nowrap">
         {doc.ref_number}
-        {sale.invoice ? null : (
-          <a href={doc.file} download={file}>
-            <MatIcon name="open_in_new" />
-          </a>
-        )}
+        <a href={doc.file} download={file}>
+          <MatIcon name="open_in_new" />
+        </a>
       </span>
     ) : null;
   }
@@ -396,7 +403,7 @@ class List extends Component {
           title: "Docs",
           render: (row) => (
             <span>
-              {row.invoice | (row.docs.length === 0) ? (
+              {row.docs.length === 0 ? (
                 allowAdd ? (
                   <button
                     className="btn btn-link d-flex"
@@ -407,6 +414,9 @@ class List extends Component {
                     <MatIcon name="attach_file" />
                   </button>
                 ) : null
+              ) : row.invoice ? null : row.task &&
+                row.task.status === "INITIATED" ? (
+                <span>Pending approval</span>
               ) : (
                 <button
                   className="btn btn-link d-flex"

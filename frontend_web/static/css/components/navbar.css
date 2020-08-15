@@ -29,16 +29,18 @@
   font-size: 1.4em;
   color: #f1f1f1;
 }
-.batch-buble {
-  position: relative;
+.notification-buble a {
+  color: #f1f1f1;
+  display: flex;
+  justify-content: space-between;
 }
-.batch-buble .notifications-count {
-  position: absolute;
-  top: -0.5em;
-  right: 0.5em;
-  background: rgb(245, 108, 45);
-  border-radius: 0.5rem;
-  font-size: 0.6em;
-  padding: 0.2em 0.5em;
-  color: aliceblue;
+.notification-buble a span {
+  background: #f1f1f1;
+  color: #333;
+  padding: 0 0.5em;
+  border-radius: 1em;
+  font-size: 0.7em;
+  display: flex;
+  align-items: center;
+  margin-left: 0.4em;
 }

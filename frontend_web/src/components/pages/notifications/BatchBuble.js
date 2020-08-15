@@ -1,11 +1,7 @@
-import React, { useState } from "react";
-import WsHandler from "../_helpers/WsHandler";
-import UUID from "../_helpers/UUID";
-import { BASE_URL, SERVER_HOST, SERVER_URL } from "../conf";
-import MatIcon from "./utils/icons/MatIcon";
-import CRUD from "../_services/CRUD";
+import React from "react";
+import WsHandler from "../../../_helpers/WsHandler";
+import CRUD from "../../../_services/CRUD";
 import { connect } from "react-redux";
-const localUuid = UUID.get();
 @connect((state) => {
   return {
     user: state.auth.user,
@@ -35,10 +31,9 @@ class BatchBuble extends React.Component {
   render() {
     const { count } = this.state;
     return (
-      <div className="batch-buble">
+      <div className="notification-buble">
         <a href="/batches">
-          <MatIcon name="notifications" />
-          {count ? <span className="notifications-count">{count}</span> : null}
+          Results <span>{count}</span>
         </a>
       </div>
     );

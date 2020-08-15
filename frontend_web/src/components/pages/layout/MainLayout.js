@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import Pages from "../../menus/Pages";
 import SideMenu from "../../menus/SideMenu";
-import BackendNotification from "../../BackendNotification";
 import { connect } from "react-redux";
-import BatchBuble from "../../BatchBuble";
+import BatchBuble from "../notifications/BatchBuble";
+import RequestsBuble from "../notifications/RequestsBuble";
 @connect((state) => {
   return {
     user: state.auth.user,
@@ -12,11 +12,11 @@ import BatchBuble from "../../BatchBuble";
 class MainLayout extends Component {
   state = { avatarOn: false };
   componentDidMount() {
-    document.querySelector("body").addEventListener("click", (e) => {
+    document.querySelector("body").addEventListener("click", () => {
       this.setState({ avatarOn: false });
     });
   }
-  toggleAvatar(e) {
+  toggleAvatar() {
     const { avatarOn } = this.state;
     this.setState({ avatarOn: !avatarOn });
   }
@@ -34,6 +34,7 @@ class MainLayout extends Component {
           </div>
           <div className="right-controls">
             <BatchBuble />
+            <RequestsBuble />
             <div className={`avatar${avatarOn ? " on" : ""}`}>
               <img
                 src={user.profile.image}

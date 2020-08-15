@@ -7,6 +7,9 @@
 .mt-2 {
   margin-top: 20px;
 }
+.ml-1 {
+  margin-left: 0.4rem;
+}
 .float-right {
   float: right;
 }

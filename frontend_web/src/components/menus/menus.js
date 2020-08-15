@@ -11,6 +11,7 @@ import React from "react";
 import MatIcon from "../utils/icons/MatIcon";
 import MyProfile from "../pages/auth/MyProfile";
 import ListBatches from "../pages/batches/ListBatches";
+import ListOfRequests from "../pages/batches/ListOfRequests";
 const getMenus = (loggedIn, privileges) => {
   let pFilter = (m) => {
     return (
@@ -67,7 +68,7 @@ const getMenus = (loggedIn, privileges) => {
           path: "/reports",
           name: "Reports",
           component: ReportsIndexPage,
-          Icon: () => <MatIcon name="data_usage" />,
+          Icon: () => <MatIcon name="leaderboard" />,
           privilege: "Sales.reports",
         },
         {
@@ -76,7 +77,7 @@ const getMenus = (loggedIn, privileges) => {
           name: "My Profile",
           hide: false,
           component: MyProfile,
-          Icon: () => <MatIcon name="lock" />,
+          Icon: () => <MatIcon name="person_outline" />,
           privilege: "Anonymous",
         },
         {
@@ -93,6 +94,15 @@ const getMenus = (loggedIn, privileges) => {
           name: "Batches",
           hide: true,
           component: ListBatches,
+          Icon: () => <MatIcon name="notifications" />,
+          privilege: "Anonymous",
+        },
+        {
+          id: getId(),
+          path: "/requests",
+          name: "Requests",
+          hide: true,
+          component: ListOfRequests,
           Icon: () => <MatIcon name="notifications" />,
           privilege: "Anonymous",
         },

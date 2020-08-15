@@ -2,11 +2,13 @@ from django.db import models
 from django.contrib.auth.models import User
 from users.choices import PRIVILEGE_CHOICES
 from .executor import EXECUTOR_CHOICES
-
+STATUS_INITIATED = 'INITIATED'
+STATUS_APPROVED = 'APPROVED'
+STATUS_REJECTED = 'REJECTED'
 STATUS_CHOICES = [
-    ('INITIATED', "Initiated"),
-    ('APPROVED', "Approved"),
-    ('REJECTED', "Rejected"),
+    (STATUS_INITIATED, "Initiated"),
+    (STATUS_APPROVED, "Approved"),
+    (STATUS_REJECTED, "Rejected"),
 ]
 
 

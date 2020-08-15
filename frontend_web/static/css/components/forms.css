@@ -72,6 +72,20 @@ fieldset .checkbox-label span {
   display: flex;
   align-items: center;
 }
+.task-details .row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.5rem;
+  font-size: 0.7em;
+}
+.task-details .row label {
+  font-weight: bold;
+  font-size: 1.2em;
+}
+.task-details .approval-btns {
+  display: flex;
+  border: 1px solid #ddd;
+}
 @media only screen and (min-width: 768px) {
   .form.search {
     display: flex;
