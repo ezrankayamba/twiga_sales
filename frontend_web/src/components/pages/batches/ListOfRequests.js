@@ -55,6 +55,14 @@ class ListOfRequests extends Component {
         },
         { field: "reference", title: "Reference" },
         { field: "status", title: "Status" },
+        {
+          field: "checker",
+          title: "Approver",
+          render: (row) => (
+            <span>{row.checker ? row.checker.username : null}</span>
+          ),
+        },
+        { field: "checker_comment", title: "Approver Comment" },
       ],
     };
     return (
