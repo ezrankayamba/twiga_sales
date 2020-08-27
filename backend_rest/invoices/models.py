@@ -17,6 +17,8 @@ class Invoice(models.Model):
 class InvoiceDoc(models.Model):
     DOC_LETTER = "Letter"
     DOC_INVOICE = "Invoice"
+    DOC_DEBIT_NOTE = "Debit Note"
+    DOC_CREDIT_NOTE = "Credit Note"
     ref_number = models.CharField(max_length=20)
     description = models.CharField(max_length=100, blank=True, null=True)
     doc_type = models.CharField(max_length=10)

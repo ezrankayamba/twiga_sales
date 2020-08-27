@@ -11,6 +11,7 @@ PRIVILEGE_CHOICES = [
     ('Sales.view.invoices', 'View Invoices'),
     ('Sales.create.invoice', 'Create Invoice'),
     ('Sales.update.invoice', 'Update Invoice'),
+    ('Sales.invoice.CrDrnote', 'Attach CrDr Note'),
 ]
 
 PRIVILEGE_CHOICES.extend(list(map(lambda x: (f'{x[0]}_maker', f'{ x[1]} Maker'), EXECUTOR_CHOICES)))

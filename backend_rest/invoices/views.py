@@ -18,6 +18,8 @@ INVOICES_SEQUENCE_KEY = 'INVOICES'
 INVOICES_DIGITS = 5
 INVOICES_PREFIX = 'EXPINV'
 
+NOTE_DOCS_SEQUENCE_KEY = "DebitOrCreditNotes"
+
 
 def generate_num():
     n = f'{get_next_value(INVOICES_SEQUENCE_KEY)}'
@@ -107,6 +109,19 @@ class InvoiceDocsView(APIView):
             print(dir(e))
             msg = f'${e}'
         return Response({'result': result, 'message': msg, 'data': {'letter': letter_res, 'invoice': invoice_res}})
+
+    def put(self, request, invoice_id):
+        data = request.data
+        invoice = models.Invoice.objects.get(pk=invoice_id)
+        doc_file = request.FILES['file'] if 'file' in request.FILES else None
+        doc_type = data['doc_type'] if 'file' in data else None
+        ref_number = get_next_value(NOTE_DOCS_SEQUENCE_KEY)
+        if doc_file and doc_type:
+            models.InvoiceDoc.objects.create(ref_number=ref_number, doc_type=doc_type, file=doc_file, invoice=invoice)
+        else:
+            return Response({'result': -1, 'message': "Not valid request/parameters"})
+
+        return Response({'result': 0, 'message': f"Successfully attached {doc_type} document"})
 
 
 class InvoiceManageView(APIView):

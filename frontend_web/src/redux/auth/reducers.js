@@ -4,6 +4,8 @@ import {
   USERS_LOGIN_SUCCESS,
   USERS_LOGOUT,
 } from "./actions";
+// import { profile } from "../../../webpack.dev";
+import { UserHelper } from "../../_helpers/UserHelper";
 
 let initialState = {
   user: null,

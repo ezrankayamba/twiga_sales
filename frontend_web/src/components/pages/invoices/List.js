@@ -11,6 +11,7 @@ import InvoiceDetails from "./forms/InvoiceDetails";
 import FileDownload from "../../../_helpers/FileDownload";
 import InvoiceDocsForm from "./forms/InvoiceDocsForm";
 import { SERVER_URL } from "../../../conf";
+import InvoiceNoteForm from "./forms/InvoiceNoteForm";
 const STATUS_MAP = [
   "Created",
   "Copy attached",
@@ -159,11 +160,20 @@ class List extends Component {
       invoiceable,
       selected,
       attachDocs,
+      attachNote,
       openDetails,
       numRecords,
     } = this.state;
     const { user } = this.props;
-
+    const noteDoc = (row) =>
+      row.docs.find(
+        (doc) => doc.doc_type === "Debit Note" || doc.doc_type === "Credit Note"
+      );
+    const docs = (row) =>
+      row.docs.filter(
+        (doc) =>
+          !(doc.doc_type === "Debit Note" || doc.doc_type === "Credit Note")
+      );
     let data = {
       records: invoices,
       headers: [
@@ -188,9 +198,9 @@ class List extends Component {
           field: "docs",
           title: "Docs",
           render: (row) =>
-            row.docs.length ? (
+            docs(row).length ? (
               <div className="action-buttons">
-                {row.docs.map((d) => (
+                {docs(row).map((d) => (
                   <a
                     href={`${this.getUrl(d.file)}`}
                     onClick={(e) => e.stopPropagation()}
@@ -218,6 +228,32 @@ class List extends Component {
                 )}
               </div>
             ),
+        },
+        {
+          field: "notes",
+          title: "Debit/Credit Note",
+          render: (row) =>
+            noteDoc(row) ? (
+              <a
+                href={`${this.getUrl(noteDoc(row).file)}`}
+                onClick={(e) => e.stopPropagation()}
+                className="inline-item"
+                target="_blank"
+              >
+                <MatIcon name="arrow_downward" /> {noteDoc(row).doc_type}
+              </a>
+            ) : UserHelper.hasPriv(user, "Sales.invoice.CrDrnote") ? (
+              <button
+                className="btn btn-link"
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  this.setState({ attachNote: true, selected: row });
+                }}
+              >
+                <MatIcon name="attach_file" />
+              </button>
+            ) : null,
         },
         {
           field: "action",
@@ -283,6 +319,15 @@ class List extends Component {
             invoice={selected}
             complete={() => {
               this.setState({ attachDocs: false, selected: null });
+              this.refresh();
+            }}
+          />
+        )}
+        {attachNote && (
+          <InvoiceNoteForm
+            invoice={selected}
+            complete={() => {
+              this.setState({ attachNote: false, selected: null });
               this.refresh();
             }}
           />
