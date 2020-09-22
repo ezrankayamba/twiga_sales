@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CRUD from "../../../../_services/CRUD";
 import MatIcon from "../../../utils/icons/MatIcon";
 import BasicCrudView from "../../../utils/crud/BasicCrudView";
@@ -9,6 +9,11 @@ import Numbers from "../../../../_helpers/Numbers";
 const InvoiceDetails = ({ token, selected }) => {
   const [pages, setPages] = useState(1);
   const [pageNo, setPageNo] = useState(1);
+  const [sales, setSales] = useState([]);
+
+  useEffect(()=>{
+    CRUD.list("/invoices/sales/"+selected.id, token, {onSuccess: (res)=>setSales(res.data), onFail: (res)=>console(res)})
+  },[selected])
 
   const exportSales = () => {
     const fname = `${Date.now()}_Sales_Report_${selected.number}.xlsx`;
@@ -31,9 +36,8 @@ const InvoiceDetails = ({ token, selected }) => {
     return res;
   }
   let data = {
-    records: selected.sales.map((c) => {
-      let commAmt =
-        c.quantity2 * parseFloat(selected.commission.replace(",", ""));
+    records: sales.map((c) => {
+      let commAmt = c.quantity2 * parseFloat(selected.commission.replace(",", ""));
       return {
         ...c,
         c2_ref: getRef(c, "C2"),
