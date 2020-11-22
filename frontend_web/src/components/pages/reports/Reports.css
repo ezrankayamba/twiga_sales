@@ -1,0 +1,39 @@
+#reports {
+  display: flex;
+  flex-direction: column;
+}
+
+#reports ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: space-around;
+}
+
+#reports ul li {
+  border: 1px solid #e0dbdd;
+  color: #f1f1f1;
+  flex: 1;
+}
+#reports ul li.active h6 {
+  background: #3333ff;
+}
+#reports ul li h6 {
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  padding: 0.4rem;
+  cursor: pointer;
+  background: #9a9aa7;
+}
+#reports .report-container {
+  flex: 1;
+  margin: 1px;
+  padding: 0.4rem;
+}
+
+/* #reports .table-scrollable {
+  overflow-y: auto;
+  max-height: 440px;
+} */

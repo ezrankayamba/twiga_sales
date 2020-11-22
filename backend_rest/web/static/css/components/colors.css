@@ -1,0 +1,19 @@
+.text-danger,
+.text-danger > span,
+.text-danger > i {
+  color: #f33;
+}
+
+.text-warning,
+.text-warning > span,
+.text-warning > i,
+.btn.btn-link.text-warning {
+  color: rgb(255, 82, 51);
+}
+
+.text-success,
+.text-success > span,
+.text-success > i,
+.btn.btn-link.text-success {
+  color: rgb(102, 216, 98);
+}

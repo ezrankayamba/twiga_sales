@@ -1,0 +1,54 @@
+:root {
+  --table-bg-color: rgb(250, 253, 253);
+  --table-header-bg-color: rgb(49, 128, 128);
+}
+
+table {
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+  font-size: 0.55em;
+  table-layout: auto;
+}
+table thead tr {
+  text-transform: uppercase;
+}
+tbody tr:hover {
+  background-color: #f5f5ff;
+}
+
+td,
+th {
+  padding: 0.4rem;
+  border-bottom: 1px solid #ddd;
+}
+th {
+  padding: 10px 4px;
+}
+td {
+  line-height: 2em;
+}
+td .inline-item {
+  padding: 0.2rem 0.4rem;
+  border: 1px solid rgb(233, 227, 227);
+  display: inline-block;
+  margin: 0.1rem;
+  border-radius: 4px;
+  color: gray;
+}
+
+td .actions {
+  display: flex;
+}
+
+.table-scrollable {
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 56vh;
+}
+
+.table-scrollable thead th {
+  position: sticky;
+  top: 0;
+  background: #f9fcfc;
+}

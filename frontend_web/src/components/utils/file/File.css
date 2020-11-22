@@ -1,0 +1,10 @@
+.my-custom-file {
+
+}
+.my-custom-file .d-flex input{
+   outline: none;
+   box-shadow: none !important;
+}
+.my-custom-file .d-flex button{
+   margin-left: -2px;
+}

@@ -1,0 +1,12 @@
+.mat-icon {
+  font-size: 1.2em;
+}
+.mat-icon:not(:last-child) {
+  margin-right: 0.4em;
+}
+.mat-icon.size-1 {
+  font-size: 1em;
+}
+.mat-icon.size-2 {
+  font-size: 2em;
+}

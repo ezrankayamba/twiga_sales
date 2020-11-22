@@ -1,0 +1,26 @@
+.create-invoice-wrap {
+  display: grid;
+  grid-template-rows: auto;
+  gap: 0.4rem;
+  max-width: 30em;
+}
+.create-invoice-wrap .item {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  padding-top: 0.4rem;
+  border-bottom: 1px solid #eee;
+}
+.create-invoice-wrap .item .value {
+  text-align: right;
+}
+
+.create-invoice-wrap p {
+  padding: 0.4rem;
+  font-size: 0.8rem;
+  background: rgb(223, 223, 248);
+}
+
+.invoices-footer {
+  display: flex;
+  justify-content: flex-end;
+}

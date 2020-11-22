@@ -1,0 +1,112 @@
+:root {
+  --button-primary-bg-color: #2196f3;
+  --button-primary-text-color: #2196f3;
+  --button-secondary-bg-color: #383737;
+  --button-secondary-text-color: #383737;
+}
+
+.buttons-container {
+  display: flex;
+}
+/* Ripple effect */
+.ripple {
+  background-position: center;
+  transition: background 0.8s;
+}
+.ripple:hover {
+  background: #47a7f5 radial-gradient(circle, transparent 1%, #47a7f5 1%)
+    center/15000%;
+}
+.ripple:active {
+  background-color: #6eb9f7;
+  background-size: 100%;
+  transition: background 0s;
+}
+
+/* Button style */
+.btn {
+  border: none;
+  border-radius: 2px;
+  padding: 8px 12px;
+  font-size: 14px;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 0 2px #999;
+  outline: none;
+  display: flex;
+  align-items: center;
+  background-position: center;
+  transition: background 0.8s;
+}
+.btn.btn-inline {
+  display: inline;
+}
+
+/* Ripple effect */
+.btn:hover {
+  background: rgb(245, 248, 250)
+    radial-gradient(circle, transparent 1%, hsl(207, 53%, 88%) 1%) center/15000%;
+}
+.btn:active {
+  background-color: #eff6fc;
+  background-size: 100%;
+  transition: background 0s;
+}
+
+/* .btn .mat-icon:last-child {
+  padding: 0 0.4rem 0 0.2rem;
+}
+.btn .mat-icon:first-child {
+  padding: 0 0.2rem 0 0.4rem;
+} */
+.btn.btn-sm {
+  padding: 6px 6px;
+  font-size: 10px;
+}
+.btn.btn-primary {
+  color: white;
+  background-color: var(--button-primary-bg-color);
+}
+.btn.btn-secondary {
+  color: white;
+  background-color: var(--button-secondary-bg-color);
+}
+
+.btn.btn-outline-secondary {
+  background: transparent;
+  border: 0px solid var(--button-secondary-text-color);
+  color: var(--button-secondary-text-color);
+}
+.btn.btn-outline-primary {
+  background: transparent;
+  border: 0px solid var(--button-primary-text-color);
+  color: var(--button-primary-text-color);
+}
+.btn.btn-outline-primary:hover {
+  background: var(--button-primary-bg-color);
+  color: #e1e1e1;
+}
+.btn.btn-outline-secondary:hover {
+  background: var(--button-secondary-bg-color);
+  color: #e1e1e1;
+}
+.btn.btn-link {
+  background: transparent;
+  color: var(--button-color);
+  box-shadow: none;
+  font-size: 1.2em;
+}
+.btn-group {
+  display: flex;
+}
+.btn-group .btn {
+  margin-right: 0.4rem;
+}
+.btn-group .btn:last-child {
+  margin-right: 0;
+}
+
+.action-buttons {
+  display: flex;
+  align-items: center;
+}

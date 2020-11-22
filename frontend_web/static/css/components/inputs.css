@@ -1,0 +1,51 @@
+:root {
+  --input-color: #2196f3;
+  --input-group-padding: 0.4rem;
+}
+
+select {
+  display: block;
+  /* padding: 6px 4px; */
+  -moz-box-sizing: content-box;
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box;
+  /* height: 15px; */
+}
+
+/* .inputs-container {
+  display: flex;
+}
+
+input {
+  border: 1px solid var(--input-color);
+  border-radius: 4px;
+  line-height: 2em;
+  padding: 0.2rem 0.4rem;
+}
+.input-group {
+  display: grid;
+  grid-template-rows: auto auto;
+  padding: var(--input-group-padding);
+}
+.input-group.float-label {
+  position: relative;
+  border: 1px solid var(--input-color);
+}
+.input-group.float-label label {
+  position: absolute;
+  bottom: calc(2 * var(--input-group-padding));
+  left: calc(2 * var(--input-group-padding));
+}
+.input-group.float-label input {
+  border: none;
+  outline: none;
+}
+.input-group.float-label:focus-within label {
+  color: blue;
+  bottom: calc(3.6 * var(--input-group-padding));
+  font-size: 80%;
+}
+
+.input-group.float-label:focus-within {
+  padding-bottom: 0;
+} */

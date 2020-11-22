@@ -1,0 +1,48 @@
+.user-profile {
+  padding: 0.4rem;
+}
+.user-profile > div {
+  margin-bottom: 1rem;
+}
+
+.user-profile .info {
+  display: flex;
+  align-items: center;
+}
+.user-profile .info img {
+  width: 56px;
+  border-radius: 50%;
+  height: 56px;
+  margin-right: 0.4rem;
+  padding: 2px;
+}
+.user-profile .info small {
+  font-size: 0.7em;
+}
+
+.user-profile .profile-photo .photo {
+  color: #33f;
+  position: relative;
+  bottom: 0;
+  right: 0;
+  font-size: 1em;
+}
+.user-profile .profile-photo .photo .mat-icon {
+  font-size: 1.5em;
+}
+.user-profile .profile-photo .photo input {
+  background: red;
+  display: none;
+}
+.user-profile .privileges li {
+  font-size: 0.8rem;
+  color: #333;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.4rem;
+  padding: 0.2rem 0;
+}
+.user-profile .update .form-wrap {
+  max-width: 20em;
+  margin-top: 0.4rem;
+}

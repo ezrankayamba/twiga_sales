@@ -1,0 +1,21 @@
+:root {
+  --dashboard-grid-gap: 0.4rem;
+  --dashboard-grid-padding: 0.4rem;
+}
+
+.dashboard {
+  display: grid;
+  gap: var(--dashboard-grid-gap);
+}
+.dashboard .row {
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content: center;
+  gap: var(--dashboard-grid-gap);
+}
+
+.dashboard .row > div {
+  border: 1px solid #ddd;
+  padding: var(--dashboard-grid-padding);
+  background: #ffffff;
+}

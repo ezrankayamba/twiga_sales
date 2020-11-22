@@ -1,0 +1,74 @@
+:root {
+  --tabs-color: rgb(134, 142, 150);
+}
+.no-rounds {
+  border-radius: 0 !important;
+  border-right: none !important;
+}
+div.col:last-child > .no-rounds {
+  border-right: 1px solid var(--tabs-color);
+}
+
+.tab-footer {
+  text-align: right;
+  background: #f6f6f6;
+  padding: 0.4rem;
+}
+.tab-buttons {
+  display: flex;
+}
+
+.tab-buttons button {
+  border: 1px solid #e1e1e1;
+  background: rgb(168, 168, 214);
+  color: white;
+  padding: 0.4rem 0.2rem;
+  margin-right: 0.6rem;
+  position: relative;
+  outline: 0;
+  flex: 1;
+}
+.tab-buttons button.btn-active {
+  background: #66f;
+}
+.tab-buttons button::after {
+  content: "";
+  width: 0;
+  height: 0;
+  border-top: 0.84rem solid transparent;
+  border-bottom: 0.84rem solid transparent;
+  border-left: 0.5rem solid rgb(168, 168, 214);
+  margin-right: -0.5rem;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.tab-buttons button.btn-active::after {
+  border-left: 0.5rem solid #66f;
+}
+.tab-buttons button:last-child::after {
+  border-left: 0 solid #66f;
+}
+.tab-buttons button:last-child {
+  margin-right: 0;
+}
+.tab-buttons button::before {
+  content: "";
+  width: 0;
+  height: 0;
+  border-top: 0.9rem solid rgb(168, 168, 214);
+  border-bottom: 0.86rem solid rgb(168, 168, 214);
+  border-right: 0.5rem solid transparent;
+  margin-left: -0.5rem;
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: rotate(180deg);
+}
+.tab-buttons button.btn-active::before {
+  border-top: 0.9rem solid #66f;
+  border-bottom: 0.85rem solid #66f;
+}
+.tab-buttons button:first-child::before {
+  border-right: 0 solid rgb(168, 168, 214);
+}

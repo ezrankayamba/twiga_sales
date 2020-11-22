@@ -1,0 +1,46 @@
+:root {
+  --navbar-bg-color: #2b7a78;
+}
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--navbar-bg-color);
+  color: #f1f1f1;
+  padding: 0.4rem 0.4rem;
+  filter: drop-shadow(0 0 2px 0 rgb(22, 7, 47));
+  box-shadow: 0 0 4px #999;
+}
+.menu {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.navbar .right-controls {
+  display: flex;
+  align-items: center;
+  padding-right: 0.4rem;
+  justify-content: center;
+}
+.navbar .right-controls > * {
+  padding-left: 0.4rem;
+}
+.navbar .right-controls .mat-icon {
+  font-size: 1.4em;
+  color: #f1f1f1;
+}
+.notification-buble a {
+  color: #f1f1f1;
+  display: flex;
+  justify-content: space-between;
+}
+.notification-buble a span {
+  background: #f1f1f1;
+  color: #333;
+  padding: 0 0.5em;
+  border-radius: 1em;
+  font-size: 0.7em;
+  display: flex;
+  align-items: center;
+  margin-left: 0.4em;
+}

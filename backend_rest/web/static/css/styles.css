@@ -1,0 +1,112 @@
+@import "./components/avatar.css";
+@import "./components/navbar.css";
+@import "./components/sidebar.css";
+@import "./components/buttons.css";
+@import "./components/inputs.css";
+@import "./components/tables.css";
+@import "./components/forms.css";
+@import "./components/pagination.css";
+@import "./components/login.css";
+@import "./components/modals.css";
+@import "./components/list.css";
+@import "./components/tabs.css";
+@import "./components/utils.css";
+@import "./components/maps.css";
+@import "./components/dashboard.css";
+@import "./components/icons.css";
+@import "./components/colors.css";
+@import "./components/invoices.css";
+@import "./components/myprofile.css";
+@import "./components/layout.css";
+@import "./components/snackbar.css";
+
+:root {
+  --brand-color: #ffd400;
+  --mobile-breakpoint: 768px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  box-shadow: azure;
+}
+ul {
+  list-style: none;
+}
+a {
+  padding: 0.2rem;
+}
+body {
+  height: 100vh;
+  width: 100vw;
+  font-family: Arial, Helvetica, sans-serif;
+}
+body {
+  width: 100vw;
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+  color: #333;
+}
+
+#app {
+  background: #fcfcfc;
+  width: 100vw;
+  height: 100vh;
+}
+.list-toolbar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+  align-items: center;
+}
+.main-content {
+  padding: 0.4rem;
+}
+
+#app {
+  height: 100%;
+}
+
+.loading-indicator {
+  position: fixed;
+  top: 90%;
+  left: 50%;
+  margin-top: -50px;
+  margin-left: -50px;
+  padding: 0.8rem;
+  z-index: 1000;
+  background: #333;
+  border-radius: 0.2rem;
+  color: #fff;
+}
+
+.backend-notification {
+  z-index: 100;
+  position: absolute;
+  bottom: 1rem;
+  margin: 0 1rem;
+  background: #d3daf1;
+  padding: 1rem 0.8rem 0.4rem;
+  color: #fff;
+  border-radius: 0.2rem;
+}
+.backend-notification button.close {
+  padding: 0.2rem;
+  position: absolute;
+  top: -0.8rem;
+  right: -0.4rem;
+  background: #d3daf1;
+  padding: 0 0.2rem;
+  border: 1px solid #e6e9f3;
+}
+
+.backend-notification a {
+  margin-top: 0.4rem;
+  text-decoration: none;
+  text-align: center;
+}

@@ -1,0 +1,80 @@
+.map-report h6 {
+  background: rgb(23, 102, 148);
+  padding: 0.4rem;
+  color: #e1e1e1;
+}
+
+.map-report {
+  height: 100%;
+  position: relative;
+}
+.report-map-container {
+  height: calc(100% - 0);
+  display: grid;
+  grid-auto-rows: auto auto;
+  gap: 10px;
+  width: 100%;
+  background: #f1f1f1;
+  padding: 0.4rem;
+}
+.map-content {
+  height: 500px;
+  max-height: 100%;
+}
+
+.map-filter {
+  grid-row: 1;
+}
+.map-content > div {
+  height: 100%;
+}
+.map-content .open-hide {
+  position: absolute;
+  right: 0.4rem;
+  top: 1px;
+  background: rgb(80, 66, 4);
+}
+
+.map-filter.hide {
+  display: none;
+}
+.map-container {
+  max-width: 90vh;
+  max-height: 90vh;
+  width: 400px;
+  height: 400px;
+  position: relative;
+}
+.map-container > button.btn {
+  position: absolute;
+  bottom: 0;
+  right: calc(50% - 5rem);
+  width: 10rem;
+  opacity: 1;
+  margin-bottom: 0.4rem;
+}
+
+@media only screen and (min-width: 768px) {
+  .map-report {
+    height: calc(100% - 200px);
+    position: relative;
+  }
+  .report-map-container {
+    display: grid;
+    grid-template-columns: 1fr auto;
+  }
+  .map-filter {
+    width: 240px;
+    grid-column: 2;
+  }
+  .map-content {
+    max-height: 100%;
+  }
+  .map-container {
+    width: 600px;
+    max-width: 90vw;
+    height: 400px;
+    max-height: 90vw;
+    position: relative;
+  }
+}

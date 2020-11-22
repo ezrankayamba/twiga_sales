@@ -1,0 +1,7 @@
+.grapg-container {
+  width: 500px;
+}
+
+.grapg-container canvas {
+  /* filter: invert(100%); */
+}
