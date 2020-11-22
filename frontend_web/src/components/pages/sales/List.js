@@ -416,17 +416,17 @@ class List extends Component {
                 ) : null
               ) : row.invoice ? null : row.task &&
                 row.task.status === "INITIATED" ? (
-                <span>Pending approval</span>
-              ) : (
-                <button
-                  className="btn btn-link d-flex"
-                  onClick={(e) =>
-                    this.setState({ openRequestDelete: true, selected: row })
-                  }
-                >
-                  <MatIcon name="delete" extra="text-danger" />
-                </button>
-              )}
+                  <span>Pending approval</span>
+                ) : (
+                  <button
+                    className="btn btn-link d-flex"
+                    onClick={(e) =>
+                      this.setState({ openRequestDelete: true, selected: row })
+                    }
+                  >
+                    <MatIcon name="delete" extra="text-danger" />
+                  </button>
+                )}
             </span>
           ),
         },
@@ -470,32 +470,18 @@ class List extends Component {
                 </button>
               )}
               {this.canAddDocs() && (
-                <>
-                  <button
-                    className="btn btn-sm btn-outline-primary"
-                    onClick={(e) =>
-                      this.setState({
-                        fileUploadDocs: true,
-                        x: e.nativeEvent.offsetX,
-                        y: e.nativeEvent.offsetY + 100,
-                      })
-                    }
-                  >
-                    <MatIcon name="attach_file" /> Attach Aggr. Docs
-                  </button>
-                  <button
-                    className="btn btn-sm btn-primary"
-                    onClick={(e) =>
-                      this.setState({
-                        fileUploadDocs: true,
-                        x: e.nativeEvent.offsetX,
-                        y: e.nativeEvent.offsetY + 100,
-                      })
-                    }
-                  >
-                    <MatIcon name="attach_file" /> Attach Docs
-                  </button>
-                </>
+                <button
+                  className="btn btn-sm btn-primary"
+                  onClick={(e) =>
+                    this.setState({
+                      fileUploadDocs: true,
+                      x: e.nativeEvent.offsetX,
+                      y: e.nativeEvent.offsetY + 100,
+                    })
+                  }
+                >
+                  <MatIcon name="attach_file" /> Attach Docs
+                </button>
               )}
             </div>
           </div>
