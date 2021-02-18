@@ -192,6 +192,8 @@ class SaleDocsView(APIView):
             ref_number = ocr2.extract_ref_number(pdf_data, regex, **args)
             # ret = re.search(d['regex'], text)
             if ref_number:
+                if 'replace' in d:
+                    ref_number = re.sub(d['replace'], '', ref_number)
                 prefix = d.get('prefix', '')
                 ref_number = f'{prefix}{ref_number}'
                 print(d['name'], ref_number)
@@ -287,6 +289,8 @@ class TestOCRView(APIView):
                 # print(regex)
                 # ret = re.search(regex, text)
                 if ref_number:
+                    if 'replace' in d:
+                        ref_number = re.sub(d['replace'], '', ref_number)
                     return Response({
                         'status': 0,
                         'message': 'Successfully extracted text',
