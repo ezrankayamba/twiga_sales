@@ -26,7 +26,7 @@ def docs_schema():
     return [
         {'name': models.Document.DOC_C2, 'letter': models.Document.LETTER_C2, 'key': doc_key(
             models.Document.DOC_C2), 'regex': '[ ]{0,1}(TZ\w{13,})[\({ ]', 'params': {'x': 700, 'y': 600, 'h': 400, 'w': 800, 'threshold': 220}, 'mandatory': True},
-        {'name': models.Document.DOC_ASSESSMENT, 'prefix': 'C ', 'letter': models.Document.LETTER_ASSESSMENT, 'key': doc_key(models.Document.DOC_ASSESSMENT), 'regex': '[CcG]{1,}[ ]{0,}(\d{2,4} \d{2}/\d{2}/\d{4})', 'params': {
+        {'name': models.Document.DOC_ASSESSMENT, 'prefix': 'C ', 'letter': models.Document.LETTER_ASSESSMENT, 'key': doc_key(models.Document.DOC_ASSESSMENT), 'regex': '[CcG]{1,}[ ]{0,}(\d{2,} \d{2}/\d{2}/\d{4})', 'params': {
             'x': 700, 'y': 20, 'h': 500, 'w': 800, 'threshold': 230, 'zoom': 1.1}, 'mandatory': True, 'replace': '\d{2}/\d{2}/'},
         {'name': models.Document.DOC_EXIT, 'letter': models.Document.LETTER_EXIT, 'key': doc_key(
             models.Document.DOC_EXIT), 'regex': 'laration[ +\d:]{1,}(\d{4} [\w/]+)', 'params': {'x': 20, 'y': 600, 'h': 600, 'w': 600, 'threshold': 236}, 'mandatory': False}
