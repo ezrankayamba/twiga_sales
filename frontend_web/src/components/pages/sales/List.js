@@ -230,6 +230,9 @@ class List extends Component {
   canAddDocs() {
     return UserHelper.hasPriv(this.props.user, "Sales.manage.docs");
   }
+  canAddDocsAggregate() {
+    return UserHelper.hasPriv(this.props.user, "Sales.manage.docs.aggregate");
+  }
   canViewDocs() {
     const { user } = this.props;
 
@@ -466,7 +469,7 @@ class List extends Component {
                   <MatIcon name="arrow_upward" text="Import Sales" />
                 </button>
               )}
-              {this.canAddDocs() && (
+              {this.canAddDocsAggregate() && (
                 <>
                   <button
                     className="btn btn-sm btn-primary"

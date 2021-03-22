@@ -148,11 +148,12 @@ class RolesPage extends Component {
           field: "privileges",
           title: "Privileges",
           render: (row) => {
-            return row.privileges.map((p) => (
-              <span className="inline-item">
-                {privs.find((prv) => prv.id === p).name}
+            return row.privileges.map((p) => {
+              let priv = privs.find((prv) => prv.id === p)
+              return <span className="inline-item">
+                {priv ? priv.name : "Unknown"}
               </span>
-            ));
+            });
           },
         },
         {
