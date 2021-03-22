@@ -6,7 +6,7 @@ import Modal from '../../../modal/Modal';
 import CommonForm from '../../../utils/form/CommonForm';
 import CustomerUnAssignedSales from '../tables/CustomerUnAssignedSales';
 
-function SaleDocsFormAggregate({ user, complete, isKigoma }) {
+function SaleDocsFormAggregate({ user, complete, isKigoma = true }) {
   const [customers, setCustomers] = useState([])
   const [sales, setSales] = useState([])
   useEffect(() => {
