@@ -52,3 +52,7 @@ td .actions {
   top: 0;
   background: #f9fcfc;
 }
+
+.table .selected{
+  background: #e0f4f5;
+}

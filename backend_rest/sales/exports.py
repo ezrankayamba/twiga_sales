@@ -27,13 +27,27 @@ def get_refs(sale):
     exit_ref = None
     c2_ref = None
     assessment_ref = None
-    exit_doc = models.Document.objects.filter(doc_type=models.Document.DOC_EXIT, sale=sale).first()
+    aggr = True if sale.aggregate else False
+    objs = models.AggregateDocument.objects if aggr else midels.Document.objetcs
+
+    if aggr:
+        exit_doc = objs.filter(doc_type=models.AggregateDocument.DOC_RELEASE_NOTE, aggregate_sale=sale.aggregate).first()
+    else:
+        exit_doc = objs.filter(doc_type=models.Document.DOC_EXIT, sale=sale).first()
     if exit_doc:
         exit_ref = exit_doc.ref_number
-    assessment_doc = models.Document.objects.filter(doc_type=models.Document.DOC_ASSESSMENT, sale=sale).first()
+
+    if aggr:
+        assessment_doc = objs.filter(doc_type=models.AggregateDocument.DOC_ASSESSMENT_KG, aggregate_sale=sale.aggregate).first()
+    else:
+        assessment_doc = objs.filter(doc_type=models.Document.DOC_ASSESSMENT, sale=sale).first()
     if assessment_doc:
         assessment_ref = assessment_doc.ref_number
-    c2_doc = models.Document.objects.filter(doc_type=models.Document.DOC_C2, sale=sale).first()
+
+    if aggr:
+        c2_doc = objs.filter(doc_type=models.Document.DOC_C2, aggregate_sale=sale.aggregate).first()
+    else:
+        c2_doc = objs.filter(doc_type=models.Document.DOC_C2, sale=sale).first()
     if c2_doc:
         c2_ref = c2_doc.ref_number
 
@@ -46,7 +60,7 @@ def export_report(request, sales):
 
     main = workbook.add_worksheet("Report")
     headers = ['ID', 'TRANS_DATE', 'CUSTOMER', 'DELIVERY NOTE', 'VEH#',
-               'TAX INVOICE', 'SO#', 'PRODUCT', 'QTY(TONS)', 'VALUE', 'DESTINATION', 'VEH# TRAILER', 'AGENT', 'C2', 'ASSESSMENT', 'EXIT', 'ASSIGN#']
+               'TAX INVOICE', 'SO#', 'PRODUCT', 'QTY(TONS)', 'VALUE', 'DESTINATION', 'VEH# TRAILER', 'AGENT', 'C2', 'ASSESSMENT', 'EXIT/RELEASE', 'ASSIGN#']
     rows = []
 
     for prj in sales:

@@ -22,12 +22,12 @@ class BasicCrudView extends React.Component {
     this.setState({ open: false });
     this.props.onDeleteAll({
       ids: this.state.selectedIds,
-      cb: () => {},
+      cb: () => { },
     });
   }
 
   render() {
-    const { headers, records, title, onSearch } = this.props.data;
+    const { headers, records, title, onSearch, rowClass } = this.props.data;
     const { isLoading, onRowClick, pagination } = this.props;
     let options = this.props.options ? this.props.options : {};
 
@@ -45,6 +45,7 @@ class BasicCrudView extends React.Component {
           }}
           onRowClick={onRowClick}
           onSearch={onSearch}
+          rowClass={rowClass}
         />
       </>
     );

@@ -21,6 +21,8 @@ import Snackbar from "../../utils/notify/Snackbar";
 import Modal from "../../modal/Modal";
 import CommonForm from "../../utils/form/CommonForm";
 import { FormsHelper } from "../../../_helpers/FormsHelper";
+import SaleDocsFormAggregate from "./forms/SaleDocsFormAggregate";
+import SaleRowAction from "./others/SaleRowAction";
 
 @connect((state) => {
   return {
@@ -34,6 +36,8 @@ class List extends Component {
       sales: [],
       fileUploadSales: false,
       fileUploadDocs: false,
+      fileUploadDocsKigoma: false,
+      fileUploadDocsKabanga: false,
       pages: 1,
       pageNo: 1,
       numRecords: 0,
@@ -42,6 +46,7 @@ class List extends Component {
       x: 0,
       y: 0,
       filter: null,
+      snackbar: { error: true, message: "Test " }
     };
 
     this.doUpdate = this.doUpdate.bind(this);
@@ -189,6 +194,16 @@ class List extends Component {
 
   fileUploadDocsComplete(data) {
     console.log(data);
+    if (this.state.fileUploadDocsKigoma) {
+      this.setState({ isLoading: false, fileUploadDocsKigoma: false });
+      this.refresh();
+      return
+    }
+    if (this.state.fileUploadDocsKabanga) {
+      this.setState({ isLoading: false, fileUploadDocsKabanga: false });
+      this.refresh();
+      return
+    }
     this.setState({ fileUploadDocs: false });
     if (data) {
       this.setState({ isLoading: true });
@@ -254,7 +269,13 @@ class List extends Component {
   }
 
   renderDoc(sale, type) {
-    let doc = sale.docs.find((typ) => typ.doc_type === type);
+    let doc = null;
+    if (sale.aggregate) {
+      console.log("Has aggregate: ", sale.sales_order, sale.aggregate)
+      doc = sale.aggregate.docs.find((typ) => typ.doc_type === type);
+    } else {
+      doc = sale.docs.find((typ) => typ.doc_type === type);
+    }
     let parts = doc && doc.file ? doc.file.split("/") : [];
     let file = parts.length ? parts[parts.length - 1] : "none";
     return doc ? (
@@ -363,7 +384,8 @@ class List extends Component {
             name: "more_filter",
             options: [
               { id: "withdocs", name: "With mandatory documents" },
-              { id: "docs_nomatch", name: "Docs with value mismatch" },
+              { id: "docs_nomatch", name: "Wuth docs, value mismatch" },
+              { id: "docs_and_match", name: "With docs, value match" },
               { id: "nodocs_new", name: "No docs new sales" },
               { id: "nodocs_old", name: "No docs above 14 days" },
             ],
@@ -375,11 +397,6 @@ class List extends Component {
         { field: "total_value2", title: "Value2" },
         { field: "agent", title: "Agent" },
         {
-          field: "c2_ref",
-          title: "C2",
-          render: (row) => this.renderDoc(row, "C2"),
-        },
-        {
           field: "assign_no",
           title: "Assign#",
           search: {
@@ -389,45 +406,25 @@ class List extends Component {
           },
         },
         {
+          field: "c2_ref",
+          title: "C2",
+          render: (row) => this.renderDoc(row, "C2"),
+        },
+        {
           field: "assessment_ref",
           title: "Assessment",
           render: (row) => this.renderDoc(row, "Assessment"),
         },
         {
           field: "exit_ref",
-          title: "Exit",
+          title: "Exit / Release",
           render: (row) => this.renderDoc(row, "Exit"),
         },
         {
           field: "action",
           title: "Docs",
           render: (row) => (
-            <span>
-              {row.docs.length === 0 ? (
-                allowAdd ? (
-                  <button
-                    className="btn btn-link d-flex"
-                    onClick={() =>
-                      this.setState({ openAdd: true, selected: row })
-                    }
-                  >
-                    <MatIcon name="attach_file" />
-                  </button>
-                ) : null
-              ) : row.invoice ? null : row.task &&
-                row.task.status === "INITIATED" ? (
-                  <span>Pending approval</span>
-                ) : (
-                  <button
-                    className="btn btn-link d-flex"
-                    onClick={(e) =>
-                      this.setState({ openRequestDelete: true, selected: row })
-                    }
-                  >
-                    <MatIcon name="delete" extra="text-danger" />
-                  </button>
-                )}
-            </span>
+            <SaleRowAction row={row} allowAdd={allowAdd} triggerAdd={() => this.setState({ openAdd: true, selected: row })} triggerDelete={() => this.setState({ openRequestDelete: true, selected: row })} />
           ),
         },
       ],
@@ -450,7 +447,7 @@ class List extends Component {
           <div className="wrap">
             <div className="btn-group float-right">
               <button
-                className="btn btn-sm btn-outline-primary"
+                className="btn btn-sm btn-outline-secondary"
                 onClick={this.exportSales.bind(this)}
               >
                 <MatIcon name="arrow_downward" text="Export Sales" />
@@ -470,18 +467,32 @@ class List extends Component {
                 </button>
               )}
               {this.canAddDocs() && (
-                <button
-                  className="btn btn-sm btn-primary"
-                  onClick={(e) =>
-                    this.setState({
-                      fileUploadDocs: true,
-                      x: e.nativeEvent.offsetX,
-                      y: e.nativeEvent.offsetY + 100,
-                    })
-                  }
-                >
-                  <MatIcon name="attach_file" /> Attach Docs
+                <>
+                  <button
+                    className="btn btn-sm btn-primary"
+                    onClick={(e) =>
+                      this.setState({
+                        fileUploadDocsKigoma: true,
+                        x: e.nativeEvent.offsetX,
+                        y: e.nativeEvent.offsetY + 100,
+                      })
+                    }
+                  >
+                    <MatIcon name="attach_file" /> Docs Via KIGOMA
                 </button>
+                  <button
+                    className="btn btn-sm btn-primary"
+                    onClick={(e) =>
+                      this.setState({
+                        fileUploadDocsKabanga: true,
+                        x: e.nativeEvent.offsetX,
+                        y: e.nativeEvent.offsetY + 100,
+                      })
+                    }
+                  >
+                    <MatIcon name="attach_file" /> Docs Via Kabanga
+                </button>
+                </>
               )}
             </div>
           </div>
@@ -499,6 +510,21 @@ class List extends Component {
             position={this.state.y}
             open={this.state.fileUploadDocs}
             complete={this.fileUploadDocsComplete.bind(this)}
+          />
+        )}
+        {this.state.fileUploadDocsKigoma && (
+          <SaleDocsFormAggregate
+            position={this.state.y}
+            open={this.state.fileUploadDocsKigoma}
+            complete={this.fileUploadDocsComplete.bind(this)}
+          />
+        )}
+        {this.state.fileUploadDocsKabanga && (
+          <SaleDocsFormAggregate
+            position={this.state.y}
+            open={this.state.fileUploadDocsKabanga}
+            complete={this.fileUploadDocsComplete.bind(this)}
+            isKigoma={false}
           />
         )}
         {this.state.fileUploadSales && (

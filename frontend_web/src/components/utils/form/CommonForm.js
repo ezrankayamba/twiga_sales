@@ -45,8 +45,8 @@ class CommonForm extends Component {
       errors[field.name] = v.valid(value)
         ? ""
         : v.error
-        ? v.error
-        : "Invalid entry";
+          ? v.error
+          : "Invalid entry";
     }
     return errors;
   }
@@ -175,12 +175,12 @@ class CommonForm extends Component {
 
   render() {
     const { errors, data } = this.state;
-    const { meta, onClose, newOptions, readOnly } = this.props;
+    const { meta, onClose, newOptions, readOnly, ...rest } = this.props;
     const defaultClose = () => console.log("Not handled...");
     const handleClose = onClose || defaultClose;
 
     return (
-      <div className="form-wrap bg-light">
+      <div className="form-wrap">
         {meta.title && (
           <div className="form-header p-2">
             <h5 className="">
@@ -204,7 +204,7 @@ class CommonForm extends Component {
           className="pl-2 pr-2"
           encType={meta.encType}
         >
-          <div className="form-content">
+          <div className="form-content m-2" {...rest}>
             {meta.fields.map((f) => {
               return (
                 <div key={f.name} className="mb-2">
@@ -215,8 +215,8 @@ class CommonForm extends Component {
                       f.other && newOptions && newOptions[f.name]
                         ? newOptions[f.name].id
                         : data[f.name]
-                        ? data[f.name]
-                        : ""
+                          ? data[f.name]
+                          : ""
                     }
                     name={f.name}
                     id={f.name}
@@ -237,7 +237,7 @@ class CommonForm extends Component {
             })}
           </div>
           <div className="submit form-footer pb-2">
-            <button className="btn btn-sm btn-primary" disabled={readOnly}>
+            <button className={`btn btn-sm ${meta.btnClass || "btn-primary"}`} disabled={readOnly}>
               {meta.btnLabel || "Submit"}
             </button>
           </div>

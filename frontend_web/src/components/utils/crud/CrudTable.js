@@ -19,6 +19,7 @@ class CrudTable extends React.Component {
       newRecord,
       pagination,
       onSearch,
+      rowClass
     } = this.props;
     let pages = 1;
     let pageNo = 1;
@@ -31,7 +32,7 @@ class CrudTable extends React.Component {
       onPageChange = pagination.onPageChange;
       numRecords = pagination.numRecords;
     }
-
+    console.log(rowClass);
     let form = {
       title: "Add Record",
       fields: [
@@ -50,7 +51,7 @@ class CrudTable extends React.Component {
     const searchFields = columns.filter((c) => c.search);
 
     return (
-      <div className="bg-light p-2">
+      <div className="p-2">
         {searchFields.length > 0 && (
           <SearchForm onSearch={onSearch} searchFields={searchFields} />
         )}
@@ -79,7 +80,7 @@ class CrudTable extends React.Component {
                 <tr
                   onClick={onRowClick ? (e) => onRowClick(e, row) : null}
                   key={row.id}
-                  className="border-none"
+                  className={`border-none ${rowClass ? rowClass(row) : ""}`}
                 >
                   {columns.map(
                     (col) =>

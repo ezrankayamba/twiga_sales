@@ -7,12 +7,12 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.parsers import FormParser, MultiPartParser
 from . import imports, ocr, serializers, models
-from django.db.models import Count
 import io
 import re
 from django.db import models as d_models
 from datetime import datetime, timedelta
 from django.db.models import Q, F, Count
+from django.db.models import Sum, Case, When, IntegerField
 from . import exports
 from django.http import HttpResponse
 import json
@@ -32,16 +32,26 @@ def destinations(request):
 
 
 def get_sales(q):
-    mandatory = ['C2', 'Assessment']
-    qs = models.Sale.objects.annotate(doc_count=Count('docs', filter=Q(docs__doc_type__in=mandatory)))
+    print(q)
+    m1 = ['Assessment', 'Exit']  # with aggregate
+    m2 = ['C2', 'Assessment', 'Exit']
+    docs_count = Case(When(aggregate__isnull=False, then=Count('aggregate__docs', filter=Q(aggregate__docs__doc_type__in=m1))), default=Count('docs', filter=Q(docs__doc_type__in=m2)))
+    mand_size = Case(When(aggregate__isnull=False, then=2), default=3, output_field=IntegerField())
+    qs = models.Sale.objects.annotate(doc_count=docs_count, mandatory_size=mand_size)
+
     if q == 'nodocs_old':
-        return qs.filter(doc_count__lt=2, transaction_date__lte=threshold_date())
+        qs = qs.filter(doc_count__lt=F('mandatory_size'), transaction_date__lte=threshold_date())
     elif q == 'nodocs_new':
-        return qs.filter(doc_count__lt=2, transaction_date__gt=threshold_date())
+        qs = qs.filter(doc_count__lt=F('mandatory_size'), transaction_date__gt=threshold_date())
     elif q == 'docs_nomatch':
-        return qs.filter(doc_count=2).filter(~Q(total_value=F('total_value2')) | ~Q(quantity=F('quantity2')))
-    else:
-        return qs.filter(doc_count=2)
+        qs = qs.filter(doc_count=F('mandatory_size')).filter(~Q(total_value=F('total_value2')) | ~Q(quantity=F('quantity2')))
+    elif q == 'docs_and_match':
+        qs = qs.filter(doc_count=F('mandatory_size')).filter(total_value=F('total_value2'), quantity=F('quantity2'))
+    else:  # with docs check only
+        qs = qs.filter(doc_count=F('mandatory_size'))
+
+    # print(qs.query)
+    return qs
 
 
 class SummaryDetailExport(APIView):

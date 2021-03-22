@@ -38,6 +38,36 @@ class Document(models.Model):
         unique_together = ['ref_number', 'doc_type']
 
 
+class AggregateSale(models.Model):
+    cf_quantity = models.DecimalField(max_digits=38, decimal_places=2)
+    total_quantity = models.DecimalField(max_digits=38, decimal_places=2)
+    total_value = models.DecimalField(max_digits=38, decimal_places=2)
+    bal_quantity = models.DecimalField(max_digits=38, decimal_places=2)
+    bal_used_on = models.OneToOneField('AggregateSale', null=True, on_delete=models.PROTECT)
+
+
+class AggregateDocument(models.Model):
+    DOC_RELEASE_NOTE = "Exit"
+    DOC_ASSESSMENT_KG = "Assessment"
+    LETTER_RELEASE_NOTE = "R"
+    LETTER_ASSESSMENT_KG = "AKG"
+    ref_number = models.CharField(max_length=20)
+    description = models.CharField(max_length=100, blank=True, null=True)
+    doc_type = models.CharField(max_length=20)
+    file = models.FileField(upload_to='docs/')
+    aggregate_sale = models.ForeignKey('AggregateSale', related_name='docs', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='aggregate_docs', on_delete=models.PROTECT, null=True)
+    created_at = models.DateTimeField(auto_now=False, auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, auto_now_add=False, null=True)
+
+    def __str__(self):
+        return f'{self.ref_number} - {self.doc_type}'
+
+    class Meta:
+        ordering = ['-created_at']
+        unique_together = ['ref_number', 'doc_type']
+
+
 class Sale(models.Model):
     sales_order = models.CharField(max_length=100, unique=True)
     transaction_date = models.CharField(max_length=20)
@@ -58,6 +88,7 @@ class Sale(models.Model):
     invoice = models.ForeignKey(Invoice, on_delete=models.SET_NULL, null=True, related_name='sales')
     assign_no = models.CharField(max_length=20, null=True)
     task = models.ForeignKey(Task, on_delete=models.PROTECT, related_name='sales', null=True)
+    aggregate = models.ForeignKey(AggregateSale, on_delete=models.SET_NULL, related_name='sales', null=True)
 
     def __str__(self):
         return self.customer_name

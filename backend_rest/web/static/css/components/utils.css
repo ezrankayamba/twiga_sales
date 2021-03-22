@@ -28,7 +28,16 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: .4em;
+  padding: 0 .4em;
 }
 .d-nowrap {
   white-space: nowrap;
+}
+
+.bg-light{
+  background: #f2f2f2;
+}
+.text-right{
+  text-align: right;
 }

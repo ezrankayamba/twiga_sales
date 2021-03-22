@@ -253,6 +253,13 @@ class SaleDocsView(APIView):
             })
 
 
+def test_poppler():
+    import subprocess
+    p = subprocess.Popen(["pdftoppm", "-h"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out, err = p.communicate()
+    print(out, err)
+
+
 class TestOCRView(APIView):
     permission_classes = [permissions.AllowAny]
     required_scopes = []
