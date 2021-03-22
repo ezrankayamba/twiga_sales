@@ -28,7 +28,7 @@ def get_refs(sale):
     c2_ref = None
     assessment_ref = None
     aggr = True if sale.aggregate else False
-    objs = models.AggregateDocument.objects if aggr else models.Document.objetcs
+    objs = models.AggregateDocument.objects if aggr else models.Document.objects
 
     if aggr:
         exit_doc = objs.filter(doc_type=models.AggregateDocument.DOC_RELEASE_NOTE, aggregate_sale=sale.aggregate).first()
