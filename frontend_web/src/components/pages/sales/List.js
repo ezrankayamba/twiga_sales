@@ -469,6 +469,18 @@ class List extends Component {
                   <MatIcon name="arrow_upward" text="Import Sales" />
                 </button>
               )}
+              {this.canAddDocs() && (
+                <button className="btn btn-sm btn-outline-primary"
+                  onClick={(e) =>
+                    this.setState({
+                      fileUploadDocs: true,
+                      x: e.nativeEvent.offsetX,
+                      y: e.nativeEvent.offsetY + 100,
+                    })
+                  }>
+                  <MatIcon name="attach_file" /> Bulk Rusumo Docs
+                </button>
+              )}
               {this.canAddDocsAggregate() && (
                 <>
                   <button
