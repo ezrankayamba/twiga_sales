@@ -146,7 +146,7 @@ def extract_ref_number(pdf_data, regex, **kwargs):
         zoom = 1.0
     img = np.array(get_image(pdf_data))
     img = crop(img, **kwargs)
-    img = de_skew(img, show=True)
+    img = de_skew(img, show=False)
     img = zoom_in(img, zoom)
     ref_number = get_ref_number(img, regex)
     if not ref_number:
