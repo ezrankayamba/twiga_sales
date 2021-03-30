@@ -182,6 +182,8 @@ class SaleDocsView(APIView):
         def extract(d):
             if d['key'] not in request.FILES:
                 return
+            if not d['letter'] in ['A', 'E', 'C']:
+                return
             print()
             print("======================")
             file = request.FILES[d['key']]
