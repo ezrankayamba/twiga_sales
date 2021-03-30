@@ -14,8 +14,10 @@ def de_skew(image, show=False):
     thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
     coords = np.column_stack(np.where(thresh > 0))
     angle = cv2.minAreaRect(coords)[-1]
-    print(angle)
-    if angle < -45:
+    print('Angle: ', angle)
+    if angle == 90:
+        angle = 0
+    elif angle < -45:
         angle = -(90 + angle)
     else:
         angle = -angle
@@ -144,7 +146,7 @@ def extract_ref_number(pdf_data, regex, **kwargs):
         zoom = 1.0
     img = np.array(get_image(pdf_data))
     img = crop(img, **kwargs)
-    img = de_skew(img, show=False)
+    img = de_skew(img, show=True)
     img = zoom_in(img, zoom)
     ref_number = get_ref_number(img, regex)
     if not ref_number:
