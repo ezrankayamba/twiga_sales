@@ -79,16 +79,16 @@ class Sale(models.Model):
     product_name = models.CharField(max_length=100)
     quantity = models.DecimalField(decimal_places=2, max_digits=20)
     total_value = models.DecimalField(decimal_places=2, max_digits=20)
-    quantity2 = models.DecimalField(decimal_places=2, max_digits=20, null=True)
-    total_value2 = models.DecimalField(decimal_places=2, max_digits=20, null=True)
+    quantity2 = models.DecimalField(decimal_places=2, max_digits=20, null=True, blank=True)
+    total_value2 = models.DecimalField(decimal_places=2, max_digits=20, null=True, blank=True)
     destination = models.CharField(max_length=100)
-    agent = models.ForeignKey(u_models.Agent, on_delete=models.SET_NULL, null=True)
+    agent = models.ForeignKey(u_models.Agent, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now=False, auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, auto_now_add=False)
-    invoice = models.ForeignKey(Invoice, on_delete=models.SET_NULL, null=True, related_name='sales')
-    assign_no = models.CharField(max_length=20, null=True)
-    task = models.ForeignKey(Task, on_delete=models.PROTECT, related_name='sales', null=True)
-    aggregate = models.ForeignKey(AggregateSale, on_delete=models.SET_NULL, related_name='sales', null=True)
+    invoice = models.ForeignKey(Invoice, on_delete=models.SET_NULL, null=True, blank=True, related_name='sales')
+    assign_no = models.CharField(max_length=20, null=True, blank=True)
+    task = models.ForeignKey(Task, on_delete=models.PROTECT, related_name='sales', null=True, blank=True)
+    aggregate = models.ForeignKey(AggregateSale, on_delete=models.SET_NULL, related_name='sales', null=True, blank=True)
 
     def __str__(self):
         return f'{self.sales_order}/{self.customer_name}'
