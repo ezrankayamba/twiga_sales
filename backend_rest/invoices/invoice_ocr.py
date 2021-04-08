@@ -29,7 +29,7 @@ def from_letter(pdf_data):
 
 def from_invoice(pdf_data):
     regex = 'ce No[\. ]{1,}(\d{2,})'
-    threshold = 148
+    threshold = 140
 
     img = np.array(ocr.get_image(pdf_data))
     img = ocr.get_grayscale(img)
