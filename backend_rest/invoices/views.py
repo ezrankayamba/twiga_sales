@@ -13,7 +13,6 @@ from django.db import transaction
 from sales.models import Sale
 from sales.serializers import SaleSerializer
 import io
-from . import sql as raw_sql
 
 INVOICES_SEQUENCE_KEY = 'INVOICES'
 INVOICES_DIGITS = 5
@@ -156,8 +155,8 @@ class InvoiceManageView(APIView):
             '%Y-%m-%d %H:%m:%S')
         agent = request.user.agent if hasattr(request.user, 'agent') else None
         agent_code = agent.code if agent else 0
-        # sql = "select *, (case when (select count(*) from sales_document d where d.created_at <= %s and d.sale_id=s.id and d.doc_type in ('C2','Assessment'))=2 then 1 else 0 end) as complete from sales_sale s left join users_agent a on s.agent_id=a.id where s.invoice_id is null and a.code = %s and complete=1"
-        return Sale.objects.raw(raw_sql.SQL_INVOICE_ELIGIBLE_SALES, [max_date, max_date, agent_code])
+        sql = "select *, (case when (select count(*) from sales_document d where d.created_at <= %s and d.sale_id=s.id and d.doc_type in ('C2','Assessment'))=2 then 1 else 0 end) as complete from sales_sale s left join users_agent a on s.agent_id=a.id where s.invoice_id is null and a.code = %s and complete=1"
+        return Sale.objects.raw(sql, [max_date, agent_code])
 
     def post(self, request):
         agent = request.user.agent if hasattr(request.user, 'agent') else None
