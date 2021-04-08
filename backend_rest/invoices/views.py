@@ -169,6 +169,8 @@ class InvoiceManageView(APIView):
 
         with transaction.atomic():
             print("Invoice Data: ", data)
+            if data['quantity'] <= 0:
+                return Response({'result': -1, 'message': f'Invoice creation ignored as no sales attached'})
             inv = models.Invoice.objects.create(**data)
             qs2 = self.eligible_list(request)
             for row in qs2:
