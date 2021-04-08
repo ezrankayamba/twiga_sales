@@ -29,12 +29,12 @@ def from_letter(pdf_data):
 
 def from_invoice(pdf_data):
     regex = 'ce No[\. ]{1,}(\d{2,})'
-    threshold = 220
+    threshold = 148
 
     img = np.array(ocr.get_image(pdf_data))
     img = ocr.get_grayscale(img)
     h, w = img.shape
-    kwargs = {'x': int(w*2/3), 'w': 1000, 'y': 0, 'h': 300, 'show': False}
+    kwargs = {'x': int(w*0.5), 'w': 1000, 'y': 0, 'h': 400, 'show': False}
     print("Params", kwargs)
     img = ocr.crop(img, **kwargs)
 
