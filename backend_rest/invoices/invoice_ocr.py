@@ -9,7 +9,7 @@ from decimal import Decimal
 
 def from_letter(pdf_data):
     kwargs = {'y': 500, 'h': 600}
-    regex = 'exited[\w ]+ ([\d,.]+) tons[\w \n]+TZS[\. ]+([\d,.]+).\ Vat[\w \n\.]+(\d{4,})\.'
+    regex = 'exited[\w ]+ ([\d,.]+) tons[\w \n@]+TZS[\. ]+([\d,.]+)[/= ]{0,4}Vat[\w \n\.]+(\d{4,})\.'
     threshold = 220
 
     img = np.array(ocr.get_image(pdf_data))
@@ -17,7 +17,7 @@ def from_letter(pdf_data):
     img = ocr.crop(img, **kwargs)
     img = ocr.thresholding(np.array(img), threshold=threshold)
     text = ocr.image_to_string(img)
-    print(text)
+    print("Letter: ", text)
     ret = re.search(regex, text)
     if ret:
         result = {}
@@ -39,6 +39,7 @@ def from_invoice(pdf_data):
 
     img = ocr.thresholding(np.array(img), threshold=threshold)
     text = ocr.image_to_string(img)
+    print("Invoice: ", text)
     ret = re.search(regex, text)
     if ret:
         result = {}

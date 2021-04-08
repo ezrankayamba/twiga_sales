@@ -9,8 +9,15 @@ class SaleAdmin(admin.ModelAdmin):
     list_filter = ['destination']
 
 
+@admin.register(models.Document)
+class DocumentAdmin(admin.ModelAdmin):
+    list_display = ['ref_number', 'sale__sales_order', 'user', 'doc_type', 'truck', 'file']
+    search_fields = ['sale__sales_order', 'ref_number', 'sale__customer_name']
+    list_filter = ['sale__destination']
+
+
 # admin.site.register(models.Sale)
-admin.site.register(models.Document)
+# admin.site.register(models.Document)
 admin.site.register(models.InvoiceDoc)
 admin.site.register(models.Batch)
 admin.site.register(models.AggregateDocument)
