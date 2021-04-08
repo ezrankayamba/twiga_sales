@@ -91,7 +91,7 @@ class Sale(models.Model):
     aggregate = models.ForeignKey(AggregateSale, on_delete=models.SET_NULL, related_name='sales', null=True)
 
     def __str__(self):
-        return self.customer_name
+        return f'{self.sales_order}/{self.customer_name}'
 
     class Meta:
         ordering = ['-created_at']

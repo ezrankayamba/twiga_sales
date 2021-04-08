@@ -52,6 +52,9 @@ class Agent(models.Model):
     commission = models.DecimalField(max_digits=10, decimal_places=2)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='agent')
 
+    def __str__(self):
+        return self.code
+
 
 class Audit(models.Model):
     method = models.CharField(max_length=1000)
