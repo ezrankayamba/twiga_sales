@@ -11,7 +11,7 @@ class SaleAdmin(admin.ModelAdmin):
 
 @admin.register(models.Document)
 class DocumentAdmin(admin.ModelAdmin):
-    list_display = ['ref_number', 'sale__sales_order', 'user', 'doc_type', 'truck', 'file']
+    list_display = ['ref_number', 'user', 'doc_type', 'truck', 'file']
     search_fields = ['sale__sales_order', 'ref_number', 'sale__customer_name']
     list_filter = ['sale__destination']
 
