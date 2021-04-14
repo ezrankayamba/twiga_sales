@@ -90,7 +90,7 @@ class InvoiceDocsView(APIView):
             # if invoice_res and letter_res:
             if letter_res:
                 # if invoice_res['invoice_number'] == letter_res['invoice_number']:
-                volume = Decimal(letter_res['volume'])
+                volume = round(Decimal(letter_res['volume']), 2)
                 if volume == invoice.quantity:
                     ref_number = letter_res['invoice_number']
                     models.InvoiceDoc.objects.create(
