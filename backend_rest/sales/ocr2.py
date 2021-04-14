@@ -8,7 +8,7 @@ from pdf2image import convert_from_bytes
 import re
 
 
-def de_skew(image, show=False):
+def de_skew(image, show=False, delta=0):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     gray = 255 - gray
     thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
@@ -21,6 +21,7 @@ def de_skew(image, show=False):
         angle = -(90 + angle)
     else:
         angle = -angle
+    angle = angle + delta
     print(angle)
     (h, w) = image.shape[:2]
     center = (w // 2, h // 2)
@@ -38,7 +39,9 @@ def get_image(data):
     return image
 
 
-def crop(image, x=0, y=0, h=2338, w=1653, show=False):
+def crop(image, x=0, y=0, h=2338, w=1653, show=False, is_gray=True):
+    if not is_gray:
+        image = get_grayscale(image)
     crop_img = image[y:y + h, x:x + w]
     if show:
         cv2.imshow("cropped", crop_img)
@@ -209,3 +212,26 @@ def auto_remove_scratches():
 
 
 # auto_remove_scratches()
+
+
+def remove_lines(image, line_spec=(1, 6)):
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
+
+    # Remove horizontal
+    horizontal_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (64, 2))
+    detected_lines = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, horizontal_kernel, iterations=2)
+    cnts = cv2.findContours(detected_lines, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    cnts = cnts[0] if len(cnts) == 2 else cnts[1]
+    for c in cnts:
+        cv2.drawContours(image, [c], -1, (255, 255, 255), 2)
+
+    # Repair image
+    repair_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (2, 6))
+    result = 255 - cv2.morphologyEx(255 - image, cv2.MORPH_CLOSE, repair_kernel, iterations=1)
+
+    # cv2.imshow('thresh', thresh)
+    # cv2.imshow('detected_lines', detected_lines)
+    # cv2.imshow('image', image)
+    cv2.imshow('result', result)
+    cv2.waitKey()

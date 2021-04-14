@@ -27,15 +27,20 @@ def from_letter(pdf_data):
         return result
 
 
-def from_invoice(pdf_data):
+def from_invoice(pdf_data, show=False, delta=0, line_spec=(1, 6)):
     regex = 'ce No[\. ]{1,}(\d{2,})'
-    threshold = 140
+    threshold = 148
 
     img = np.array(ocr.get_image(pdf_data))
+    img = ocr.de_skew(img, delta=delta)
+    # img_gray = ocr.get_grayscale(img)
+    # h, w, _ = img.shape
+    # kwargs = {'x': int(w*2/3), 'w': 1000, 'y': 0, 'h': 300, 'show': show}
+    # img = ocr.crop(img, **kwargs)
+
     img = ocr.get_grayscale(img)
     h, w = img.shape
-    kwargs = {'x': int(w*0.5), 'w': 1000, 'y': 0, 'h': 400, 'show': False}
-    print("Params", kwargs)
+    kwargs = {'x': int(w*2/3), 'w': 1000, 'y': 0, 'h': 300, 'show': show}
     img = ocr.crop(img, **kwargs)
 
     img = ocr.thresholding(np.array(img), threshold=threshold)
@@ -50,14 +55,19 @@ def from_invoice(pdf_data):
 
 def extract_invoice_copy(invoice, letter):
     letter = from_letter(letter)
-    invoice = from_invoice(invoice)
+    invoice = from_invoice(invoice, delta=-4)
     return (invoice, letter)
 
 
 def test():
-    folder = 'C:\\Users\\godfred.nkayamba\\Downloads\\'
-    file1 = f'{folder}TI.pdf'
-    file2 = f'{folder}LE.pdf'
+    folder = 'C:\\Users\\godfred.nkayamba\\OneDrive - MIC\Desktop\\Test Export\\'
+    file1 = f'{folder}IN.pdf'
+    file2 = f'{folder}LT.pdf'
     with open(file1, 'rb') as pdf_data1, open(file2, 'rb') as pdf_data2:
         res = extract_invoice_copy(pdf_data1, pdf_data2)
+        # res = from_invoice(pdf_data1, show=True, delta=-4, line_spec=(50, 1))
         print("Res: ", res)
+
+
+if __name__ == '__main__':
+    test()
