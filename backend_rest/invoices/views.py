@@ -82,29 +82,29 @@ class InvoiceDocsView(APIView):
         invoice = models.Invoice.objects.get(pk=data['invoice_id'])
         inv_file = request.FILES['invoice']
         let_file = request.FILES['letter']
-        invoice_res, letter_res = invoice_ocr.extract_invoice_copy(
-            io.BytesIO(inv_file.read()), io.BytesIO(let_file.read()))
+        invoice_res, letter_res = invoice_ocr.extract_invoice_copy(io.BytesIO(inv_file.read()), io.BytesIO(let_file.read()))
         print(invoice_res, letter_res)
         result = -1
         msg = f'Attached invoice docs failed. Check the docs and reupload'
         try:
-            if invoice_res and letter_res:
-                if invoice_res['invoice_number'] == letter_res['invoice_number']:
-                    volume = Decimal(letter_res['volume'])
-                    if volume == invoice.quantity:
-                        ref_number = invoice_res['invoice_number']
-                        models.InvoiceDoc.objects.create(
-                            ref_number=ref_number, doc_type=models.InvoiceDoc.DOC_INVOICE, file=inv_file, invoice=invoice)
-                        models.InvoiceDoc.objects.create(
-                            ref_number=ref_number, doc_type=models.InvoiceDoc.DOC_LETTER, file=let_file, invoice=invoice)
+            # if invoice_res and letter_res:
+            if letter_res:
+                # if invoice_res['invoice_number'] == letter_res['invoice_number']:
+                volume = Decimal(letter_res['volume'])
+                if volume == invoice.quantity:
+                    ref_number = letter_res['invoice_number']
+                    models.InvoiceDoc.objects.create(
+                        ref_number=ref_number, doc_type=models.InvoiceDoc.DOC_INVOICE, file=inv_file, invoice=invoice)
+                    models.InvoiceDoc.objects.create(
+                        ref_number=ref_number, doc_type=models.InvoiceDoc.DOC_LETTER, file=let_file, invoice=invoice)
 
-                        invoice.status = 1
-                        invoice.save()
+                    invoice.status = 1
+                    invoice.save()
 
-                        msg = f'Successfully attached invoice docs'
-                        result = 0
-                    else:
-                        msg = f'Quantity mismatch. Invoice Qty: {invoice.quantity}, Uploaded Qty: {volume} tons'
+                    msg = f'Successfully attached invoice docs'
+                    result = 0
+                else:
+                    msg = f'Quantity mismatch. Invoice Qty: {invoice.quantity}, Uploaded Qty: {volume} tons'
         except Exception as e:
             print(dir(e))
             msg = f'${e}'
