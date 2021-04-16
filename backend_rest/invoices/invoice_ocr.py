@@ -9,7 +9,7 @@ from decimal import Decimal
 
 def from_letter(pdf_data):
     kwargs = {'y': 500, 'h': 600}
-    regex = 'exited[\w ]+ ([\d,.]+) tons[\w \n@,]+TZS[\. _]+([\d,.]+)[/= \n]{0,4}Vat[\w \n\.]+(\d{4,})[\., ]'
+    regex = 'exited[\w ]+ ([\d,.]+) tons[\w \n@,]+TZS[\. _]+([\d,.]+)[/= \n<]{0,4}Vat[\w \n\.]+(\d{4,})[\., ]'
     threshold = 220
 
     img = np.array(ocr.get_image(pdf_data))
@@ -21,8 +21,8 @@ def from_letter(pdf_data):
     ret = re.search(regex, text)
     if ret:
         result = {}
-        result['volume'] = float(ret.group(1).replace(',', ''))
-        result['value'] = float(ret.group(2).replace(',', ''))
+        result['volume'] = float(ret.group(1).rstrip('\.').replace(',', ''))
+        result['value'] = float(ret.group(2).rstrip('\.').replace(',', ''))
         result['invoice_number'] = int(ret.group(3))
         return result
 
@@ -62,7 +62,7 @@ def extract_invoice_copy(invoice, letter):
 def test():
     folder = 'C:\\Users\\godfred.nkayamba\\OneDrive - MIC\Desktop\\Test Export\\'
     file1 = f'{folder}IN.pdf'
-    file2 = f'{folder}LETTER 841.pdf'
+    file2 = f'{folder}LETTER 835.pdf'
     with open(file1, 'rb') as pdf_data1, open(file2, 'rb') as pdf_data2:
         res = extract_invoice_copy(pdf_data1, pdf_data2)
         # res = from_invoice(pdf_data1, show=True, delta=-4, line_spec=(50, 1))
