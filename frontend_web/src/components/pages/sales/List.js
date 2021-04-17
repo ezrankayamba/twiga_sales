@@ -46,7 +46,8 @@ class List extends Component {
       x: 0,
       y: 0,
       filter: null,
-      snackbar: { error: true, message: "Test " }
+      snackbar: { error: true, message: "Test " },
+      destinations: []
     };
 
     this.doUpdate = this.doUpdate.bind(this);
@@ -135,6 +136,15 @@ class List extends Component {
         onSuccess: (res) => this.setState({ deleteType: res.data.data }),
       }
     );
+    CRUD.list("/sales/destinations", this.props.user.token, {
+      onSuccess: (res) => {
+        this.setState({
+          destinations: res.data.map((r) => {
+            return { id: r.destination, name: r.destination }
+          })
+        })
+      }
+    })
   }
 
   onDelete(e, params) {
@@ -383,6 +393,14 @@ class List extends Component {
           title: "Product",
           search: {
             type: "select",
+            label: "Destination",
+            name: "destination",
+            options: this.state.destinations,
+          },
+        },
+        {
+          field: "quantity", title: "Qty(Tons)", search: {
+            type: "select",
             label: "More Filter",
             name: "more_filter",
             options: [
@@ -392,10 +410,11 @@ class List extends Component {
               { id: "nodocs_new", name: "No docs new sales" },
               { id: "nodocs_old", name: "No docs above 14 days" },
             ],
-          },
+          }, hide: this.canAddDocs()
         },
-        { field: "quantity", title: "Qty(Tons)", hide: this.canAddDocs() },
-        { field: "total_value", title: "Value", hide: this.canAddDocs() },
+        {
+          field: "total_value", title: "Value", hide: this.canAddDocs()
+        },
         { field: "quantity2", title: "Qty2(Tons)" },
         { field: "total_value2", title: "Value2" },
         { field: "agent", title: "Agent" },

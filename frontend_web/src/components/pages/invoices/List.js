@@ -12,6 +12,7 @@ import FileDownload from "../../../_helpers/FileDownload";
 import InvoiceDocsForm from "./forms/InvoiceDocsForm";
 import { SERVER_URL } from "../../../conf";
 import InvoiceNoteForm from "./forms/InvoiceNoteForm";
+import DropdownButton from "../../utils/buttons/DropdownButton";
 const STATUS_MAP = [
   "Created",
   "Copy attached",
@@ -285,26 +286,34 @@ class List extends Component {
       onPageChange: this.onPageChange,
       numRecords,
     };
+
+    let invoiceOptions = [
+      { id: "1", name: "Rusumo", handler: () => this.setState({ create: true }) },
+      { id: "2", name: "Kabanga Aggregate" },
+      { id: "3", name: "Kigoma Aggregate" },
+    ]
     return (
       <div>
         <div className="list-toolbar">
           <h5>{data.title}</h5>
           <div className="wrap">
             <div className="btn-group float-right">
+
+              {UserHelper.hasPriv(this.props.user, "Sales.create.invoice") && (
+                // <button
+                //   className="btn btn-sm btn-primary"
+                //   onClick={() => this.setState({ create: true })}
+                // >
+                //   <MatIcon name="post_add" /> Create Invoice
+                // </button>
+                <DropdownButton options={invoiceOptions} label="Create Invoice" />
+              )}
               <button
                 className="btn btn-sm btn-outline-primary"
                 onClick={this.exportInvoices.bind(this)}
               >
                 <MatIcon name="arrow_downward" /> Export Invoices
               </button>
-              {UserHelper.hasPriv(this.props.user, "Sales.create.invoice") && (
-                <button
-                  className="btn btn-sm btn-primary"
-                  onClick={() => this.setState({ create: true })}
-                >
-                  <MatIcon name="post_add" /> Create Invoice
-                </button>
-              )}
             </div>
           </div>
         </div>
