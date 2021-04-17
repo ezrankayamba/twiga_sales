@@ -168,9 +168,23 @@ class InvoiceManageView(APIView):
             '%Y-%m-%d %H:%m:%S')
         agent = request.user.agent if hasattr(request.user, 'agent') else None
         agent_code = agent.code if agent else 0
-        sql = "select *, (case when (select count(*) from sales_document d where d.created_at <= %s and d.sale_id=s.id and d.doc_type in ('C2','Assessment'))=2 then 1 else 0 end) as complete from sales_sale s left join users_agent a on s.agent_id=a.id where s.invoice_id is null and a.code = %s and complete=1"
-        print(category, "=>", sql)
-        return Sale.objects.raw(sql, [max_date, agent_code])
+
+        # sql = "select *, (case when (select count(*) from sales_document d where d.created_at <= %s and d.sale_id=s.id and d.doc_type in ('C2','Assessment'))=2 then 1 else 0 end) as complete from sales_sale s left join users_agent a on s.agent_id=a.id where s.invoice_id is null and a.code = %s and complete=1"
+        # print(category, "=>", sql)
+        # return Sale.objects.raw(sql, [max_date, agent_code])
+        category = int(request.GET['category']) if 'category' in request.GET else -1
+        print('Category: ', category)
+        if category == 1:
+            sql = raw_sql.SQL_INVOICE_ELIGIBLE_LIST_RUSUMO
+            return Sale.objects.raw(sql, [max_date, agent_code])
+        elif category == 2:
+            sql = raw_sql.SQL_INVOICE_ELIGIBLE_LIST_KABANGA
+            return Sale.objects.raw(sql, [max_date, agent_code])
+        elif category == 3:
+            sql = raw_sql.SQL_INVOICE_ELIGIBLE_LIST_KIGOMA
+            return Sale.objects.raw(sql, [agent_code])
+        else:
+            return []
 
     def post(self, request):
         agent = request.user.agent if hasattr(request.user, 'agent') else None
