@@ -126,7 +126,7 @@ class List extends Component {
     e.stopPropagation();
     this.setState({ isLoading: true }, () => {
       CRUD.create(
-        "/invoices/manage",
+        `/invoices/manage?category=${this.state.category.id}`,
         this.props.user.token,
         {},
         {
