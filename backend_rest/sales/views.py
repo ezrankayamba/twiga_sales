@@ -177,9 +177,14 @@ class SaleDocsView(APIView):
         print(data)
         sale = models.Sale.objects.get(pk=data['sale_id'])
         truck = 'trailer' if sale.quantity >= models.TRUCK_THRESHOLD else 'head'
+        category = data['category'] if 'category' in data else None
+        print(category)
 
         errors = []
         docs = []
+
+        def is_kabanga(category):
+            return category == 2
 
         def extract(d):
             if d['key'] not in request.FILES:
@@ -202,7 +207,10 @@ class SaleDocsView(APIView):
                 ref_number = f'{prefix}{ref_number}'
                 print(d['name'], ref_number)
                 name = d['name']
-                duplicate = models.Document.objects.filter(ref_number=ref_number, doc_type=name, truck=truck).first()
+                if d['letter'] == 'A' and is_kabanga(category):
+                    duplicate = None
+                else:
+                    duplicate = models.Document.objects.filter(ref_number=ref_number, doc_type=name, truck=truck).first()
                 if duplicate:
                     error = f'Duplicate {name} document with ref# {ref_number}; existing document attached to sale: {duplicate.sale.sales_order}'
                     errors.append({
@@ -230,6 +238,8 @@ class SaleDocsView(APIView):
                 })
         with concurrent.futures.ThreadPoolExecutor() as executor:
             results = executor.map(extract, imports.docs_schema())
+            for i, result in enumerate(results):
+                print(result)
         # for d in imports.docs_schema():
         #     extract(d)
         print()
@@ -243,12 +253,28 @@ class SaleDocsView(APIView):
             })
         else:
             print('Docs: ', docs)
+            assess_doc = next(filter(lambda x: x['doc_type'] == 'Assessment', docs), None)
+            print(assess_doc)
+            aggr_obj = None
+            if is_kabanga(category) and assess_doc:
+                aggr_doc = models.AggregateDocument.objects.filter(ref_number=assess_doc['ref_number'], doc_type=assess_doc['name']).first()
+                if not aggr_doc:
+                    aggr_obj = models.AggregateSale.objects.create(cf_quantity=0, total_quantity=0, total_value=0, bal_quantity=0, category=2)
+                    assess_doc['aggregate_sale'] = aggr_obj
+                    assess_doc.pop('sale', None)
+                    assess_doc.pop('truck', None)
+                    aggr_doc = models.AggregateDocument.objects.create(**assess_doc)
+                else:
+                    aggr_obj = aggr_doc.aggregate_sale
             sale.agent = request.user.agent
             sale.quantity2 = data['quantity2']
             sale.total_value2 = data['total_value2']
             sale.assign_no = sale.assign_no if sale.assign_no else get_next_value(SALE_DOCS_ASSIGN_SEQUENCE_KEY)
+            sale.aggregate = aggr_obj
             sale.save()
             for doc in docs:
+                if assess_doc and is_kabanga(category):
+                    continue
                 models.Document.objects.create(**doc)
             return Response({
                 'status': 0,

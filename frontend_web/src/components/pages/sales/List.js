@@ -113,6 +113,7 @@ class List extends Component {
                   vehicle_number: c.vehicle_number_trailer
                     ? `${c.vehicle_number}, ${c.vehicle_number_trailer}`
                     : c.vehicle_number,
+                  is_kabanga: c.aggregate && c.aggregate.category === 2
                 };
               }),
               isLoading: false,

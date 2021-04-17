@@ -13,6 +13,7 @@ import InvoiceDocsForm from "./forms/InvoiceDocsForm";
 import { SERVER_URL } from "../../../conf";
 import InvoiceNoteForm from "./forms/InvoiceNoteForm";
 import DropdownButton from "../../utils/buttons/DropdownButton";
+import CreateInvoiceForm from "./forms/CreateInvoiceForm";
 const STATUS_MAP = [
   "Created",
   "Copy attached",
@@ -34,6 +35,7 @@ class List extends Component {
       isLoading: false,
       filter: {},
       create: false,
+      category: null,
       invoiceable: null,
       selected: null,
     };
@@ -87,10 +89,10 @@ class List extends Component {
         page,
       });
     });
-    CRUD.list("/invoices/manage", this.props.user.token, {
-      onSuccess: (res) => this.setState({ invoiceable: res.data }),
-      onFail: (res) => console.error(res),
-    });
+    // CRUD.list("/invoices/manage", this.props.user.token, {
+    //   onSuccess: (res) => this.setState({ invoiceable: res.data }),
+    //   onFail: (res) => console.error(res),
+    // });
   }
 
   componentDidMount() {
@@ -151,6 +153,10 @@ class List extends Component {
     let url = `${SERVER_URL}${file}`;
     console.log(url);
     return url;
+  }
+
+  handleOption(option) {
+    this.setState({ create: true, category: option })
   }
 
   render() {
@@ -288,7 +294,7 @@ class List extends Component {
     };
 
     let invoiceOptions = [
-      { id: "1", name: "Rusumo", handler: () => this.setState({ create: true }) },
+      { id: "1", name: "Rusumo" },
       { id: "2", name: "Kabanga Aggregate" },
       { id: "3", name: "Kigoma Aggregate" },
     ]
@@ -298,15 +304,8 @@ class List extends Component {
           <h5>{data.title}</h5>
           <div className="wrap">
             <div className="btn-group float-right">
-
               {UserHelper.hasPriv(this.props.user, "Sales.create.invoice") && (
-                // <button
-                //   className="btn btn-sm btn-primary"
-                //   onClick={() => this.setState({ create: true })}
-                // >
-                //   <MatIcon name="post_add" /> Create Invoice
-                // </button>
-                <DropdownButton options={invoiceOptions} label="Create Invoice" />
+                <DropdownButton options={invoiceOptions} label="Create Invoice" handleOption={this.handleOption.bind(this)} />
               )}
               <button
                 className="btn btn-sm btn-outline-primary"
@@ -359,57 +358,11 @@ class List extends Component {
             }
           />
         )}
-        {this.state.create && invoiceable && (
-          <Modal
-            modalId="invoices-create"
-            title="Invoice Summary"
-            handleClose={() => this.setState({ create: false })}
-            content={
-              <div className="create-invoice-wrap">
-                <p>
-                  Invoiceable sales are those sales with atleast Assessment and
-                  C2 documents attached
-                </p>
-                <div className="item">
-                  <div className="label">Commission Rate</div>
-                  <div className="value">
-                    {Numbers.fmt(invoiceable.commission)}
-                  </div>
-                </div>
-                <div className="item">
-                  <div className="label">Total Quantity (Tons)</div>
-                  <div className="value">
-                    {Numbers.fmt(invoiceable.complete.quantity)}
-                  </div>
-                </div>
-                <div className="item">
-                  <div className="label">Commission Value (TZS)</div>
-                  <div className="value">
-                    {Numbers.fmt(
-                      invoiceable.commission * invoiceable.complete.quantity
-                    )}
-                  </div>
-                </div>
-                <div className="invoices-footer">
-                  {invoiceable.complete.quantity ? (
-                    <button
-                      className="btn btn-primary"
-                      onClick={this.createInvoice.bind(this)}
-                    >
-                      Create Invoice
-                    </button>
-                  ) : (
-                    <button
-                      className="btn btn-link text-warning"
-                      disabled={true}
-                    >
-                      No invoiceable Sales
-                    </button>
-                  )}
-                </div>
-              </div>
-            }
-          />
+        {this.state.create && (
+          <CreateInvoiceForm
+            token={this.props.user.token}
+            category={this.state.category}
+            handleClose={() => this.setState({ create: false })} />
         )}
       </div>
     );

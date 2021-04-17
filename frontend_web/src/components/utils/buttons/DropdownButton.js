@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import MatIcon from '../icons/MatIcon';
 
-function DropdownButton({ label, options }) {
+function DropdownButton({ label, options, handleOption }) {
     const [show, setShow] = useState(false)
     const btnRef = useRef(null);
     const handleClickOutside = (event) => {
@@ -9,11 +9,6 @@ function DropdownButton({ label, options }) {
             setShow(false);
         }
     };
-    const handleOptionClick = (option) => {
-        if (option.handler) {
-            option.handler()
-        }
-    }
     useEffect(() => {
         document.addEventListener('click', handleClickOutside);
         return () => {
@@ -24,7 +19,7 @@ function DropdownButton({ label, options }) {
         <div className="btn-dropdown">
             <button ref={btnRef} className="btn btn-sm btn-primary" onClick={() => setShow(!show)}><MatIcon name="post_add" />{label}</button>
             <ul>
-                {show && options.map(o => <li key={o.id} onClick={() => handleOptionClick(o)}>{o.name}</li>)}
+                {show && options.map(o => <li key={o.id} onClick={() => handleOption && handleOption(o)}>{o.name}</li>)}
             </ul>
         </div>
     );

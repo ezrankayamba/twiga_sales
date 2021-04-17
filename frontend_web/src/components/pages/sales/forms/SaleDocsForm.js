@@ -95,7 +95,6 @@ class SaleDocsForm extends Component {
           validator: FormsHelper.notEmpty(),
           value: val("c2_doc"),
         },
-
         {
           name: "assessment_doc",
           label: "Assessment Document",
@@ -108,6 +107,13 @@ class SaleDocsForm extends Component {
           label: "Exit Document",
           type: "file",
           value: val("exit_doc"),
+        },
+        {
+          name: "category",
+          label: null,
+          type: "checkbox",
+          options: [{ id: 3, name: "Kabanga/Rusumo Aggr. Docs" }],
+          value: val("category"),
         },
       ],
       onSubmit: readOnly ? null : onSubmit || this.onSubmit.bind(this),

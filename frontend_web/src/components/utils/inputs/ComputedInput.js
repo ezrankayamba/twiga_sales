@@ -20,9 +20,11 @@ const getInput = (
       </select>
     );
   } else if (type === "checkbox") {
+    console.log(value)
     let checked = (id) => {
+      console.log(value, id)
       if (!value) return false;
-      return value.find((v) => v === id) !== undefined;
+      return value.find((v) => v === `${id}`) !== undefined;
     };
     return (
       <fieldset>
@@ -30,7 +32,7 @@ const getInput = (
           options.map((o) => {
             let isChecked = checked(o.id);
             return (
-              <label className="d-block checkbox-label">
+              <label className="d-block checkbox-label" key={o.id}>
                 <input
                   className="pt-2"
                   id={`${name}-${o.id}`}

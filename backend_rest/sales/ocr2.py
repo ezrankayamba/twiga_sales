@@ -139,24 +139,27 @@ def zoom_in(img, zoom):
 
 
 def extract_ref_number(pdf_data, regex, **kwargs):
-    threshold = kwargs.get('threshold')
-    zoom = kwargs.get('zoom')
-    if threshold:
-        del kwargs['threshold']
-    if zoom:
-        del kwargs['zoom']
-    else:
-        zoom = 1.0
-    img = np.array(get_image(pdf_data))
-    img = crop(img, **kwargs)
-    img = de_skew(img, show=False)
-    img = zoom_in(img, zoom)
-    ref_number = get_ref_number(img, regex)
-    if not ref_number:
-        thresholds = [threshold, threshold-7, threshold+7, threshold-14, threshold+14,  threshold*2/3.5, threshold*2/3]
-        print("Try with thresholds: ", thresholds)
-        ref_number = threshold_trials(img, regex, thresholds)
-    return ref_number
+    try:
+        threshold = kwargs.get('threshold')
+        zoom = kwargs.get('zoom')
+        if threshold:
+            del kwargs['threshold']
+        if zoom:
+            del kwargs['zoom']
+        else:
+            zoom = 1.0
+        img = np.array(get_image(pdf_data))
+        img = crop(img, **kwargs)
+        img = de_skew(img, show=False)
+        img = zoom_in(img, zoom)
+        ref_number = get_ref_number(img, regex)
+        if not ref_number:
+            thresholds = [threshold, threshold-7, threshold+7, threshold-14, threshold+14,  threshold*2/3.5, threshold*2/3]
+            print("Try with thresholds: ", thresholds)
+            ref_number = threshold_trials(img, regex, thresholds)
+        return ref_number
+    except Exception as ex:
+        return None
 
 
 def show_wait_destroy(winname, img):

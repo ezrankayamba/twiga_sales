@@ -101,7 +101,7 @@ class AggregateSaleDocsView(APIView):
                 ref_number = f'{prefix}{ref_number}'
                 print("Extract Res: ", d['name'], ref_number)
                 name = d['name']
-                duplicate = models.Document.objects.filter(ref_number=ref_number, doc_type=name).first()
+                duplicate = models.AggregateDocument.objects.filter(ref_number=ref_number, doc_type=name).first()
 
                 if duplicate:
                     error = f'Duplicate {name} document with ref# {ref_number}; existing document attached to sale: {duplicate.sale.sales_order}'
@@ -131,6 +131,8 @@ class AggregateSaleDocsView(APIView):
                 print(errors)
         with concurrent.futures.ThreadPoolExecutor() as executor:
             results = executor.map(extract, imports.docs_schema())
+            for i, result in enumerate(results):
+                print(result)
 
         if len(list(filter(lambda x: x['mandatory'], errors))):
             print('Errors: ', errors)
