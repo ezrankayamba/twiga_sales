@@ -502,32 +502,18 @@ class List extends Component {
                 </button>
               )}
               {this.canAddDocsAggregate() && (
-                <>
-                  <button
-                    className="btn btn-sm btn-primary"
-                    onClick={(e) =>
-                      this.setState({
-                        fileUploadDocsKigoma: true,
-                        x: e.nativeEvent.offsetX,
-                        y: e.nativeEvent.offsetY + 100,
-                      })
-                    }
-                  >
-                    <MatIcon name="attach_file" /> Docs Via KIGOMA
+                <button
+                  className="btn btn-sm btn-primary"
+                  onClick={(e) =>
+                    this.setState({
+                      fileUploadDocsKigoma: true,
+                      x: e.nativeEvent.offsetX,
+                      y: e.nativeEvent.offsetY + 100,
+                    })
+                  }
+                >
+                  <MatIcon name="attach_file" /> Docs Via KIGOMA
                 </button>
-                  <button
-                    className="btn btn-sm btn-primary"
-                    onClick={(e) =>
-                      this.setState({
-                        fileUploadDocsKabanga: true,
-                        x: e.nativeEvent.offsetX,
-                        y: e.nativeEvent.offsetY + 100,
-                      })
-                    }
-                  >
-                    <MatIcon name="attach_file" /> Docs Via Kabanga
-                </button>
-                </>
               )}
             </div>
           </div>
