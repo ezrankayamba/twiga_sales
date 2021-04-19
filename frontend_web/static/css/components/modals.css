@@ -66,3 +66,15 @@
 .close-button:hover {
   color: #f1f1f1;
 }
+
+.confirm-dialog{
+  max-width: 20em;
+}
+
+.confirm-dialog p{
+  padding: 1em 0;
+}
+.confirm-dialog .buttons{
+  display: flex;
+  gap: 1em;
+}

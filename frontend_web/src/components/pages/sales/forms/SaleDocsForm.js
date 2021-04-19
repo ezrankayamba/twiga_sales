@@ -7,6 +7,7 @@ import LoadingIndicator from "../../../utils/loading/LoadingIndicator";
 import Snackbar from "../../../utils/notify/Snackbar";
 import CommonForm from "../../../utils/form/CommonForm";
 import Modal from "../../../modal/Modal";
+import { openConfirmDialog } from "../../../modal/ConfirmDialog";
 
 @connect(
   (state) => {
@@ -25,39 +26,59 @@ class SaleDocsForm extends Component {
   }
   onSubmit(data, cb) {
     const { sale } = this.props;
-    const hasDocs = sale.docs.length > 0;
-    let form = new FormData();
-    Object.entries(data).forEach((entry) => {
-      console.log(entry);
-      form.append(entry[0], entry[1]);
-    });
-    this.setState({ isLoading: true, snackbar: null });
-    uploadDocs(
-      this.props.user.token,
-      form,
-      (res) => {
-        this.setState({ isLoading: false });
-        if (res && res.status === 0) {
-          this.props.complete(res.message);
-          cb(res);
-        } else {
-          this.setState({
-            snackbar: {
-              message: (
-                <ol>
-                  {res.errors.map((e) => (
-                    <li>{e.message}</li>
-                  ))}
-                </ol>
-              ),
-              timeout: 10000,
-              error: true,
-            },
-          });
-        }
-      },
-      !hasDocs
-    );
+
+    let proceedSubmit = () => {
+      const hasDocs = sale.docs.length > 0;
+      let form = new FormData();
+      Object.entries(data).forEach((entry) => {
+        console.log(entry);
+        form.append(entry[0], entry[1]);
+      });
+      this.setState({ isLoading: true, snackbar: null });
+      uploadDocs(
+        this.props.user.token,
+        form,
+        (res) => {
+          this.setState({ isLoading: false });
+          if (res && res.status === 0) {
+            this.props.complete(res.message);
+            cb(res);
+          } else {
+            this.setState({
+              snackbar: {
+                message: (
+                  <ol>
+                    {res.errors.map((e) => (
+                      <li>{e.message}</li>
+                    ))}
+                  </ol>
+                ),
+                timeout: 10000,
+                error: true,
+              },
+            });
+          }
+        },
+        !hasDocs
+      );
+    }
+
+    let noMatchVal = Number(data.total_value2).toFixed(2) !== sale.total_value
+    let noMatchQty = Number(data.quantity2).toFixed(2) !== sale.quantity
+    if (noMatchQty || noMatchVal) {
+      console.log(data.quantity2, sale.quantity)
+      openConfirmDialog({
+        title: "Warning",
+        message: "There is inherent mismatch of quantity/value, Are you sure you want to proceed?",
+        buttons: [
+          { label: "Yes, proceed", handler: () => proceedSubmit(), cls: "btn-primary" },
+          { label: "No, cancel", cls: "btn-secondary" },
+        ]
+      })
+      return
+    } else {
+      proceedSubmit()
+    }
   }
 
   render() {
