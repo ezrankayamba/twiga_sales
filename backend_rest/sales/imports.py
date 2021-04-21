@@ -31,7 +31,7 @@ def docs_schema():
         {'name': models.AggregateDocument.DOC_ASSESSMENT_KG, 'letter': models.AggregateDocument.LETTER_ASSESSMENT_KG, 'key': doc_key(models.AggregateDocument.DOC_ASSESSMENT_KG), 'regex': '(TZ\w{2}[-\d]+) [\d\/]+$', 'params': {
             'x': 1100, 'y': 100, 'h': 400, 'w': 600, 'threshold': 230, 'zoom': 1.0}, 'mandatory': True},
         {'name': models.AggregateDocument.DOC_RELEASE_NOTE, 'letter': models.AggregateDocument.LETTER_RELEASE_NOTE, 'key': doc_key(models.AggregateDocument.DOC_RELEASE_NOTE), 'regex': '(TZ\w{2}[-\d]+)$', 'params': {
-            'x': 400, 'y': 400, 'h': 400, 'w': 800, 'threshold': 230, 'zoom': 1.0}, 'mandatory': True},
+            'x': 400, 'y': 300, 'h': 600, 'w': 800, 'threshold': 230, 'zoom': 1.0}, 'mandatory': True},
         {'name': models.Document.DOC_EXIT, 'letter': models.Document.LETTER_EXIT, 'key': doc_key(
             models.Document.DOC_EXIT), 'regex': 'laration[ +\d:]{1,}(\d{4} [\w/]+)', 'params': {'x': 20, 'y': 800, 'h': 600, 'w': 600, 'threshold': 236}, 'mandatory': False}
     ]
