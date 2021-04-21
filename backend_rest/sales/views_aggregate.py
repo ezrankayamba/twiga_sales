@@ -104,7 +104,7 @@ class AggregateSaleDocsView(APIView):
                 duplicate = models.AggregateDocument.objects.filter(ref_number=ref_number, doc_type=name).first()
 
                 if duplicate:
-                    error = f'Duplicate {name} document with ref# {ref_number}; existing document attached to sale: {duplicate.sale.sales_order}'
+                    error = f'Duplicate {name} document with ref# {ref_number}; existing document attached to aggregate sale'
                     errors.append({
                         'key': d['key'],
                         'name': d['name'],
