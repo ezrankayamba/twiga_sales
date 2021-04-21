@@ -24,7 +24,7 @@ export const SearchForm = ({ searchFields, onSearch }) => {
   };
   return (
     <div className="container small">
-      <form onSubmit={search} className="form search2">
+      <form onSubmit={search} className="form search">
         <div className="form-content">
           {searchFields.map((fld) => {
             return (

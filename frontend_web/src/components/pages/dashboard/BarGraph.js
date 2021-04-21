@@ -1,10 +1,10 @@
-import React from "react";
-import { ColorsHelper } from "../../../_helpers/ColorsHelper";
+import React, { useEffect, useRef } from "react";
 import Numbers from "../../../_helpers/Numbers";
 
-class BarGraph extends React.Component {
-  componentDidMount() {
-    const { graphId, meta } = this.props;
+const BarGraph = ({ graphId, title, meta }) => {
+  const canvasRef = useRef(null)
+
+  useEffect(() => {
     const data = {
       datasets: meta.data,
       labels: meta.labels,
@@ -45,21 +45,21 @@ class BarGraph extends React.Component {
       },
     };
 
-    new Chart(document.getElementById(graphId), {
+    let chart = new Chart(canvasRef.current, {
       type: "bar",
       data: data,
       options: options,
     });
-  }
-  render() {
-    const { graphId, title } = this.props;
-    return (
-      <div className="grapg-container bg-white card p-2">
-        <h6>{title}</h6>
-        <canvas id={graphId} className="graph" style={{}}></canvas>
-      </div>
-    );
-  }
+
+    return () => chart.destroy()
+  }, [meta])
+
+  return (
+    <div className="grapg-container bg-white card p-2">
+      <h6>{title}</h6>
+      <canvas ref={canvasRef} id={graphId} className="graph" style={{}}></canvas>
+    </div>
+  );
 }
 
 export default BarGraph;

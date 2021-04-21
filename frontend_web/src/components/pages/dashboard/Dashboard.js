@@ -1,19 +1,32 @@
 import React, { useEffect, useState } from "react";
 import Graph from "./Graph";
 import "./Dashboard.css";
-import { fetchSalesSummary } from "../../../_services/SalesService";
 import CRUD from "../../../_services/CRUD";
 import BarGraph from "./BarGraph";
-import { SearchForm } from "../../utils/search/SearchForm";
+import LoadingIndicator from "../../utils/loading/LoadingIndicator";
 
 const Dashboard = ({ onDataClick, user }) => {
-  // state = { meta1: null, destQty: null, destVal: null, destVol: null, filter: null };
+  const currentYear = new Date().getFullYear()
   const [meta1, setMeta1] = useState(null)
   const [destQty, setDestQty] = useState(null)
   const [destVal, setDestVal] = useState(null)
   const [destVol, setDestVol] = useState(null)
-  const [filter, setFilter] = useState({ 'year': 2021 })
+  const [filter, setFilter] = useState({ 'year': currentYear })
   const [colors, setColors] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const years = []
+  for (let y = 2018; y <= currentYear; y++) {
+    years.push(y)
+  }
+  const serialize = function (obj) {
+    var str = [];
+    for (var p in obj)
+      if (obj.hasOwnProperty(p)) {
+        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+      }
+    return str.join("&");
+  }
+
 
   let handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -22,16 +35,18 @@ const Dashboard = ({ onDataClick, user }) => {
 
   useEffect(() => {
     const token = user.token;
-    fetchSalesSummary(token, 1, (res) => {
-      let sumary = {
-        data: res.data.summary,
-      };
-      let clrs = sumary.data.map((d) => d.color);
-      // this.setState({ meta1, colors });
-      setMeta1(sumary)
-      setColors(clrs)
-    });
-    CRUD.list("/reports/destination", token, {
+    setLoading(true)
+    CRUD.list(`/sales/summary`, token, {
+      onSuccess: (res) => {
+        let sumary = {
+          data: res.summary,
+        };
+        let clrs = sumary.data.map((d) => d.color);
+        setMeta1(sumary)
+        setColors(clrs)
+      }
+    })
+    CRUD.list(`/reports/destination?${serialize(filter)}`, token, {
       onSuccess: (res) => {
         let data = res.data;
         let sales = { qty: [], value: [], volume: [] };
@@ -93,21 +108,12 @@ const Dashboard = ({ onDataClick, user }) => {
           ],
           labels,
         })
+        setLoading(false)
       },
       onFail: (err) => console.error(err),
     });
-  }, [])
+  }, [filter])
 
-  const searchFields = [
-    {
-      search: {
-        name: "year",
-        label: "Year",
-        type: "select",
-        options: ["2020", "2021"].map(y => { return { id: y, name: y } })
-      }
-    }
-  ]
 
   return (
     <div className="dashboard">
@@ -152,14 +158,13 @@ const Dashboard = ({ onDataClick, user }) => {
           <h5>Filter-graphs</h5>
           <div className="input-control">
             <label>Year</label>
-            <select name="year" value={filter["year"]} onChange={handleFilterChange}>
-              <option>2020</option>
-              <option>2021</option>
+            <select name="year" value={filter["year"]} onChange={handleFilterChange} className="form-control p-2">
+              {years.map(y => <option key={y} value={y}>{y}</option>)}
             </select>
           </div>
-          <button className="btn btn-sm">Filter</button>
         </form>
       </div>
+      {loading && <LoadingIndicator isLoading={loading} />}
     </div>
   );
 }

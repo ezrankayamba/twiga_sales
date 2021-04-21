@@ -19,6 +19,7 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from datetime import date, time, datetime
+from .raw_sql import SQL_SUMMARY_PER_DEST, SQL_SUMMARY_PER_DEST_NO_FILTER
 
 THRESHOLD_DAYS = 14
 
@@ -209,8 +210,14 @@ class DestinationReportView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None):
-        sql = 'select max(id) as id, destination, complete, count(id) as volume, sum(total_value) as value_sum, sum(quantity) as quantity_sum from (select *, (case when (select count(*) from sales_document d where d.sale_id=s.id)=3 then 1 else 0 end) as complete from sales_sale s) as sales group by destination, complete'
-        qs = models.Sale.objects.raw(sql)
+        # sql = 'select max(id) as id, destination, complete, count(id) as volume, sum(total_value) as value_sum, sum(quantity) as quantity_sum from (select *, (case when (select count(*) from sales_document d where d.sale_id=s.id)=3 then 1 else 0 end) as complete from sales_sale s) as sales group by destination, complete'
+        year = request.GET.get('year', datetime.today().year)
+        frm = f'{year}-01-01 00:00:00'
+        to = f'{year}-12-31 23:59:59'
+        # sql = SQL_SUMMARY_PER_DEST_NO_FILTER
+        sql = SQL_SUMMARY_PER_DEST
+        qs = models.Sale.objects.raw(sql, [frm, to])
+        # qs = models.Sale.objects.raw(sql, [])
         data = {}
         for row in qs:
             dest = row.destination
@@ -313,10 +320,3 @@ class UnmatchedValuesReportView(APIView):
             'message': f'Successfully fetched report',
             'data': serializers.SaleSerializer(mismatch, many=True).data
         })
-
-
-# '''
-# >>> models.Sale.objects.values('destination').annotate(quantity=Sum('quantity'), value=Sum('total_value')).order_by('destination')
-# <QuerySet [{'destination': 'Kenya', 'quantity': 377, 'value': 312431}, {'destination': 'Rwanda', 'quantity': 711, 'value': 599704}, {'destination': 'Uganda', 'quantity': 189, 'value': 272427}, {'destination': 'Zambia', 'quantity': 841, 'value': 544854}]>
-
-# '''
