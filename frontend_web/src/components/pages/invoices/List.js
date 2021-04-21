@@ -340,9 +340,8 @@ class List extends Component {
             }}
           />
         )}
-        {this.state.isLoading && (
-          <LoadingIndicator isLoading={this.state.isLoading} />
-        )}
+        {this.state.isLoading && <LoadingIndicator />
+        }
         {openDetails && (
           <Modal
             modalId="invoices-create"

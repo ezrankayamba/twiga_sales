@@ -8,6 +8,7 @@ import Numbers from "../../../../_helpers/Numbers";
 
 const CustomerReport = ({ user }) => {
   const [sales, setSales] = useState([]);
+  const [loading, setLoading] = useState(false)
   const [destinations, setDestinations] = useState([]);
   const [filter, setFilter] = useState(null);
   const exportCustomers = () => {
@@ -25,8 +26,10 @@ const CustomerReport = ({ user }) => {
     });
   };
   function fetchData() {
+    setLoading(true)
     CRUD.search("/reports/customers", user.token, filter, {
       onSuccess: (res) => {
+        setLoading(false)
         console.log(res);
         setSales(
           res.data.data.map((row) => {
@@ -46,11 +49,10 @@ const CustomerReport = ({ user }) => {
           })
         );
       },
-      onFail: (err) => console.log(err),
+      onFail: (err) => setLoading(false),
     });
   }
   useEffect(() => {
-    fetchData();
     CRUD.list("/sales/destinations", user.token, {
       onSuccess: (res) =>
         setDestinations(
@@ -59,6 +61,9 @@ const CustomerReport = ({ user }) => {
           })
         ),
     });
+  }, [])
+  useEffect(() => {
+    fetchData();
   }, [filter]);
   //columns = ['customer_name', 'qty', 'total_value', 'total_volume', 'total_value2', 'total_volume2']
   let data = {
@@ -74,10 +79,22 @@ const CustomerReport = ({ user }) => {
           options: destinations,
         },
       },
-      { field: "qty", title: "Count" },
+      {
+        field: "qty", title: "Count",
+        search: {
+          type: "date",
+          label: "From",
+          name: "date_from",
+        },
+      },
       {
         field: "total_value",
         title: "Factory Value",
+        search: {
+          type: "date",
+          label: "To",
+          name: "date_to",
+        },
       },
       {
         field: "total_volume",

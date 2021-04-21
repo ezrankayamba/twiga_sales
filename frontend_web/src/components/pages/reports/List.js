@@ -276,9 +276,7 @@ class List extends Component {
               complete={this.fileUploadSalesComplete.bind(this)}
             />
           )}
-          {this.state.isLoading && (
-            <LoadingIndicator isLoading={this.state.isLoading} />
-          )}
+          {this.state.isLoading && <LoadingIndicator />}
           {openDetail && this.canViewDocs() && (
             <SaleDocsForm
               readOnly={readOnly}

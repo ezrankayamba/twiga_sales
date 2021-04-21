@@ -89,7 +89,7 @@ class LoginPage extends Component {
           </div>
           <div className="login-content">
             <CommonForm meta={form} />
-            <LoadingIndicator isLoading={isLoading} />
+            {isLoading && <LoadingIndicator />}
             {snackbar && (
               <Snackbar
                 message={snackbar.message}

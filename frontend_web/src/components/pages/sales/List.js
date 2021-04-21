@@ -555,9 +555,7 @@ class List extends Component {
             complete={this.fileUploadSalesComplete.bind(this)}
           />
         )}
-        {this.state.isLoading && (
-          <LoadingIndicator isLoading={this.state.isLoading} />
-        )}
+        {this.state.isLoading && <LoadingIndicator />}
         {openAdd && allowAdd && selected && (
           <SaleDocsForm complete={this.complete.bind(this)} sale={selected} />
         )}

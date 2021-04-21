@@ -196,7 +196,7 @@ class RolesPage extends Component {
           isLoading={isLoading}
           onRowClick={this.onRowClick.bind(this)}
         />
-        <LoadingIndicator isLoading={isLoading} />
+        {isLoading && <LoadingIndicator />}
         {snackbar && (
           <Snackbar
             message={snackbar.message}

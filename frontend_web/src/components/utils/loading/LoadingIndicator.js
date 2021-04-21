@@ -1,15 +1,9 @@
-import React, { Component } from "react";
-import MatIcon from "../icons/MatIcon";
+import React from "react";
 
-class LoadingIndicator extends Component {
-  render() {
-    const { isLoading } = this.props;
-    return isLoading ? (
-      <div className="loading-indicator">
-        <p>Loading, please wait...</p>
-      </div>
-    ) : null;
-  }
+const LoadingIndicator = () => {
+  return <div className="loading-indicator">
+    <p>Loading, please wait...</p>
+  </div>
 }
 
 export default LoadingIndicator;

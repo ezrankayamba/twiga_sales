@@ -96,7 +96,7 @@ class CrudTable extends React.Component {
           </table>
         </div>
 
-        <LoadingIndicator isLoading={isLoading} />
+        {isLoading && <LoadingIndicator />}
 
         {newRecord && (
           <CloseableModel

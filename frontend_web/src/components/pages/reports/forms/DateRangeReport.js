@@ -5,10 +5,12 @@ import { DateTime } from "../../../../_helpers/DateTime";
 import FileDownload from "../../../../_helpers/FileDownload";
 import BasicCrudView from "../../../utils/crud/BasicCrudView";
 import MatIcon from "../../../utils/icons/MatIcon";
+import LoadingIndicator from "../../../utils/loading/LoadingIndicator";
 
 const DateRangeReport = ({ user }) => {
   const [sales, setSales] = useState([]);
   const [filter, setFilter] = useState(null);
+  const [loading, setLoading] = useState(false)
   const exportSales = () => {
     const fname = `${Date.now()}_Sales_Report.xlsx`;
     const getFile = (res) => FileDownload.get(res, fname);
@@ -44,6 +46,18 @@ const DateRangeReport = ({ user }) => {
       agent: c.agent ? c.agent.code : null,
     };
   };
+  const onSearch = (params) => {
+    setFilter(params);
+    setLoading(true)
+    CRUD.search("/reports/search", user.token, params, {
+      onSuccess: (res) => {
+        setLoading(false)
+        console.log(res);
+        setSales(res.data.data.map(mapSaleRecord));
+      },
+      onFail: (err) => setLoading(false),
+    });
+  };
   useEffect(() => {
     const fmtStr = "YYYY-MM-DD";
     let date = new Date();
@@ -54,24 +68,16 @@ const DateRangeReport = ({ user }) => {
     );
     let params = { date_from: firstDay, date_to: now };
     setFilter(params);
-    CRUD.search("/reports/search", user.token, params, {
-      onSuccess: (res) => {
-        console.log(res);
-        setSales(res.data.data.map(mapSaleRecord));
-      },
-      onFail: (err) => console.log(err),
-    });
+    // CRUD.search("/reports/search", user.token, params, {
+    //   onSuccess: (res) => {
+    //     console.log(res);
+    //     setSales(res.data.data.map(mapSaleRecord));
+    //   },
+    //   onFail: (err) => console.log(err),
+    // });
+    onSearch(params)
   }, []);
-  const onSearch = (params) => {
-    setFilter(params);
-    CRUD.search("/reports/search", user.token, params, {
-      onSuccess: (res) => {
-        console.log(res);
-        setSales(res.data.data.map(mapSaleRecord));
-      },
-      onFail: (err) => console.log(err),
-    });
-  };
+
 
   let data = {
     records: sales,
@@ -138,6 +144,7 @@ const DateRangeReport = ({ user }) => {
         </div>
       </div>
       <BasicCrudView data={data} />
+      {loading && <LoadingIndicator />}
     </>
   );
 };
