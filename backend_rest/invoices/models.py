@@ -13,6 +13,9 @@ class Invoice(models.Model):
     created_at = models.DateTimeField(auto_now=False, auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, auto_now_add=False, null=True)
 
+    def __str__(self):
+        return self.number
+
 
 class InvoiceDoc(models.Model):
     DOC_LETTER = "Letter"
