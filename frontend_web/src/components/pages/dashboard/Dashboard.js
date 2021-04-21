@@ -1,20 +1,35 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Graph from "./Graph";
 import "./Dashboard.css";
 import { fetchSalesSummary } from "../../../_services/SalesService";
 import CRUD from "../../../_services/CRUD";
 import BarGraph from "./BarGraph";
+import { SearchForm } from "../../utils/search/SearchForm";
 
-class Dashboard extends React.Component {
-  state = { meta1: null, destQty: null, destVal: null, destVol: null };
-  componentDidMount() {
-    const token = this.props.user.token;
+const Dashboard = ({ onDataClick, user }) => {
+  // state = { meta1: null, destQty: null, destVal: null, destVol: null, filter: null };
+  const [meta1, setMeta1] = useState(null)
+  const [destQty, setDestQty] = useState(null)
+  const [destVal, setDestVal] = useState(null)
+  const [destVol, setDestVol] = useState(null)
+  const [filter, setFilter] = useState({ 'year': 2021 })
+  const [colors, setColors] = useState(null)
+
+  let handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilter({ ...filter, [name]: value })
+  }
+
+  useEffect(() => {
+    const token = user.token;
     fetchSalesSummary(token, 1, (res) => {
-      let meta1 = {
+      let sumary = {
         data: res.data.summary,
       };
-      let colors = meta1.data.map((d) => d.color);
-      this.setState({ meta1, colors });
+      let clrs = sumary.data.map((d) => d.color);
+      // this.setState({ meta1, colors });
+      setMeta1(sumary)
+      setColors(clrs)
     });
     CRUD.list("/reports/destination", token, {
       onSuccess: (res) => {
@@ -29,7 +44,6 @@ class Dashboard extends React.Component {
           sales.qty.push(withdocs.qty + nodocs.qty);
           sales.value.push(withdocs.value + nodocs.value);
           sales.volume.push(withdocs.volume + nodocs.volume);
-
           completed.qty.push(withdocs.qty);
           completed.value.push(withdocs.value);
           completed.volume.push(withdocs.volume);
@@ -42,55 +56,62 @@ class Dashboard extends React.Component {
           backgroundColor: "rgba(255, 212, 0, .5)",
           borderWidth: 1,
         };
-        this.setState({
-          destQty: {
-            data: [
-              {
-                ...barProps,
-                label: "Quantity of sales",
-                data: sales.qty,
-              },
-              {
-                ...lineProps,
-                label: "Quantity with completed docs",
-                data: completed.qty,
-              },
-            ],
-            labels,
-          },
-          destVal: {
-            data: [
-              { ...barProps, label: "Value of sales", data: sales.value },
-              {
-                ...lineProps,
-                label: "Value with complete docs",
-                data: completed.value,
-              },
-            ],
-            labels,
-          },
-          destVol: {
-            data: [
-              { ...barProps, label: "Volume of sales", data: sales.volume },
-              {
-                ...lineProps,
-                label: "Volume with complete docs",
-                data: completed.volume,
-              },
-            ],
-            labels,
-          },
-        });
+        setDestQty({
+          data: [
+            {
+              ...barProps,
+              label: "Quantity of sales",
+              data: sales.qty,
+            },
+            {
+              ...lineProps,
+              label: "Quantity with completed docs",
+              data: completed.qty,
+            },
+          ],
+          labels,
+        })
+        setDestVal({
+          data: [
+            { ...barProps, label: "Value of sales", data: sales.value },
+            {
+              ...lineProps,
+              label: "Value with complete docs",
+              data: completed.value,
+            },
+          ],
+          labels,
+        })
+        setDestVol({
+          data: [
+            { ...barProps, label: "Volume of sales", data: sales.volume },
+            {
+              ...lineProps,
+              label: "Volume with complete docs",
+              data: completed.volume,
+            },
+          ],
+          labels,
+        })
       },
       onFail: (err) => console.error(err),
     });
-  }
-  render() {
-    const { meta1, colors, destQty, destVal, destVol } = this.state;
-    const { onDataClick } = this.props;
+  }, [])
 
-    return (
-      <div className="dashboard">
+  const searchFields = [
+    {
+      search: {
+        name: "year",
+        label: "Year",
+        type: "select",
+        options: ["2020", "2021"].map(y => { return { id: y, name: y } })
+      }
+    }
+  ]
+
+  return (
+    <div className="dashboard">
+      <div>
         <div className="row">
           {meta1 && (
             <Graph
@@ -126,7 +147,20 @@ class Dashboard extends React.Component {
           )}
         </div>
       </div>
-    );
-  }
+      <div className="filter-form-wrap">
+        <form>
+          <h5>Filter-graphs</h5>
+          <div className="input-control">
+            <label>Year</label>
+            <select name="year" value={filter["year"]} onChange={handleFilterChange}>
+              <option>2020</option>
+              <option>2021</option>
+            </select>
+          </div>
+          <button className="btn btn-sm">Filter</button>
+        </form>
+      </div>
+    </div>
+  );
 }
 export default Dashboard;

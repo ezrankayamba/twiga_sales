@@ -126,7 +126,6 @@ class HomePage extends Component {
       ],
       title: "List of sales",
     };
-    const pagination = { pages, pageNo, onPageChange: this.onPageChange };
 
     return (
       <div>

@@ -19,12 +19,12 @@ export const SearchForm = ({ searchFields, onSearch }) => {
   let search = (e) => {
     e.preventDefault();
     if (onSearch) {
-      onSearch(data, (res) => {});
+      onSearch(data, (res) => { });
     }
   };
   return (
     <div className="container small">
-      <form onSubmit={search} className="form search">
+      <form onSubmit={search} className="form search2">
         <div className="form-content">
           {searchFields.map((fld) => {
             return (

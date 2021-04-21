@@ -406,7 +406,7 @@ class List extends Component {
             name: "more_filter",
             options: [
               { id: "withdocs", name: "With mandatory documents" },
-              { id: "docs_nomatch", name: "Wuth docs, value mismatch" },
+              { id: "docs_nomatch", name: "With docs, value mismatch" },
               { id: "docs_and_match", name: "With docs, value match" },
               { id: "nodocs_new", name: "No docs new sales" },
               { id: "nodocs_old", name: "No docs above 14 days" },

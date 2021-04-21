@@ -4,7 +4,7 @@
 }
 
 .dashboard {
-  display: grid;
+  display: flex;
   gap: var(--dashboard-grid-gap);
 }
 .dashboard .row {
@@ -18,4 +18,26 @@
   border: 1px solid #ddd;
   padding: var(--dashboard-grid-padding);
   background: #ffffff;
+}
+
+.filter-form-wrap label{
+  font-size: .7em;
+  padding-top: .4em;
+}
+.filter-form-wrap select,
+.filter-form-wrap input {
+  margin-top: .2em;
+  min-width: 100%;
+}
+
+/* .filter-form-wrap button {
+  margin: .8em;
+} */
+.filter-form-wrap h5{
+  white-space: nowrap;
+  background: #e1e1e1;
+  padding: .4em;
+}
+.filter-form-wrap .input-control {
+  padding-bottom: .4em;
 }
