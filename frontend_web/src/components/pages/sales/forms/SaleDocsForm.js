@@ -70,6 +70,23 @@ class SaleDocsForm extends Component {
       return num1 === num2
     }
 
+    let isValidAggr = () => {
+      if (data.category === null || data.category.length === 0) return true
+      let arr = data.category.map(r => parseInt(r))
+      return arr.includes(4) ? arr.includes(3) : arr.includes(3)
+    }
+
+    if (!isValidAggr()) {
+      openConfirmDialog({
+        title: "Error",
+        message: "The aggregate constraints are not met, check your documents and review your inputs!",
+        buttons: [
+          { label: "Close and Try again", cls: "btn-secondary" },
+        ]
+      })
+      return
+    }
+
     let noMatchVal = !isEqual(data.total_value2, sale.total_value)
     let noMatchQty = !isEqual(data.quantity2, sale.quantity)
     if (noMatchQty || noMatchVal) {
@@ -141,7 +158,7 @@ class SaleDocsForm extends Component {
           name: "category",
           label: null,
           type: "checkbox",
-          options: [{ id: 3, name: "Kabanga/Rusumo Aggr. Docs" }],
+          options: [{ id: 3, name: "Aggregate Assessment" }, { id: 4, name: "Aggregate C2" }],
           value: val("category"),
         },
       ],

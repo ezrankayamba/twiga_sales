@@ -177,14 +177,20 @@ class SaleDocsView(APIView):
         print(data)
         sale = models.Sale.objects.get(pk=data['sale_id'])
         truck = 'trailer' if sale.quantity >= models.TRUCK_THRESHOLD else 'head'
-        category = data['category'] if 'category' in data else None
+        category = list(map(lambda x: int(x), data['category'].split(','))) if 'category' in data else None
         print(category)
 
         errors = []
         docs = []
 
-        def is_kabanga(category):
-            return category == 2
+        aggr_doc = {
+            'A': 3 in category,
+            'C': 4 in category,
+            'E': False
+        }
+
+        def is_aggregate(letter):
+            return aggr_doc[letter]
 
         def extract(d):
             if d['key'] not in request.FILES:
@@ -207,7 +213,7 @@ class SaleDocsView(APIView):
                 ref_number = f'{prefix}{ref_number}'
                 print(d['name'], ref_number)
                 name = d['name']
-                if d['letter'] == 'A' and is_kabanga(category):
+                if is_aggregate(d['letter']):
                     duplicate = None
                 else:
                     duplicate = models.Document.objects.filter(ref_number=ref_number, doc_type=name, truck=truck).first()
@@ -254,9 +260,11 @@ class SaleDocsView(APIView):
         else:
             print('Docs: ', docs)
             assess_doc = next(filter(lambda x: x['doc_type'] == 'Assessment', docs), None)
-            print(assess_doc)
+            c2_doc = next(filter(lambda x: x['doc_type'] == 'C2', docs), None)
+            print(assess_doc, c2)
             aggr_obj = None
-            if is_kabanga(category) and assess_doc:
+
+            if is_aggregate('A') and assess_doc:
                 aggr_doc = models.AggregateDocument.objects.filter(ref_number=assess_doc['ref_number'], doc_type=assess_doc['name']).first()
                 if not aggr_doc:
                     aggr_obj = models.AggregateSale.objects.create(cf_quantity=0, total_quantity=0, total_value=0, bal_quantity=0, category=2)
@@ -266,6 +274,18 @@ class SaleDocsView(APIView):
                     aggr_doc = models.AggregateDocument.objects.create(**assess_doc)
                 else:
                     aggr_obj = aggr_doc.aggregate_sale
+
+            if is_aggregate('C') and c2_doc:
+                aggr_doc = models.AggregateDocument.objects.filter(ref_number=c2_doc['ref_number'], doc_type=c2_doc['name']).first()
+                if not aggr_doc:
+                    # aggr_obj = models.AggregateSale.objects.create(cf_quantity=0, total_quantity=0, total_value=0, bal_quantity=0, category=2)
+                    c2_doc['aggregate_sale'] = aggr_obj
+                    c2_doc.pop('sale', None)
+                    c2_doc.pop('truck', None)
+                    aggr_doc = models.AggregateDocument.objects.create(**c2_doc)
+                else:
+                    aggr_obj = aggr_doc.aggregate_sale
+
             sale.agent = request.user.agent
             sale.quantity2 = data['quantity2']
             sale.total_value2 = data['total_value2']
