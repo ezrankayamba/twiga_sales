@@ -253,7 +253,7 @@ class CustomerReportView(APIView):
         if date_from:
             whereby += f"and  s.transaction_date >= '{date_from} 00:00:00' "
         if date_to:
-            whereby += f"and  s.transaction_date <= '{date_to}' 23:59:59 "
+            whereby += f"and  s.transaction_date <= '{date_to} 23:59:59' "
         sql = f'select max(id) as id, customer_name, count(id) as qty, sum(total_value) as total_value, sum(quantity) as total_volume, sum(total_value2) as total_value2, sum(quantity2) as total_volume2  from sales_sale s {whereby} group by customer_name'
         print(sql)
         qs = models.Sale.objects.raw(sql)
