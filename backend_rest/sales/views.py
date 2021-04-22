@@ -177,7 +177,7 @@ class SaleDocsView(APIView):
         print(data)
         sale = models.Sale.objects.get(pk=data['sale_id'])
         truck = 'trailer' if sale.quantity >= models.TRUCK_THRESHOLD else 'head'
-        category = list(map(lambda x: int(x), data['category'].split(','))) if 'category' in data else None
+        category = list(map(lambda x: int(x), data['category'].split(','))) if 'category' in data and not data['category'] == 'null' else []
         print(category)
 
         errors = []
@@ -261,7 +261,7 @@ class SaleDocsView(APIView):
             print('Docs: ', docs)
             assess_doc = next(filter(lambda x: x['doc_type'] == 'Assessment', docs), None)
             c2_doc = next(filter(lambda x: x['doc_type'] == 'C2', docs), None)
-            print(assess_doc, c2)
+            print(assess_doc, c2_doc)
             aggr_obj = None
 
             if is_aggregate('A') and assess_doc:
@@ -293,7 +293,9 @@ class SaleDocsView(APIView):
             sale.aggregate = aggr_obj
             sale.save()
             for doc in docs:
-                if assess_doc and is_kabanga(category):
+                if assess_doc and is_aggregate('A'):
+                    continue
+                if c2_doc and is_aggregate('C'):
                     continue
                 models.Document.objects.create(**doc)
             return Response({

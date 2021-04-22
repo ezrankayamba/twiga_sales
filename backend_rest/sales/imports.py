@@ -32,8 +32,11 @@ def docs_schema():
             'x': 1100, 'y': 100, 'h': 400, 'w': 600, 'threshold': 230, 'zoom': 1.0}, 'mandatory': True},
         {'name': models.AggregateDocument.DOC_RELEASE_NOTE, 'letter': models.AggregateDocument.LETTER_RELEASE_NOTE, 'key': doc_key(models.AggregateDocument.DOC_RELEASE_NOTE), 'regex': '(TZ\w{2}[-\d]+)$', 'params': {
             'x': 400, 'y': 300, 'h': 600, 'w': 800, 'threshold': 230, 'zoom': 1.0}, 'mandatory': True},
+        # {'name': models.Document.DOC_EXIT, 'letter': models.Document.LETTER_EXIT, 'key': doc_key(
+        #     models.Document.DOC_EXIT), 'regex': 'laration[ +\d:]{1,}(\d{4} [\w/]+)', 'params': {'x': 20, 'y': 800, 'h': 600, 'w': 600, 'threshold': 236}, 'mandatory': False},
         {'name': models.Document.DOC_EXIT, 'letter': models.Document.LETTER_EXIT, 'key': doc_key(
-            models.Document.DOC_EXIT), 'regex': 'laration[ +\d:]{1,}(\d{4} [\w/]+)', 'params': {'x': 20, 'y': 800, 'h': 600, 'w': 600, 'threshold': 236}, 'mandatory': False}
+            models.Document.DOC_EXIT), 'regex': 'Nbr ([\dXx/]+) Issued', 'params': {'x': 40, 'y': 200, 'h': 600, 'w': 600, 'threshold': 236}, 'mandatory': False}
+
     ]
 
 
