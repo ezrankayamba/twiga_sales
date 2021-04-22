@@ -62,11 +62,19 @@ class SaleDocsForm extends Component {
         !hasDocs
       );
     }
+    let isEqual = (str1, str2) => {
+      if (!str1 || !str2) return false
+      let num1 = parseFloat(str1.replace(",", ""))
+      let num2 = parseFloat(str2.replace(",", ""))
+      console.log(num1, num2)
+      return num1 === num2
+    }
 
-    let noMatchVal = Number(data.total_value2).toFixed(2) !== sale.total_value
-    let noMatchQty = Number(data.quantity2).toFixed(2) !== sale.quantity
+    let noMatchVal = !isEqual(data.total_value2, sale.total_value)
+    let noMatchQty = !isEqual(data.quantity2, sale.quantity)
     if (noMatchQty || noMatchVal) {
       console.log(data.quantity2, sale.quantity)
+      console.log(data.total_value2, sale.total_value)
       openConfirmDialog({
         title: "Warning",
         message: "There is inherent mismatch of quantity/value, Are you sure you want to proceed?",
