@@ -283,12 +283,10 @@ class List extends Component {
   }
 
   renderDoc(sale, type) {
-    let doc = null;
-    if (sale.aggregate) {
+    let doc = sale.docs.find((typ) => typ.doc_type === type);
+    if (sale.aggregate && !doc) {
       console.log("Has aggregate: ", sale.sales_order, sale.aggregate)
       doc = sale.aggregate.docs.find((typ) => typ.doc_type === type);
-    } else {
-      doc = sale.docs.find((typ) => typ.doc_type === type);
     }
     let parts = doc && doc.file ? doc.file.split("/") : [];
     let file = parts.length ? parts[parts.length - 1] : "none";
