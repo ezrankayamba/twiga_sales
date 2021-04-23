@@ -274,6 +274,7 @@ class SaleDocsView(APIView):
                     assess_doc.pop('truck', None)
                     assess_doc.pop('letter', None)
                     aggr_doc = models.AggregateDocument.objects.create(**assess_doc)
+                    assess_doc['letter'] = 'A'
                 else:
                     aggr_obj = aggr_doc.aggregate_sale
 
@@ -286,6 +287,7 @@ class SaleDocsView(APIView):
                     c2_doc.pop('truck', None)
                     c2_doc.pop('letter', None)
                     aggr_doc = models.AggregateDocument.objects.create(**c2_doc)
+                    c2_doc['letter'] = 'C'
                 else:
                     aggr_obj = aggr_doc.aggregate_sale
 
@@ -296,6 +298,7 @@ class SaleDocsView(APIView):
             sale.aggregate = aggr_obj
             sale.save()
             for doc in docs:
+                print('Doc: ', doc)
                 if is_aggregate(doc['letter']):
                     continue
                 doc.pop('letter', None)
