@@ -183,14 +183,14 @@ class SaleDocsView(APIView):
         errors = []
         docs = []
 
-        aggr_doc = {
+        aggr_doc_lookup = {
             'A': 3 in category,
             'C': 4 in category,
             'E': False
         }
 
         def is_aggregate(letter):
-            return aggr_doc[letter]
+            return aggr_doc_lookup[letter]
 
         def extract(d):
             if d['key'] not in request.FILES:
