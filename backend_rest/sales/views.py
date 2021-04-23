@@ -232,7 +232,8 @@ class SaleDocsView(APIView):
                         'sale': sale,
                         'doc_type': name,
                         'truck': truck,
-                        'user': request.user
+                        'user': request.user,
+                        'letter': d['letter']
                     })
             else:
                 name = d['name']
@@ -271,6 +272,7 @@ class SaleDocsView(APIView):
                     assess_doc['aggregate_sale'] = aggr_obj
                     assess_doc.pop('sale', None)
                     assess_doc.pop('truck', None)
+                    assess_doc.pop('letter', None)
                     aggr_doc = models.AggregateDocument.objects.create(**assess_doc)
                 else:
                     aggr_obj = aggr_doc.aggregate_sale
@@ -282,6 +284,7 @@ class SaleDocsView(APIView):
                     c2_doc['aggregate_sale'] = aggr_obj
                     c2_doc.pop('sale', None)
                     c2_doc.pop('truck', None)
+                    c2_doc.pop('letter', None)
                     aggr_doc = models.AggregateDocument.objects.create(**c2_doc)
                 else:
                     aggr_obj = aggr_doc.aggregate_sale
@@ -293,10 +296,9 @@ class SaleDocsView(APIView):
             sale.aggregate = aggr_obj
             sale.save()
             for doc in docs:
-                if assess_doc and is_aggregate('A'):
+                if is_aggregate(doc['letter']):
                     continue
-                if c2_doc and is_aggregate('C'):
-                    continue
+                doc.pop('letter', None)
                 models.Document.objects.create(**doc)
             return Response({
                 'status': 0,
