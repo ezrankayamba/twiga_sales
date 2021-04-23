@@ -44,7 +44,9 @@ class AggregateSale(models.Model):
     total_value = models.DecimalField(max_digits=38, decimal_places=2)
     bal_quantity = models.DecimalField(max_digits=38, decimal_places=2)
     bal_used_on = models.OneToOneField('AggregateSale', null=True, on_delete=models.PROTECT)
-    category = models.IntegerField(default=3) # 2=Kabanga & Rusumo, 3=Kigoma
+    category = models.IntegerField(default=3)  # 2=Kabanga & Rusumo, 3=Kigoma
+    created_at = models.DateTimeField(auto_now=False, auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, auto_now_add=False, null=True)
 
 
 class AggregateDocument(models.Model):
