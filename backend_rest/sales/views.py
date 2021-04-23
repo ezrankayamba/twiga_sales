@@ -265,7 +265,7 @@ class SaleDocsView(APIView):
             aggr_obj = None
 
             if is_aggregate('A') and assess_doc:
-                aggr_doc = models.AggregateDocument.objects.filter(ref_number=assess_doc['ref_number'], doc_type=assess_doc['name']).first()
+                aggr_doc = models.AggregateDocument.objects.filter(ref_number=assess_doc['ref_number'], doc_type=assess_doc['doc_type']).first()
                 if not aggr_doc:
                     aggr_obj = models.AggregateSale.objects.create(cf_quantity=0, total_quantity=0, total_value=0, bal_quantity=0, category=2)
                     assess_doc['aggregate_sale'] = aggr_obj
@@ -276,7 +276,7 @@ class SaleDocsView(APIView):
                     aggr_obj = aggr_doc.aggregate_sale
 
             if is_aggregate('C') and c2_doc:
-                aggr_doc = models.AggregateDocument.objects.filter(ref_number=c2_doc['ref_number'], doc_type=c2_doc['name']).first()
+                aggr_doc = models.AggregateDocument.objects.filter(ref_number=c2_doc['ref_number'], doc_type=c2_doc['doc_type']).first()
                 if not aggr_doc:
                     # aggr_obj = models.AggregateSale.objects.create(cf_quantity=0, total_quantity=0, total_value=0, bal_quantity=0, category=2)
                     c2_doc['aggregate_sale'] = aggr_obj
