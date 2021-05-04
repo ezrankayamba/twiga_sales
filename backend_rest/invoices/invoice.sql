@@ -20,7 +20,7 @@ DROP VIEW IF EXISTS vw_sale_documents;
 CREATE VIEW vw_sale_documents
 AS
 SELECT id, ref_number, description, doc_type, file, created_at, updated_at,user_id,aggregate_sale_id,sale_id,sales_order,transaction_date,destination, truck
-FROM (SELECT d.*,s.sales_order,s.transaction_date,s.destination, (select NULL) as aggregate_sale_id from sales_document d left join sales_sale s on d.sale_id=s.id and s.aggregate_id is NULL and d.id not in (select reference from vw_on_or_deleted_documents))
+FROM (SELECT d.*,s.sales_order,s.transaction_date,s.destination, (select NULL) as aggregate_sale_id from sales_document d left join sales_sale s on d.sale_id=s.id and s.aggregate_id is NULL)
 UNION
 select aggr_docs.*, s.id as sale_id, s.sales_order, s.transaction_date, s.destination, (select NULL) as truck
 FROM sales_sale s left JOIN

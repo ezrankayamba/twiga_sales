@@ -2,7 +2,7 @@ from django.db import connection
 
 SQL_ALL_DOCS = '''
 SELECT id, ref_number, description, doc_type, file, created_at, updated_at,user_id,aggregate_sale_id,sale_id,sales_order,transaction_date,destination, truck
-FROM (SELECT d.*,s.sales_order,s.transaction_date,s.destination, (select NULL) as aggregate_sale_id from sales_document d left join sales_sale s on d.sale_id=s.id and s.aggregate_id is NULL and d.id not in (select reference from vw_on_or_deleted_documents))
+FROM (SELECT d.*,s.sales_order,s.transaction_date,s.destination, (select NULL) as aggregate_sale_id from sales_document d left join sales_sale s on d.sale_id=s.id and s.aggregate_id is NULL)
 UNION
 select aggr_docs.*, s.id as sale_id, s.sales_order, s.transaction_date, s.destination, (select NULL) as truck
 FROM sales_sale s left JOIN
@@ -11,21 +11,20 @@ on s.aggregate_id=aggr_docs.aggregate_sale_id
 WHERE s.aggregate_id is not NULL
 '''
 
-SQL_SALES_DOC_DELETE = '''
-SELECT m.*, s.destination
-from makerchecker_task m
-left join makerchecker_tasktype t on m.task_type_id=t.id
-left join sales_document d on m.reference=d.id
-left JOIN sales_sale s on d.sale_id=s.id
-where t.name='Sales Documents Delete'
-'''
+# SQL_SALES_DOC_DELETE = '''
+# SELECT m.*, s.destination
+# from makerchecker_task m
+# left join makerchecker_tasktype t on m.task_type_id=t.id
+# left join sales_document d on m.reference=d.id
+# left JOIN sales_sale s on d.sale_id=s.id
+# where t.name='Sales Documents Delete'
+# '''
 
 
 def change_docs_db_view():
     with connection.cursor() as cursor:
         cursor.execute("DROP VIEW IF EXISTS vw_sale_documents")
         cursor.execute("DROP VIEW IF EXISTS vw_on_or_deleted_documents")
-        cursor.execute(f"CREATE VIEW vw_on_or_deleted_documents AS {SQL_SALES_DOC_DELETE}")
         cursor.execute(f"CREATE VIEW vw_sale_documents AS {SQL_ALL_DOCS}")
 
 
@@ -39,6 +38,7 @@ def rusumo_list_query(for_summary=True):
        and s.transaction_date < %s
        and s.invoice_id is null
        and agent_code = %s
+       and s.task_id is null
        '''
     if for_summary:
         return part1
@@ -57,6 +57,7 @@ def kigoma_list_query(for_summary=True):
 	and s.invoice_id is null
 	and agent_code = %s
 	and (aggr.category=3 or aggr.category is null)
+       and s.task_id is null
        '''
     if for_summary:
         return part1
@@ -75,6 +76,7 @@ def kabanga_list_query(for_summary=True):
 	and s.invoice_id is null
 	and agent_code = %s
 	and (aggr.category=2 or aggr.category is null)
+       and s.task_id is null
        '''
     if for_summary:
         return part1
