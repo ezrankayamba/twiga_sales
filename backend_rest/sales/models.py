@@ -45,8 +45,8 @@ class AggregateSale(models.Model):
     bal_quantity = models.DecimalField(max_digits=38, decimal_places=2)
     bal_used_on = models.OneToOneField('AggregateSale', null=True, on_delete=models.PROTECT)
     category = models.IntegerField(default=3)  # 2=Kabanga & Rusumo, 3=Kigoma
-    created_at = models.DateTimeField(auto_now=False, auto_now_add=True, null=True)
-    updated_at = models.DateTimeField(auto_now=True, auto_now_add=False, null=True)
+    # created_at = models.DateTimeField(auto_now=False, auto_now_add=True, null=True)
+    # updated_at = models.DateTimeField(auto_now=True, auto_now_add=False, null=True)
 
 
 class AggregateDocument(models.Model):
@@ -91,7 +91,7 @@ class Sale(models.Model):
     invoice = models.ForeignKey(Invoice, on_delete=models.SET_NULL, null=True, blank=True, related_name='sales')
     assign_no = models.CharField(max_length=20, null=True, blank=True)
     task = models.ForeignKey(Task, on_delete=models.PROTECT, related_name='sales', null=True, blank=True)
-    aggregate = models.ForeignKey(AggregateSale, on_delete=models.SET_NULL, related_name='sales', null=True, blank=True)
+    aggregate = models.ForeignKey(AggregateSale, on_delete=models.SET_NULL, related_name='sales', null=True, blank=True, default=None)
 
     def __str__(self):
         return f'{self.sales_order}/{self.customer_name}'

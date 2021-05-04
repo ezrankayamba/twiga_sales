@@ -361,7 +361,10 @@ class List extends Component {
           <CreateInvoiceForm
             token={this.props.user.token}
             category={this.state.category}
-            handleClose={() => this.setState({ create: false })} />
+            handleClose={() => {
+              this.setState({ create: false });
+              this.refresh()
+            }} />
         )}
       </div>
     );

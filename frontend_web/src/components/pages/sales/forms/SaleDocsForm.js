@@ -153,6 +153,7 @@ class SaleDocsForm extends Component {
           label: "Exit Document",
           type: "file",
           value: val("exit_doc"),
+          validator: FormsHelper.notEmpty(),
         },
         {
           name: "category",

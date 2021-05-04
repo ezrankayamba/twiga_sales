@@ -133,15 +133,17 @@ class InvoiceManageView(APIView):
         agent = request.user.agent if hasattr(request.user, 'agent') else None
 
         qs = self.eligible_summary(request)
-        data = {'complete': {'quantity': 0, 'quantity': 0}, 'incomplete': {
-            'quantity': 0, 'quantity': 0}, 'commission': agent.commission if agent else 0}
+        data = {'complete': {'quantity': 0, 'value': 0, 'volume': 0}, 'incomplete': {
+            'quantity': 0, 'value': 0, 'volume': 0}, 'commission': agent.commission if agent else 0}
         for row in qs:
             if row.complete:
                 data['complete']['quantity'] = row.quantity_sum
                 data['complete']['value'] = row.value_sum
+                data['complete']['volume'] = row.volume
             else:
                 data['incomplete']['quantity'] = row.quantity_sum
                 data['incomplete']['value'] = row.value_sum
+                data['incomplete']['volume'] = row.volume
         return Response({'result': 0, 'message': 'Invoicable sales retrieved successfully', 'data': data})
 
     def eligible_summary(self, request):
@@ -152,16 +154,15 @@ class InvoiceManageView(APIView):
         category = int(request.GET['category']) if 'category' in request.GET else -1
         print('Category: ', category)
         if category == 1:
-            sql = raw_sql.SQL_INVOICE_ELIGIBLE_SUMMARY_RUSUMO
-            return Sale.objects.raw(sql, [max_date, agent_code])
+            sql = raw_sql.summary_query(category='rusumo')
         elif category == 2:
-            sql = raw_sql.SQL_INVOICE_ELIGIBLE_SUMMARY_KABANGA
-            return Sale.objects.raw(sql, [max_date, agent_code])
+            sql = raw_sql.summary_query(category='kabanga')
         elif category == 3:
-            sql = raw_sql.SQL_INVOICE_ELIGIBLE_SUMMARY_KIGOMA
-            return Sale.objects.raw(sql, [agent_code])
+            sql = raw_sql.summary_query(category='kigoma')
         else:
             return []
+        print("SQL: ", sql)
+        return Sale.objects.raw(sql, [max_date, agent_code])
 
     def eligible_list(self, request):
         max_date = request.GET['max_date'] if 'max_date' in request.GET else datetime.now().strftime(
@@ -175,32 +176,38 @@ class InvoiceManageView(APIView):
         category = int(request.GET['category']) if 'category' in request.GET else -1
         print('Category: ', category)
         if category == 1:
-            sql = raw_sql.SQL_INVOICE_ELIGIBLE_LIST_RUSUMO
-            return Sale.objects.raw(sql, [max_date, agent_code])
+            sql = raw_sql.rusumo_list_query(for_summary=False)
         elif category == 2:
-            sql = raw_sql.SQL_INVOICE_ELIGIBLE_LIST_KABANGA
-            return Sale.objects.raw(sql, [max_date, agent_code])
+            sql = raw_sql.kabanga_list_query(for_summary=False)
         elif category == 3:
-            sql = raw_sql.SQL_INVOICE_ELIGIBLE_LIST_KIGOMA
-            return Sale.objects.raw(sql, [agent_code])
+            sql = raw_sql.kigoma_list_query(for_summary=False)
         else:
             return []
+        print("SQL: ", sql)
+        return Sale.objects.raw(sql, [max_date, agent_code])
 
     def post(self, request):
         agent = request.user.agent if hasattr(request.user, 'agent') else None
         qs = self.eligible_summary(request)
-        data = {'quantity': 0, 'quantity': 0, 'number': generate_num(), 'commission': agent.commission, 'agent': agent}
+        data = {'quantity': 0, 'quantity': 0, 'volume': 0, 'number': generate_num(), 'commission': agent.commission, 'agent': agent}
         for row in qs:
             if row.complete and row.quantity_sum:
                 data['quantity'] = row.quantity_sum
                 data['value'] = Decimal(row.quantity_sum) * agent.commission
+                data['volume'] = Decimal(row.volume)
 
         with transaction.atomic():
             print("Invoice Data: ", data)
+            volume = data['volume']
+            del data['volume']
             if data['quantity'] <= 0:
                 return Response({'result': -1, 'message': f'Invoice creation ignored as no sales attached'})
-            inv = models.Invoice.objects.create(**data)
             qs2 = self.eligible_list(request)
+            volume2 = len(list(qs2))
+            print("Summary/List Count: ", volume, "/", volume2)
+            if not (volume2 == volume):
+                return Response({'result': -1, 'message': f'Invoice creation ignored as there is volume mismatch!'})
+            inv = models.Invoice.objects.create(**data)
             for row in qs2:
                 sale = Sale.objects.get(pk=row.id)
                 sale.invoice = inv
