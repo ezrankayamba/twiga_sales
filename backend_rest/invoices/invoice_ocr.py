@@ -9,7 +9,7 @@ from decimal import Decimal
 
 def from_letter(pdf_data):
     kwargs = {'y': 500, 'h': 600}
-    regex = 'exited[\w ]+ ([\d,.]+) tons[\w \n@,]+[TZz2S]{3,}[\. _]+([\d,.]+)[/= \n<]{0,4}Vat[\w \n\.]+(\d{4,})[\., ]'
+    regex = 'exited[\w ]+ ([\d,.]+) tons[\w \n@,!]+[TZz2S]{3,}[\. _]+([\d,.]+)[/= \n<]{0,4}Vat[\w \n\.]+(\d{4,})[\., ]'
     threshold = 220
 
     img = np.array(ocr.get_image(pdf_data))
@@ -60,9 +60,9 @@ def extract_invoice_copy(invoice, letter):
 
 
 def test():
-    folder = 'C:\\Users\\godfred.nkayamba\\OneDrive - MIC\Desktop\\Test Export\\'
-    file1 = f'{folder}IN.pdf'
-    file2 = f'{folder}LETTER 835.pdf'
+    folder = 'C:\\Users\\godfred.nkayamba\\OneDrive - MIC\Desktop\\TestExport\\'
+    file1 = f'{folder}invoice 849.pdf'
+    file2 = f'{folder}letter 849.pdf'
     with open(file1, 'rb') as pdf_data1, open(file2, 'rb') as pdf_data2:
         res = extract_invoice_copy(pdf_data1, pdf_data2)
         # res = from_invoice(pdf_data1, show=True, delta=-4, line_spec=(50, 1))

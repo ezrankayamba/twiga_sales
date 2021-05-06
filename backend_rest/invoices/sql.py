@@ -11,15 +11,6 @@ on s.aggregate_id=aggr_docs.aggregate_sale_id
 WHERE s.aggregate_id is not NULL
 '''
 
-# SQL_SALES_DOC_DELETE = '''
-# SELECT m.*, s.destination
-# from makerchecker_task m
-# left join makerchecker_tasktype t on m.task_type_id=t.id
-# left join sales_document d on m.reference=d.id
-# left JOIN sales_sale s on d.sale_id=s.id
-# where t.name='Sales Documents Delete'
-# '''
-
 
 def change_docs_db_view():
     with connection.cursor() as cursor:
