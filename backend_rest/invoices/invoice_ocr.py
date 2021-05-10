@@ -9,7 +9,7 @@ from decimal import Decimal
 
 def from_letter(pdf_data):
     kwargs = {'y': 500, 'h': 600}
-    regex = 'exited[\w ]+ ([\d,.]+) tons[\w \n@,!]+[TZz2S]{3,}[\. _]+([\d,.]+)[/= \n<]{0,4}Vat[\w \n\.]+(\d{4,})[\., ]'
+    regex = 'exited[\w ]+ ([\d,.]+) tons[\w \n@,!|]+[TZz2S]{3,}[\. _]+([\d,.]+)[/= \n<]{0,4}Vat[\w \n\.]+(\d{4,})[\., ]'
     threshold = 220
 
     img = np.array(ocr.get_image(pdf_data))
