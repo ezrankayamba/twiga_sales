@@ -193,10 +193,16 @@ class SaleSummaryView(APIView):
     parser_classes = [FormParser, MultiPartParser]
 
     def get(self, request, format=None):
-        with_docs = get_sales(q='withdocs').count()
-        no_docs_older = get_sales(q='nodocs_old').count()
-        no_docs_new = get_sales(q='nodocs_new').count()
-        docs_nomatch = get_sales(q='docs_nomatch').count()
+        year = request.GET.get('year', datetime.today().year)
+        frm = f'{year}-01-01 00:00:00'
+        to = f'{year}-12-31 23:59:59'
+
+        def more_filter(qs):
+            return qs.filter(transaction_date__gte=frm, transaction_date__lte=to)
+        with_docs = more_filter(get_sales(q='withdocs')).count()
+        no_docs_older = more_filter(get_sales(q='nodocs_old')).count()
+        no_docs_new = more_filter(get_sales(q='nodocs_new')).count()
+        docs_nomatch = more_filter(get_sales(q='docs_nomatch')).count()
         return Response({
             'status': 0,
             'summary': [

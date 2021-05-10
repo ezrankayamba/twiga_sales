@@ -36,7 +36,7 @@ const Dashboard = ({ onDataClick, user }) => {
   useEffect(() => {
     const token = user.token;
     setLoading(true)
-    CRUD.list(`/sales/summary`, token, {
+    CRUD.list(`/sales/summary?${serialize(filter)}`, token, {
       onSuccess: (res) => {
         let sumary = {
           data: res.summary,

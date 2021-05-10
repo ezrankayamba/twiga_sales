@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { ColorsHelper } from "../../../_helpers/ColorsHelper";
 
-class Graph extends React.Component {
-  componentDidMount() {
-    const { meta, colors, onDataClick } = this.props;
+const Graph = ({ meta, colors, onDataClick, title }) => {
+  const canvasRef = useRef(null)
+  useEffect(() => {
     let bgColors = colors || ColorsHelper.randomColors(meta.data.length);
     let fntColors = ColorsHelper.contrastColors(bgColors);
     let options = {
@@ -40,23 +40,22 @@ class Graph extends React.Component {
       ],
       labels: meta.data.map((d) => d.name),
     };
-    const { graphId } = this.props;
-    var myPieChart = new Chart(document.getElementById(graphId), {
+
+    let chart = new Chart(canvasRef.current, {
       type: "pie",
       data: data,
       options: options,
     });
-    console.log(myPieChart);
-  }
-  render() {
-    const { graphId, title } = this.props;
-    return (
-      <div className="grapg-container bg-white card p-2">
-        <h6>{title}</h6>
-        <canvas id={graphId} className="graph" style={{}}></canvas>
-      </div>
-    );
-  }
+
+    return () => chart.destroy()
+  }, [meta])
+
+  return (
+    <div className="grapg-container bg-white card p-2">
+      <h6>{title}</h6>
+      <canvas ref={canvasRef} className="graph" style={{}}></canvas>
+    </div>
+  );
 }
 
 export default Graph;
