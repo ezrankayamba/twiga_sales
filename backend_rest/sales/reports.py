@@ -34,8 +34,10 @@ def mand_docs_date():
 
 
 def destinations(request):
-    qs = models.Sale.objects.values('destination').annotate(count=Count('id')).order_by('destination')
-    return JsonResponse({'data': list(qs)})
+    # qs = models.Sale.objects.values('destination').annotate(count=Count('id')).order_by('destination')
+    qs = map(lambda x: {'destination': x}, ['RWANDA', 'CONGO', 'BURUNDI'])
+    qs = list(qs)
+    return JsonResponse({'data': qs})
 
 
 def get_sales(q):

@@ -1,7 +1,6 @@
 import React from "react";
 import CrudTable from "./CrudTable";
 import PropTypes from "prop-types";
-import { SimpleDialog } from "../../modal/SimpleDialog";
 
 class BasicCrudView extends React.Component {
   constructor(props) {
