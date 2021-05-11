@@ -290,8 +290,8 @@ class SaleDocsView(APIView):
                     c2_doc['letter'] = 'C'
                 else:
                     aggr_obj = aggr_doc.aggregate_sale
-
-            sale.agent = request.user.agent
+            agent = request.user.profile.agent
+            sale.agent = agent
             sale.quantity2 = data['quantity2']
             sale.total_value2 = data['total_value2']
             sale.assign_no = sale.assign_no if sale.assign_no else get_next_value(SALE_DOCS_ASSIGN_SEQUENCE_KEY)

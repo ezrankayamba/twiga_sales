@@ -147,12 +147,13 @@ class AggregateSaleDocsView(APIView):
             cf_quantity, prev_aggr = outstanding_cf()
             bal_quantity = (cf_quantity + quantity2) - total_qty
             new_aggr = models.AggregateSale.objects.create(cf_quantity=cf_quantity, total_quantity=quantity2, total_value=total_value2, bal_quantity=bal_quantity)
+            agent = request.user.profile.agent
             for doc in docs:
                 doc['aggregate_sale'] = new_aggr
                 models.AggregateDocument.objects.create(**doc)
             for sale in sales:
                 sale.aggregate = new_aggr
-                sale.agent = request.user.agent
+                sale.agent = agent
                 sale.quantity2 = sale.quantity
                 sale.total_value2 = sale.total_value
                 sale.assign_no = sale.assign_no if sale.assign_no else get_next_value(SALE_DOCS_ASSIGN_SEQUENCE_KEY)

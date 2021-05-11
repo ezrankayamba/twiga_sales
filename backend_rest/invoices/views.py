@@ -61,7 +61,7 @@ class InvoiceReportExportView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        agent = request.user.agent if hasattr(request.user, 'agent') else None
+        agent = request.user.profile.agent
         if agent:
             data = models.Invoice.objects.filter(agent__code=agent.code)
         else:
@@ -129,7 +129,7 @@ class InvoiceManageView(APIView):
     required_scopes = []
 
     def get(self, request):
-        agent = request.user.agent if hasattr(request.user, 'agent') else None
+        agent = request.user.profile.agent
 
         qs = self.eligible_summary(request)
         data = {'complete': {'quantity': 0, 'value': 0, 'volume': 0}, 'incomplete': {
@@ -148,7 +148,7 @@ class InvoiceManageView(APIView):
     def eligible_summary(self, request):
         max_date = request.GET['max_date'] if 'max_date' in request.GET else datetime.now().strftime(
             '%Y-%m-%d %H:%m:%S')
-        agent = request.user.agent if hasattr(request.user, 'agent') else None
+        agent = request.user.profile.agent
         agent_code = agent.code if agent else 0
         category = int(request.GET['category']) if 'category' in request.GET else -1
         print('Category: ', category)
@@ -166,7 +166,7 @@ class InvoiceManageView(APIView):
     def eligible_list(self, request):
         max_date = request.GET['max_date'] if 'max_date' in request.GET else datetime.now().strftime(
             '%Y-%m-%d %H:%m:%S')
-        agent = request.user.agent if hasattr(request.user, 'agent') else None
+        agent = request.user.profile.agent
         agent_code = agent.code if agent else 0
 
         # sql = "select *, (case when (select count(*) from sales_document d where d.created_at <= %s and d.sale_id=s.id and d.doc_type in ('C2','Assessment'))=2 then 1 else 0 end) as complete from sales_sale s left join users_agent a on s.agent_id=a.id where s.invoice_id is null and a.code = %s and complete=1"
@@ -186,7 +186,7 @@ class InvoiceManageView(APIView):
         return Sale.objects.raw(sql, [max_date, agent_code])
 
     def post(self, request):
-        agent = request.user.agent if hasattr(request.user, 'agent') else None
+        agent = request.user.profile.agent
         qs = self.eligible_summary(request)
         data = {'quantity': 0, 'quantity': 0, 'volume': 0, 'number': generate_num(), 'commission': agent.commission, 'agent': agent}
         for row in qs:
