@@ -9,6 +9,8 @@ import FileDownload from "../../_helpers/FileDownload";
 import Modal from "../modal/Modal";
 import BasicCrudView from "../utils/crud/BasicCrudView";
 import MatIcon from "../utils/icons/MatIcon";
+import { hasPrivilege } from "../utils/Utils";
+import { Redirect } from "react-router";
 
 @connect((state) => {
   return {
@@ -26,6 +28,7 @@ class HomePage extends Component {
       pages: 1,
       pageNo: 1,
       q: "",
+      redirect: false
     };
     this.onPageChange = this.onPageChange.bind(this);
   }
@@ -105,6 +108,10 @@ class HomePage extends Component {
   }
 
   render() {
+    if (!hasPrivilege(this.props.user, "Home.dashboard")) {
+      return <Redirect to="/sales" />;
+    }
+
     const { user } = this.props;
     const { selectedOn, title, sales, pages, pageNo } = this.state;
     let data = {

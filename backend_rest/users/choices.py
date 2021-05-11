@@ -1,6 +1,7 @@
 from makerchecker.executor import EXECUTOR_CHOICES
 
 PRIVILEGE_CHOICES = [
+    ('Home.dashboard', 'View Dashboard'),
     ('Users.manage', 'Manage users'),
     ('Roles.manage', 'Manage roles'),
     ('Sales.manage', 'Manage sales'),
