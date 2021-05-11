@@ -85,6 +85,8 @@ class SideMenu extends Component {
     let { loggedIn, user } = this.props;
 
     let privileges = getPrivileges(user);
+    let menus = getMenus(loggedIn, privileges)
+    console.log(menus)
     return (
       <aside className="sidebar sidebar-left animated fast">
         <div className="sidebar-content">
@@ -93,23 +95,21 @@ class SideMenu extends Component {
             <span className="material-icons sidebar-close">close</span>
           </div>
           <ul className="sidebar-menu">
-            {getMenus(loggedIn, privileges)
-              .filter((m) => !m.hide)
-              .map((item) => {
-                return (
-                  <li key={item.id}>
-                    <NavLink
-                      key={item.id}
-                      to={item.path}
-                      className="ripple"
-                      activeClassName="active"
-                    >
-                      <item.Icon />
-                      <span className="menu-item-label">{item.name}</span>
-                    </NavLink>
-                  </li>
-                );
-              })}
+            {menus.filter((m) => !m.hide).map((item) => {
+              return (
+                <li key={item.id}>
+                  <NavLink
+                    key={item.id}
+                    to={item.path}
+                    className="ripple"
+                    activeClassName="active"
+                  >
+                    <item.Icon />
+                    <span className="menu-item-label">{item.name}</span>
+                  </NavLink>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </aside>

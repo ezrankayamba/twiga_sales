@@ -10,7 +10,7 @@ class RoleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Role
-        fields = ('id', 'name', 'privileges')
+        fields = ('id', 'name', 'privileges', 'path')
 
 
 class AgentSerializer(serializers.ModelSerializer):
@@ -25,7 +25,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Profile
-        fields = ('id', 'role', 'image','agent')
+        fields = ('id', 'role', 'image', 'agent')
 
 
 class UserSerializer(serializers.ModelSerializer):

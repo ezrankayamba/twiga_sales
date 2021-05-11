@@ -28,7 +28,7 @@ export const SearchForm = ({ searchFields, onSearch }) => {
         <div className="form-content">
           {searchFields.map((fld) => {
             return (
-              <InputControl
+              <InputControl key={fld.search.name}
                 {...fld.search}
                 field={fld.search}
                 name={fld.search.name}

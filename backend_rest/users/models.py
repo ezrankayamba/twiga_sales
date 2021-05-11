@@ -12,6 +12,7 @@ class Role(models.Model):
     privileges = MultiSelectField(choices=choices.PRIVILEGE_CHOICES, null=True)
     created_at = models.DateTimeField(auto_now=False, auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, auto_now_add=False, null=True)
+    path = models.CharField(default='/', max_length=40)
 
     def __str__(self):
         return self.name

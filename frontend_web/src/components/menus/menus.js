@@ -1,4 +1,3 @@
-import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/auth/LoginPage";
 import LogoutPage from "../pages/auth/LogoutPage";
 import SalesIndexPage from "../pages/sales/IndexPage";
@@ -12,6 +11,7 @@ import MatIcon from "../utils/icons/MatIcon";
 import MyProfile from "../pages/auth/MyProfile";
 import ListBatches from "../pages/batches/ListBatches";
 import ListOfRequests from "../pages/batches/ListOfRequests";
+import HomePage from "../pages/HomePage";
 const getMenus = (loggedIn, privileges) => {
   let pFilter = (m) => {
     return (
@@ -21,6 +21,11 @@ const getMenus = (loggedIn, privileges) => {
   };
   let id = 0;
   const getId = () => id++;
+  // if (!hasPrivilege(this.props.user, "Home.dashboard")) {
+  //   return <Redirect to="/sales" />;
+  // }
+
+
   let menus = loggedIn
     ? [
       {
@@ -30,6 +35,7 @@ const getMenus = (loggedIn, privileges) => {
         component: HomePage,
         Icon: () => <MatIcon name="home" />,
         privilege: "Home.dashboard",
+        redirect: "/sales"
       },
       {
         id: getId(),
@@ -38,6 +44,7 @@ const getMenus = (loggedIn, privileges) => {
         component: UsersPage,
         Icon: () => <MatIcon name="people" />,
         privilege: "Users.manage",
+        redirect: "/sales"
       },
       {
         id: getId(),
@@ -46,6 +53,7 @@ const getMenus = (loggedIn, privileges) => {
         component: RolesPage,
         Icon: () => <MatIcon name="people" />,
         privilege: "Roles.manage",
+        redirect: "/sales"
       },
       {
         id: getId(),
@@ -54,6 +62,7 @@ const getMenus = (loggedIn, privileges) => {
         component: SalesIndexPage,
         Icon: () => <MatIcon name="attach_money" />,
         privilege: "Sales.view",
+        redirect: "/my-profile"
       },
       {
         id: getId(),
@@ -62,6 +71,7 @@ const getMenus = (loggedIn, privileges) => {
         component: InvoicesIndexPage,
         Icon: () => <MatIcon name="data_usage" />,
         privilege: "Sales.view.invoices",
+        redirect: "/sales"
       },
       {
         id: getId(),
@@ -70,6 +80,7 @@ const getMenus = (loggedIn, privileges) => {
         component: ReportsIndexPage,
         Icon: () => <MatIcon name="leaderboard" />,
         privilege: "Sales.reports",
+        redirect: "/sales"
       },
       {
         id: getId(),
@@ -108,14 +119,6 @@ const getMenus = (loggedIn, privileges) => {
       },
     ]
     : [
-      {
-        id: getId(),
-        path: "/home",
-        name: "Home",
-        component: HomePage,
-        Icon: () => <MatIcon name="home" />,
-        privilege: "Anonymous",
-      },
       {
         id: getId(),
         path: "/login",

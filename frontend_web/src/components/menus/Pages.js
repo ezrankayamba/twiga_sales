@@ -1,8 +1,8 @@
-import React, {Component} from 'react';
-import {Route, Switch, Redirect} from "react-router-dom";
+import React, { Component } from 'react';
+import { Route, Switch, Redirect } from "react-router-dom";
 import getMenus from "./menus";
-import {connect} from "react-redux";
-import {getPrivileges} from "../../_services/AuthService";
+import { connect } from "react-redux";
+import { getPrivileges } from "../../_services/AuthService";
 
 @connect((state) => {
     return {
@@ -12,15 +12,16 @@ import {getPrivileges} from "../../_services/AuthService";
 })
 class Pages extends Component {
     render() {
-        const {loggedIn, user} = this.props
+        const { user } = this.props
         let privileges = getPrivileges(user)
         let menus = getMenus(this.props.loggedIn, privileges)
+        let role = user.profile.role
         return (
             <Switch>
                 {menus.map(item => {
-                    return <Route key={item.id} exact path={item.path} component={item.component}/>
+                    return <Route key={item.id} exact path={item.path} component={item.component} />
                 })}
-                <Redirect to="/home"/>
+                <Redirect to={role ? role.path : "/"} />
             </Switch>
         );
     }

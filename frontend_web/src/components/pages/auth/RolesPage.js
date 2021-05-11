@@ -96,6 +96,12 @@ class RolesPage extends Component {
     console.log(data);
     return {
       fields: [
+
+        {
+          name: "id",
+          value: data ? data.id : null,
+          type: "hidden",
+        },
         {
           name: "name",
           label: "Name",
@@ -106,9 +112,13 @@ class RolesPage extends Component {
           },
         },
         {
-          name: "id",
-          value: data ? data.id : null,
-          type: "hidden",
+          name: "path",
+          label: "Default Path",
+          value: data ? data.path : null,
+          validator: {
+            valid: (val) => (val ? val.length >= 1 : false),
+            error: "Path should be at least 1 characters",
+          },
         },
         {
           name: "privileges",
@@ -144,6 +154,7 @@ class RolesPage extends Component {
       headers: [
         { field: "id", title: "ID" },
         { field: "name", title: "Role Name" },
+        { field: "path", title: "Default Path" },
         {
           field: "privileges",
           title: "Privileges",

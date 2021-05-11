@@ -108,9 +108,6 @@ class HomePage extends Component {
   }
 
   render() {
-    if (!hasPrivilege(this.props.user, "Home.dashboard")) {
-      return <Redirect to="/sales" />;
-    }
 
     const { user } = this.props;
     const { selectedOn, title, sales, pages, pageNo } = this.state;
