@@ -15,7 +15,6 @@ context = ssl.create_default_context()
 config = configparser.ConfigParser()
 config_path = path.join(settings.BASE_DIR, 'mailsender.ini')
 config.read(config_path)
-print(config_path)
 
 
 def attach_file(message, file_to_attach):

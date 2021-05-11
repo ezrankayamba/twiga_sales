@@ -32,10 +32,15 @@ class InvoiceListView(APIView):
 
     def post(self, request):
         agent = request.user.profile.agent
+        data = request.data
+        print(data)
+        f = {}
         if agent:
-            data = serializers.InvoiceSerializer(models.Invoice.objects.filter(agent=agent), many=True).data
-        else:
-            data = serializers.InvoiceSerializer(models.Invoice.objects.all(), many=True).data
+            f['agent'] = agent
+        if 'number' in data:
+            f['number__contains'] = data['number']
+        qs = models.Invoice.objects.filter(**f)
+        data = serializers.InvoiceSerializer(qs, many=True).data
         return Response({'result': 0, 'message': 'Fetched invoices successfully', 'data': data})
 
 
