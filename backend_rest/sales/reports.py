@@ -257,7 +257,7 @@ class CustomerReportView(APIView):
         date_from = request.data.get('date_from', None)
         date_to = request.data.get('date_to', None)
         if dest:
-            whereby += f"and  s.destination = '{dest}' "
+            whereby += f"and  s.destination LIKE '{dest}%' "
         if date_from:
             whereby += f"and  s.transaction_date >= '{date_from} 00:00:00' "
         if date_to:
