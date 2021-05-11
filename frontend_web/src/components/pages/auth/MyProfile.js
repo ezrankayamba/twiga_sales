@@ -102,7 +102,7 @@ class MyProfile extends Component {
             <h3>{user.username}</h3>
             <small>
               {user.profile.role.name}
-              {user.agent ? ` - ${user.agent.code}` : ""}
+              {user.profile.agent ? ` - ${user.profile.agent.code}` : ""}
             </small>
           </div>
         </div>
