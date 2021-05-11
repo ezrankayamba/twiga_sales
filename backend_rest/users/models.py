@@ -34,6 +34,7 @@ class Profile(models.Model):
     updated_by = models.ForeignKey(to=User, related_name="updated_profiles",
                                    on_delete=models.PROTECT, null=True, blank=True)
     role = models.ForeignKey(to=Role, related_name='profiles', on_delete=models.PROTECT, null=True)
+    agent = models.ForeignKey('Agent', related_name='profiles', on_delete=models.PROTECT, null=True)
 
     def __str__(self):
         return f'{self.user.username}'
@@ -49,11 +50,12 @@ class Profile(models.Model):
 
 class Agent(models.Model):
     code = models.CharField(max_length=20, unique=True)
+    name = models.CharField(max_length=40, null=True)
     commission = models.DecimalField(max_digits=10, decimal_places=2)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='agent')
+    # user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='agent')
 
     def __str__(self):
-        return self.code
+        return f'{self.name if self.name else "Unnamed"}({self.code})'
 
 
 class Audit(models.Model):

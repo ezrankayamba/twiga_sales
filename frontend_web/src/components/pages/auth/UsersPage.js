@@ -13,6 +13,8 @@ import BasicCrudView from "../../utils/crud/BasicCrudView";
 import LoadingIndicator from "../../utils/loading/LoadingIndicator";
 import Modal from "../../modal/Modal";
 import CommonForm from "../../utils/form/CommonForm";
+import { isEmailValid } from "../../utils/Utils"
+import CRUD from "../../../_services/CRUD";
 
 @connect(
   (state) => {
@@ -30,6 +32,7 @@ class UsersPage extends Component {
     this.state = {
       users: [],
       roles: [],
+      agents: [],
       isLoading: false,
       snackbar: null,
       pages: 1,
@@ -71,8 +74,8 @@ class UsersPage extends Component {
                   u.profile && u.profile.role
                     ? u.profile.role.name
                     : "No role assigned",
-                agent_code: u.agent ? u.agent.code : "N/A",
-                commission: u.agent ? u.agent.commission : "N/A",
+                agent_code: u.profile.agent ? u.profile.agent.code : "N/A",
+                commission: u.profile.agent ? u.profile.agent.commission : "N/A",
               };
             }),
             isLoading: false,
@@ -84,10 +87,15 @@ class UsersPage extends Component {
   }
 
   componentDidMount() {
-    fetchRoles(this.props.user.token, 1, (res) => {
+    let token = this.props.user.token
+    fetchRoles(token, 1, (res) => {
       console.log(res);
       this.setState({ roles: res.data });
     });
+    CRUD.list("/users/agents", token, {
+      onSuccess: (res) => this.setState({ agents: res }),
+      onFail: (res) => console.log(res),
+    })
     this.refresh();
   }
 
@@ -119,7 +127,7 @@ class UsersPage extends Component {
 
   render() {
     const { isLoading, snackbar, openForm } = this.state;
-    let { users, pages, pageNo, roles, selected } = this.state;
+    let { users, pages, pageNo, roles, selected, agents } = this.state;
 
     let data = {
       records: users,
@@ -161,6 +169,16 @@ class UsersPage extends Component {
           },
         },
         {
+          name: "email",
+          label: "Email",
+          value: selected ? selected.email : "",
+          type: "email",
+          validator: {
+            valid: (val) => isEmailValid(val),
+            error: "Must be valid email address",
+          },
+        },
+        {
           name: "role",
           label: "Role",
           type: "select",
@@ -168,16 +186,18 @@ class UsersPage extends Component {
           value: selected ? selected.profile.role.id : "",
         },
         {
-          name: "agent_code",
-          label: "Agent Code",
-          value: selected && selected.agent ? selected.agent.code : "",
+          name: "agent",
+          label: "Under Agent",
+          type: "select",
+          value: selected && selected.profile.agent ? selected.profile.agent.id : "",
+          options: agents
         },
-        {
-          name: "commission",
-          label: "Commission",
-          type: "number",
-          value: selected && selected.agent ? selected.agent.commission : "",
-        },
+        // {
+        //   name: "commission",
+        //   label: "Commission",
+        //   type: "number",
+        //   value: selected && selected.agent ? selected.agent.commission : "",
+        // },
       ],
       onSubmit: selected ? this.onUpdate.bind(this) : this.onAdd.bind(this),
     };

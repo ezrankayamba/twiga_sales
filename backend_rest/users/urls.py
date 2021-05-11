@@ -11,6 +11,7 @@ urlpatterns = [
     path('create', views.CreateUserView.as_view()),
     path('update/<int:pk>', views.CreateUserView.as_view()),
     path('privileges', views.privileges),
+    path('agents', views.agents),
     path('changepwd', views.ManagePasswordView.as_view()),
     path('my-photo', views.ManageMyProfilePhotoView.as_view()),
 ]

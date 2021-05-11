@@ -31,8 +31,7 @@ class InvoiceListView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        print(request.GET)
-        agent = request.user.agent if hasattr(request.user, 'agent') else None
+        agent = request.user.profile.agent
         if agent:
             data = serializers.InvoiceSerializer(models.Invoice.objects.filter(agent=agent), many=True).data
         else:

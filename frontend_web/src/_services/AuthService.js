@@ -45,7 +45,7 @@ export const loginRefresh = (token, cb) => {
 };
 
 export const fetchUsers = (token, page, cb) => {
-  apiGetPaginated(BASE_URL + "/users", token, page)
+  apiGetPaginated(BASE_URL + "/users/", token, page)
     .then((res) => {
       if (res.status === 200) {
         let { pages, records } = res.headers;
@@ -63,7 +63,7 @@ export const fetchUsers = (token, page, cb) => {
 };
 
 export const fetchRoles = (token, page = 1, cb) => {
-  apiGetPaginated(BASE_URL + "/users/roles", token, page)
+  apiGetPaginated(BASE_URL + "/users/roles/", token, page)
     .then((res) => {
       if (res.status === 200) {
         let { pages, records } = res.headers;

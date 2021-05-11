@@ -21,10 +21,11 @@ class AgentSerializer(serializers.ModelSerializer):
 
 class ProfileSerializer(serializers.ModelSerializer):
     role = RoleSerializer(many=False, read_only=True)
+    agent = AgentSerializer(many=False, read_only=True)
 
     class Meta:
         model = models.Profile
-        fields = ('id', 'role', 'image')
+        fields = ('id', 'role', 'image','agent')
 
 
 class UserSerializer(serializers.ModelSerializer):
