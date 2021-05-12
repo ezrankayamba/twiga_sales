@@ -12,7 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.21.1",
-    "chart.js": "^2.9.3",
+    "chart.js": "^2.9.4",
     "css-loader": "^3.6.0",
     "dayjs": "^1.8.32",
     "google-maps-react": "^2.0.6",
