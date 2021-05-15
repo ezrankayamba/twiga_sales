@@ -45,8 +45,8 @@ def get_sales(q):
     m1 = ['Assessment', 'Exit']  # with aggregate
     m2 = ['C2', 'Assessment', 'Exit']
     m3 = ['C2', 'Assessment']  # before April
-    docs_count = Case(When(aggregate__isnull=False, then=Count('docs', filter=Q(docs_vw__doc_type__in=m1))),
-                      default=Count('docs', filter=Q(docs_vw__doc_type__in=m2)))
+    docs_count = Case(When(aggregate__isnull=False, then=Count('docs', filter=Q(docs__doc_type__in=m1))),
+                      default=Count('docs', filter=Q(docs__doc_type__in=m2)))
     mand_size = Case(When(aggregate__isnull=False, then=2), When(transaction_date__lt=mand_docs_date(), then=2), default=3, output_field=IntegerField())
     qs = models.Sale.objects.annotate(doc_count=docs_count, mandatory_size=mand_size)
 
