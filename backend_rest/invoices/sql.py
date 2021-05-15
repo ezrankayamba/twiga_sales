@@ -1,21 +1,23 @@
 from django.db import connection
 
 SQL_ALL_DOCS = '''
+SELECT row_number() OVER (ORDER BY aggregate_sale_id) AS id, id as org_id, ref_number, description, doc_type, file, created_at, updated_at,user_id,aggregate_sale_id,sale_id,sales_order,transaction_date,destination, truck
+FROM(
 SELECT id, ref_number, description, doc_type, file, created_at, updated_at,user_id,aggregate_sale_id,sale_id,sales_order,transaction_date,destination, truck
 FROM (SELECT d.*,s.sales_order,s.transaction_date,s.destination, (select NULL) as aggregate_sale_id from sales_document d left join sales_sale s on d.sale_id=s.id and s.aggregate_id is NULL)
 UNION
 select aggr_docs.*, s.id as sale_id, s.sales_order, s.transaction_date, s.destination, (select NULL) as truck
 FROM sales_sale s left JOIN
-(select d.* from sales_aggregatedocument d LEFT join sales_aggregatesale aggr on d.aggregate_sale_id=aggr.id) as aggr_docs
+(select d.* from sales_aggregatedocument d LEFT join sales_aggregatesale aggr on d.aggregate_sale_id=aggr.id) as aggr_docs 
 on s.aggregate_id=aggr_docs.aggregate_sale_id
 WHERE s.aggregate_id is not NULL
+) as d
 '''
 
 
 def change_docs_db_view():
     with connection.cursor() as cursor:
         cursor.execute("DROP VIEW IF EXISTS vw_sale_documents")
-        cursor.execute("DROP VIEW IF EXISTS vw_on_or_deleted_documents")
         cursor.execute(f"CREATE VIEW vw_sale_documents AS {SQL_ALL_DOCS}")
 
 
