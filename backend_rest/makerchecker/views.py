@@ -31,7 +31,7 @@ class ManageTaskMakerChecker(APIView):
         task = models.Task.objects.get(pk=task_id)
         status = request.data['status']
         result = None
-        if (status == models.STATUS_APPROVED and not task.reverse) or (status == models.STATUS_REJECTED and task.reverse):
+        if (status == models.STATUS_APPROVED and not task.task_type.reverse) or (status == models.STATUS_REJECTED and task.task_type.reverse):
             func = getattr(executor, task.task_type.executor)
             result = func(task)
             print(result)
