@@ -18,6 +18,7 @@ class TaskType(models.Model):
     checker_privilege = models.CharField(max_length=40, choices=PRIVILEGE_CHOICES)
     view_privilege = models.CharField(max_length=40, choices=PRIVILEGE_CHOICES)
     executor = models.CharField(max_length=40, choices=EXECUTOR_CHOICES)
+    reverse = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['name']

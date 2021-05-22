@@ -15,10 +15,11 @@ WHERE s.aggregate_id is not NULL
 '''
 
 
-def change_docs_db_view():
+def change_docs_db_view(drop=False):
     with connection.cursor() as cursor:
         cursor.execute("DROP VIEW IF EXISTS vw_sale_documents")
-        cursor.execute(f"CREATE VIEW vw_sale_documents AS {SQL_ALL_DOCS}")
+        if not drop:
+            cursor.execute(f"CREATE VIEW vw_sale_documents AS {SQL_ALL_DOCS}")
 
 
 def rusumo_list_query(for_summary=True):

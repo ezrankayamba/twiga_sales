@@ -61,7 +61,7 @@ def get_sales(q):
     else:  # with docs check only
         qs = qs.filter(doc_count__gte=F('mandatory_size'))
 
-    print(qs.query)
+    # print(qs.query)
     return qs
 
 

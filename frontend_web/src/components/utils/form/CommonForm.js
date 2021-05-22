@@ -225,7 +225,7 @@ class CommonForm extends Component {
                     noValidate
                     errors={errors}
                     setChanged={this.setChanged}
-                    disabled={readOnly}
+                    disabled={readOnly || f.readOnly}
                   />
                   {f.info && (
                     <div className="info">

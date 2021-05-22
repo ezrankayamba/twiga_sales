@@ -94,7 +94,7 @@ CHANNEL_LAYERS = {
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -174,7 +174,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_PAGINATION_CLASS': 'core.paginators.CustomPagination',
-    'PAGE_SIZE': 100
+    'PAGE_SIZE': 4
 }
 
 

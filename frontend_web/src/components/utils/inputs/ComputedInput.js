@@ -1,7 +1,7 @@
 import React from "react";
 
 const getInput = (
-  { type, options, name, many, all, label },
+  { type, options, name, many, all, label, ...rest0 },
   { value, prepend, newOptions, dispatch, ...rest }
 ) => {
   if (type === "select") {
@@ -43,6 +43,7 @@ const getInput = (
                   checked={isChecked}
                   onChange={rest.onChange}
                 />
+
                 <span className="pl-2">{o.name}</span>
               </label>
             );
@@ -50,6 +51,7 @@ const getInput = (
       </fieldset>
     );
   } else if (type === "file") {
+    console.log("Rest Params: ", rest0, rest)
     let url =
       value && typeof value === "string" && value.startsWith("http")
         ? value

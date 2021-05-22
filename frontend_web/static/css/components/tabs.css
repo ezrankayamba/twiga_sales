@@ -20,7 +20,7 @@ div.col:last-child > .no-rounds {
 
 .tab-buttons button {
   border: 1px solid #e1e1e1;
-  background: rgb(168, 168, 214);
+  background: rgb(223, 223, 240);
   color: white;
   padding: 0.4rem 0.2rem;
   margin-right: 0.6rem;
@@ -37,7 +37,7 @@ div.col:last-child > .no-rounds {
   height: 0;
   border-top: 0.84rem solid transparent;
   border-bottom: 0.84rem solid transparent;
-  border-left: 0.5rem solid rgb(168, 168, 214);
+  border-left: 0.5rem solid rgb(223, 223, 240);
   margin-right: -0.5rem;
   position: absolute;
   right: 0;
@@ -56,8 +56,8 @@ div.col:last-child > .no-rounds {
   content: "";
   width: 0;
   height: 0;
-  border-top: 0.9rem solid rgb(168, 168, 214);
-  border-bottom: 0.86rem solid rgb(168, 168, 214);
+  border-top: 0.9rem solid rgb(223, 223, 240);
+  border-bottom: 0.86rem solid rgb(223, 223, 240);
   border-right: 0.5rem solid transparent;
   margin-left: -0.5rem;
   position: absolute;

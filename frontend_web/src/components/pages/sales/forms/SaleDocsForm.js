@@ -8,6 +8,7 @@ import Snackbar from "../../../utils/notify/Snackbar";
 import CommonForm from "../../../utils/form/CommonForm";
 import Modal from "../../../modal/Modal";
 import { openConfirmDialog } from "../../../modal/ConfirmDialog";
+import DocumentsFormCombinex from "./DocumentsFormCombinex";
 
 @connect(
   (state) => {
@@ -125,12 +126,14 @@ class SaleDocsForm extends Component {
         {
           name: "quantity2",
           label: "Quantity(Tons)",
+          type: "number",
           validator: FormsHelper.notEmpty(),
           value: val("quantity2"),
         },
         {
           name: "total_value2",
           label: "Value(USD)",
+          type: "number",
           validator: FormsHelper.notEmpty(),
           value: val("total_value2"),
         },
@@ -174,7 +177,7 @@ class SaleDocsForm extends Component {
           show={true}
           title={title}
           content={
-            <CommonForm
+            <DocumentsFormCombinex
               meta={form}
               readOnly={readOnly}
               onClose={() => complete(false)}

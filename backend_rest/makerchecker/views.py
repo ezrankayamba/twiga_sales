@@ -31,10 +31,11 @@ class ManageTaskMakerChecker(APIView):
         task = models.Task.objects.get(pk=task_id)
         status = request.data['status']
         result = None
-        if status == models.STATUS_APPROVED:
+        if (status == models.STATUS_APPROVED and not task.reverse) or (status == models.STATUS_REJECTED and task.reverse):
             func = getattr(executor, task.task_type.executor)
             result = func(task)
             print(result)
+
         task.checker_comment = request.data['checker_comment']
         task.checker = request.user
         task.status = status

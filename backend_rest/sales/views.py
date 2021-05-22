@@ -16,6 +16,7 @@ import ast
 from sequences import get_next_value
 import concurrent
 from .constants import SALE_DOCS_ASSIGN_SEQUENCE_KEY
+from makerchecker.models import Task
 
 
 class SaleListView(generics.ListCreateAPIView):
@@ -178,6 +179,7 @@ class SaleDocsView(APIView):
         sale = models.Sale.objects.get(pk=data['sale_id'])
         truck = 'trailer' if sale.quantity >= models.TRUCK_THRESHOLD else 'head'
         category = list(map(lambda x: int(x), data['category'].split(','))) if 'category' in data and not data['category'] == 'null' else []
+        missing_c2 = data['missing_c2'] if 'missing_c2' in data else 0
         print(category)
 
         errors = []
@@ -196,6 +198,8 @@ class SaleDocsView(APIView):
             if d['key'] not in request.FILES:
                 return
             if not d['letter'] in ['A', 'E', 'C']:
+                return
+            if d['letter'] == 'C' and missing_c2:
                 return
             print()
             print("======================")
@@ -296,6 +300,13 @@ class SaleDocsView(APIView):
             sale.total_value2 = data['total_value2']
             sale.assign_no = sale.assign_no if sale.assign_no else get_next_value(SALE_DOCS_ASSIGN_SEQUENCE_KEY)
             sale.aggregate = aggr_obj
+            if missing_c2:
+                print("Creating missing C2 approval initiation: ", sale.id)
+                name = 'Waive Missing C2 Sale Documents'
+                tType = models.TaskType.objects.filter(name=name).first()
+                t_info = {'reverse': True, 'task_type_id': tType.id, 'reference': sale.id, 'maker_comment': 'C2 is missing due to TRA system issue', 'maker': request.user}
+                task = Task.objects.create(**t_info)
+                sale.task = task
             sale.save()
             for doc in docs:
                 print('Doc: ', doc)
