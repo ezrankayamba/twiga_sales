@@ -312,6 +312,8 @@ class SaleDocsView(APIView):
                 print('Doc: ', doc)
                 if is_aggregate(doc['letter']):
                     continue
+                if missing_c2:
+                    doc['status'] = 0
                 doc.pop('letter', None)
                 models.Document.objects.create(**doc)
             return Response({

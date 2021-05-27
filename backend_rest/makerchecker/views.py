@@ -31,18 +31,23 @@ class ManageTaskMakerChecker(APIView):
         task = models.Task.objects.get(pk=task_id)
         status = request.data['status']
         result = None
-        if (status == models.STATUS_APPROVED and not task.task_type.reverse) or (status == models.STATUS_REJECTED and task.task_type.reverse):
+        # if (status == models.STATUS_APPROVED and not task.task_type.reverse) or (status == models.STATUS_REJECTED and task.task_type.reverse):
+        #     func = getattr(executor, task.task_type.executor)
+        #     result = func(task)
+        #     print(result)
+        if (status == models.STATUS_APPROVED or status == models.STATUS_REJECTED):
             func = getattr(executor, task.task_type.executor)
             result = func(task)
             print(result)
+            task.checker_comment = request.data['checker_comment']
+            task.checker = request.user
+            task.status = status
+            task.result = result
+            task.save()
 
-        task.checker_comment = request.data['checker_comment']
-        task.checker = request.user
-        task.status = status
-        task.result = result
-        task.save()
+            return Response({'result': 0, 'message': f'Successfully updated task approval request with id: {task.id}'})
 
-        return Response({'result': 0, 'message': f'Successfully updated task approval request with id: {task.id}'})
+        return Response({'result': -1, 'message': f'Approval execution failed, seems not valid status : {task.id} => {status}'})
 
 
 class TaskTypeView(APIView):
