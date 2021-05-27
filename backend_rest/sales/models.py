@@ -29,6 +29,7 @@ class Document(models.Model):
     user = models.ForeignKey(User, related_name='docs_org', on_delete=models.PROTECT, null=True)
     created_at = models.DateTimeField(auto_now=False, auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, auto_now_add=False, null=True)
+    status = models.IntegerField(default=1)
 
     def __str__(self):
         return f'{self.ref_number} - {self.doc_type}'
