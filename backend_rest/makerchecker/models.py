@@ -1,7 +1,8 @@
+from .executor import EXECUTOR_CHOICES
 from django.db import models
 from django.contrib.auth.models import User
 from users.choices import PRIVILEGE_CHOICES
-from .executor import EXECUTOR_CHOICES
+
 STATUS_INITIATED = 'INITIATED'
 STATUS_APPROVED = 'APPROVED'
 STATUS_REJECTED = 'REJECTED'

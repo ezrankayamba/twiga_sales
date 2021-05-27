@@ -1,12 +1,11 @@
-from backend_rest.core import models
 from sales import models as m_sales
-from . import models as mc_models
 
 
 def delete_sale_docs(task, status):
+    from .models import STATUS_APPROVED
     sale_id = int(task.reference)
     sale = m_sales.Sale.objects.get(pk=sale_id)
-    if status == mc_models.STATUS_APPROVED:
+    if status == STATUS_APPROVED:
         m_sales.Document.objects.filter(sale_id=sale_id).delete()
         m_sales.Sale.objects.filter(pk=sale_id).update(agent=None, task=None)
         return f'Documents deleted successfully from sale: {sale.sales_order}'
@@ -15,9 +14,10 @@ def delete_sale_docs(task, status):
 
 
 def waive_missing_c2(task, status):
+    from .models import STATUS_APPROVED
     sale_id = int(task.reference)
     sale = m_sales.Sale.objects.get(pk=sale_id)
-    if status == mc_models.STATUS_APPROVED:
+    if status == STATUS_APPROVED:
         m_sales.Document.objects.filter(sale_id=sale_id).update(status=1)
         m_sales.Sale.objects.filter(pk=sale_id).update(task=None)
         return f'Documents with missing C2 successfully approved for sale: {sale.sales_order}'
