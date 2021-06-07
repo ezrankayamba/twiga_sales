@@ -87,6 +87,7 @@ class InvoiceDocsView(APIView):
         invoice = models.Invoice.objects.get(pk=data['invoice_id'])
         inv_file = request.FILES['invoice']
         let_file = request.FILES['letter']
+        rcp_file = request.FILES['receipt'] if 'receipt' in request.FILES else None
         invoice_res, letter_res = invoice_ocr.extract_invoice_copy(io.BytesIO(inv_file.read()), io.BytesIO(let_file.read()))
         print(invoice_res, letter_res)
         result = -1
@@ -102,6 +103,9 @@ class InvoiceDocsView(APIView):
                         ref_number=ref_number, doc_type=models.InvoiceDoc.DOC_INVOICE, file=inv_file, invoice=invoice)
                     models.InvoiceDoc.objects.create(
                         ref_number=ref_number, doc_type=models.InvoiceDoc.DOC_LETTER, file=let_file, invoice=invoice)
+                    if rcp_file:
+                        models.InvoiceDoc.objects.create(
+                            ref_number=ref_number, doc_type=models.InvoiceDoc.DOC_RECEIPT, file=rcp_file, invoice=invoice)
 
                     invoice.status = 1
                     invoice.save()

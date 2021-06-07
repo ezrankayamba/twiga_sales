@@ -75,6 +75,11 @@ class InvoiceDocsForm extends Component {
           validator: FormsHelper.notEmpty(),
           type: "file",
         },
+        {
+          name: "receipt",
+          label: "Receipt",
+          type: "file",
+        },
       ],
       onSubmit: readOnly ? null : onSubmit || this.onSubmit.bind(this),
       enctype: "multipart/form-data",
