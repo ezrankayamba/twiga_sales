@@ -32,7 +32,7 @@ def rusumo_list_query(for_summary=True):
        and s.transaction_date < %s
        and s.invoice_id is null
        and agent_code = %s
-       and s.task_id is null
+       and s.task_id is null and docs_flag=1
        '''
     if for_summary:
         return part1
@@ -51,8 +51,8 @@ def kigoma_list_query(for_summary=True):
 	and s.invoice_id is null
 	and agent_code = %s
 	and (aggr.category=3 or aggr.category is null)
-       and s.task_id is null
-       '''
+    and s.task_id is null and docs_flag=1
+    '''
     if for_summary:
         return part1
     return f'{part1} and complete = 1'
@@ -70,7 +70,7 @@ def kabanga_list_query(for_summary=True):
 	and s.invoice_id is null
 	and agent_code = %s
 	and (aggr.category=2 or aggr.category is null)
-       and s.task_id is null
+    and s.task_id is null and docs_flag=1
        '''
     if for_summary:
         return part1

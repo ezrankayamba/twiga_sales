@@ -19,7 +19,7 @@ def waive_missing_c2(task, status):
     sale = m_sales.Sale.objects.get(pk=sale_id)
     if status == STATUS_APPROVED:
         m_sales.Document.objects.filter(sale_id=sale_id).update(status=1)
-        m_sales.Sale.objects.filter(pk=sale_id).update(task=None)
+        m_sales.Sale.objects.filter(pk=sale_id).update(task=None, docs_flag=2)
         return f'Documents with missing C2 successfully approved for sale: {sale.sales_order}'
     else:
         m_sales.Document.objects.filter(sale_id=sale_id).delete()
