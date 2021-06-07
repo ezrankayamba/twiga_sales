@@ -154,7 +154,7 @@ class SalesReportExport(APIView):
             filt['vehicle_number__contains'] = self.get_filter('vehicle_number')
             filt_ref_num = self.get_filter('doc_ref')
             if self.get_filter('destination'):
-                filt['destination'] = self.get_filter('destination')
+                filt['destination__startswith'] = self.get_filter('destination')
             if(filt_ref_num):
                 filt['docs__ref_number__contains'] = self.get_filter('doc_ref')
             filt['sales_order__contains'] = self.get_filter('sales_order')

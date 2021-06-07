@@ -75,6 +75,8 @@ class CreateUserView(APIView):
         print('Data: ', data)
 
         user = User.objects.get(pk=pk)
+        user.email = data['email']
+        user.save()
         profile = user.profile
         profile.role_id = data['role']
         profile.agent_id = self.agent_id(data)
