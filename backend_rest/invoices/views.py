@@ -133,6 +133,9 @@ class InvoiceManageView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     required_scopes = []
 
+    def get_categories(self):
+        return ['Not valid', 'rusumo', 'kabanga', 'kigoma', 'rusumo_noc2']
+
     def get(self, request):
         agent = request.user.profile.agent
 
@@ -157,16 +160,22 @@ class InvoiceManageView(APIView):
         agent_code = agent.code if agent else 0
         category = int(request.GET['category']) if 'category' in request.GET else -1
         print('Category: ', category)
-        if category == 1:
-            sql = raw_sql.summary_query(category='rusumo')
-        if category == 4:
-            sql = raw_sql.summary_query(category='rusumo_noc2')
-        elif category == 2:
-            sql = raw_sql.summary_query(category='kabanga')
-        elif category == 3:
-            sql = raw_sql.summary_query(category='kigoma')
-        else:
+
+        # if category == 1:
+        #     sql = raw_sql.summary_query(category='rusumo')
+        # elif category == 4:
+        #     sql = raw_sql.summary_query(category='rusumo_noc2')
+        # elif category == 2:
+        #     sql = raw_sql.summary_query(category='kabanga')
+        # elif category == 3:
+        #     sql = raw_sql.summary_query(category='kigoma')
+        # else:
+        #     print("Not known category")
+        #     return []
+        categories = self.get_categories()
+        if category == -1:
             return []
+        sql = raw_sql.summary_query(category=categories[category])
         print("SQL: ", sql)
         return Sale.objects.raw(sql, [max_date, agent_code])
 
@@ -181,14 +190,20 @@ class InvoiceManageView(APIView):
         # return Sale.objects.raw(sql, [max_date, agent_code])
         category = int(request.GET['category']) if 'category' in request.GET else -1
         print('Category: ', category)
-        if category == 1:
-            sql = raw_sql.rusumo_list_query(for_summary=False)
-        elif category == 2:
-            sql = raw_sql.kabanga_list_query(for_summary=False)
-        elif category == 3:
-            sql = raw_sql.kigoma_list_query(for_summary=False)
-        else:
+        # if category == 1:
+        #     sql = raw_sql.rusumo_list_query(for_summary=False)
+        # if category == 4:
+        #     sql = raw_sql.rusumo_noc2_list_query(for_summary=False)
+        # elif category == 2:
+        #     sql = raw_sql.kabanga_list_query(for_summary=False)
+        # elif category == 3:
+        #     sql = raw_sql.kigoma_list_query(for_summary=False)
+        # else:
+        #     return []
+        categories = self.get_categories()
+        if category == -1:
             return []
+        sql = raw_sql.summary_query(category=categories[category])
         print("SQL: ", sql)
         return Sale.objects.raw(sql, [max_date, agent_code])
 
