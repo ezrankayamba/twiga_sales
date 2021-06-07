@@ -42,7 +42,7 @@ def rusumo_list_query(for_summary=True):
 def rusumo_noc2_list_query(for_summary=True):
     part1 = f'''
        select s.*,a.code as agent_code,
-       (CASE WHEN (select count(*) from vw_sale_documents d where sale_id=s.id and d.doc_type IN ( 'C2', 'Assessment' )) >=2 THEN 1 ELSE 0 END) as complete
+       (CASE WHEN (select count(*) from vw_sale_documents d where sale_id=s.id and d.doc_type IN ( 'E', 'Assessment' )) >=2 THEN 1 ELSE 0 END) as complete
        FROM sales_sale as s
        left join users_agent a on s.agent_id=a.id or s.agent_id is null
        WHERE s.destination like 'RWANDA%%'

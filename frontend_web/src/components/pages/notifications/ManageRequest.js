@@ -7,6 +7,7 @@ import { UserHelper } from "../../../_helpers/UserHelper";
 function ManageRequest({ task, token, done, user }) {
   const [entity, setEntity] = useState(null);
   const [approval, setApproval] = useState(null);
+  const saleTasks=["Sales Documents Delete","Waive Missing C2 Sale Documents"]
 
   function ApprovalForm({ status }) {
     const [comment, setComment] = useState("");
@@ -82,7 +83,7 @@ function ManageRequest({ task, token, done, user }) {
     );
   }
   useEffect(() => {
-    if (task.task_type.name === "Sales Documents Delete") {
+    if (saleTasks.includes(task.task_type.name)) {
       CRUD.list("/sales/" + task.reference, token, {
         onSuccess: (res) => {
           console.log("Response: ", res);
@@ -92,7 +93,8 @@ function ManageRequest({ task, token, done, user }) {
       });
     }
   }, []);
-  return task.task_type.name === "Sales Documents Delete" ? (
+  
+  return saleTasks.includes(task.task_type.name) ? (
     entity ? (
       <div className="task-details">
         <div className="row">

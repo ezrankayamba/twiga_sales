@@ -37,7 +37,7 @@ class ManageTaskMakerChecker(APIView):
         #     print(result)
         if (status == models.STATUS_APPROVED or status == models.STATUS_REJECTED):
             func = getattr(executor, task.task_type.executor)
-            result = func(task)
+            result = func(task, status=status)
             print(result)
             task.checker_comment = request.data['checker_comment']
             task.checker = request.user
