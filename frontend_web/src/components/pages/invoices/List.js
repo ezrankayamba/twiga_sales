@@ -221,7 +221,7 @@ class List extends Component {
             ) : (
               <div className="action-buttons">
                 <span>Not attached</span>
-                {user.agent && (
+                {user.profile.agent && (
                   <button
                     className="btn btn-link"
                     type="button"
