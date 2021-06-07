@@ -297,6 +297,7 @@ class List extends Component {
       { id: "1", name: "Rusumo" },
       { id: "2", name: "Kabanga Aggregate" },
       { id: "3", name: "Kigoma Aggregate" },
+      { id: "4", name: "Rusumo - Missing C2" },
     ]
     return (
       <div>

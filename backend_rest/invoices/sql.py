@@ -39,6 +39,23 @@ def rusumo_list_query(for_summary=True):
     return f'{part1} and complete = 1'
 
 
+def rusumo_noc2_list_query(for_summary=True):
+    part1 = f'''
+       select s.*,a.code as agent_code,
+       (CASE WHEN (select count(*) from vw_sale_documents d where sale_id=s.id and d.doc_type IN ( 'C2', 'Assessment' )) >=2 THEN 1 ELSE 0 END) as complete
+       FROM sales_sale as s
+       left join users_agent a on s.agent_id=a.id or s.agent_id is null
+       WHERE s.destination like 'RWANDA%%'
+       and s.transaction_date < %s
+       and s.invoice_id is null
+       and agent_code = %s
+       and s.task_id is null and docs_flag=2
+       '''
+    if for_summary:
+        return part1
+    return f'{part1} and complete = 1'
+
+
 def kigoma_list_query(for_summary=True):
     part1 = f'''
        select s.*,a.code as agent_code, aggr.category,
@@ -81,6 +98,7 @@ def summary_query(category):
     list_query = None
     lookup = {
         'rusumo': rusumo_list_query,
+        'rusumo_noc2': rusumo_noc2_list_query,
         'kigoma': kigoma_list_query,
         'kabanga': kabanga_list_query,
     }

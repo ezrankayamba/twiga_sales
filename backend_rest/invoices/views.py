@@ -159,6 +159,8 @@ class InvoiceManageView(APIView):
         print('Category: ', category)
         if category == 1:
             sql = raw_sql.summary_query(category='rusumo')
+        if category == 4:
+            sql = raw_sql.summary_query(category='rusumo_noc2')
         elif category == 2:
             sql = raw_sql.summary_query(category='kabanga')
         elif category == 3:
