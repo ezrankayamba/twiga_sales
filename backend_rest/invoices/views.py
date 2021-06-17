@@ -84,12 +84,13 @@ class InvoiceDocsView(APIView):
 
     def post(self, request):
         data = request.data
+        print(data, request.FILES)
         invoice = models.Invoice.objects.get(pk=data['invoice_id'])
         inv_file = request.FILES['invoice']
         let_file = request.FILES['letter']
         rcp_file = request.FILES['receipt'] if 'receipt' in request.FILES else None
         invoice_res, letter_res = invoice_ocr.extract_invoice_copy(io.BytesIO(inv_file.read()), io.BytesIO(let_file.read()))
-        print(invoice_res, letter_res)
+        print(invoice_res, letter_res, rcp_file)
         result = -1
         msg = f'Attached invoice docs failed. Check the docs and reupload'
         try:
