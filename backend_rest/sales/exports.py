@@ -60,7 +60,7 @@ def export_report(request, sales):
 
     main = workbook.add_worksheet("Report")
     headers = ['ID', 'TRANS_DATE', 'CUSTOMER', 'DELIVERY NOTE', 'VEH#',
-               'TAX INVOICE', 'SO#', 'PRODUCT', 'QTY(TONS)', 'VALUE', 'DESTINATION', 'VEH# TRAILER', 'AGENT', 'C2', 'ASSESSMENT', 'EXIT/RELEASE', 'ASSIGN#']
+               'TAX INVOICE', 'SO#', 'PRODUCT', 'QTY(TONS)', 'VALUE', 'DESTINATION', 'VEH# TRAILER', 'AGENT', 'C2', 'ASSESSMENT', 'EXIT/RELEASE', 'ASSIGN#', 'INVOICE NO']
     rows = []
 
     for prj in sales:
@@ -80,6 +80,7 @@ def export_report(request, sales):
         row.append(prj.agent.code if prj.agent else 'None')
         row.extend(get_refs(prj))
         row.append(prj.assign_no)
+        row.append(prj.invoice.number if prj.invoice else 'None')
         rows.append(row)
 
     for j, col in enumerate(headers, start=1):
