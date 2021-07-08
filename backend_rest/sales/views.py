@@ -305,7 +305,7 @@ class SaleDocsView(APIView):
                 name = 'Waive Missing C2 Sale Documents'
                 tType = TaskType.objects.filter(name=name).first()
                 t_info = {'task_type_id': tType.id, 'reference': sale.id,
-                          'maker_comment': 'C2 is missing due to TRA system issue: {sale.transaction_date} ~ {sale.customer_name} ~ {sale.delivery_note}', 'maker': request.user}
+                          'maker_comment': f'C2 is missing due to TRA system issue: {sale.transaction_date} ~ {sale.customer_name} ~ {sale.delivery_note}', 'maker': request.user}
                 task = Task.objects.create(**t_info)
                 sale.task = task
             sale.save()
